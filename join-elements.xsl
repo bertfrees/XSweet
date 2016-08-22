@@ -14,7 +14,10 @@
   </xsl:template>
   
   <xsl:template match="p">
-    <xsl:call-template name="collapse-ilk"/>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:call-template name="collapse-ilk"/>
+    </xsl:copy>
   </xsl:template>
   
   <xsl:template name="collapse-ilk">
@@ -41,19 +44,25 @@
     </xsl:value-of>
   </xsl:function>
   
+  <!-- Note we're going to collapse things with the same (local) name
+       though in different namespaces - this ain't lookin to be namespace safe -->
   <xsl:template match="*" mode="hash">
-      <xsl:value-of select="local-name()"/>
-    <xsl:apply-templates mode="#current" select="@*">
+    <xsl:value-of select="local-name()"/>
+    <xsl:for-each select="@*">
       <xsl:sort select="local-name()"/>
-    </xsl:apply-templates>
+      <xsl:if test="position() ne 1"> ::: </xsl:if>
+      <xsl:apply-templates mode="#current" select="."/>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="@*" mode="hash">
-    <xsl:value-of select="local-name(),." separator=":"/>
+    <xsl:value-of select="local-name(),." separator="="/>
   </xsl:template>
  
-  <xsl:template match="div" mode="hash">
-    <xsl:value-of select="generate-id()"/>
+  <!-- These guys should never collapse so their hash is always unique -->
+  <xsl:template match="div | p" mode="hash">
+    <xsl:value-of select="local-name(.)"/>
+    <xsl:value-of select="generate-id(.)"/>
   </xsl:template>
   
   <xsl:template match="text() | comment() | processing-instruction()" mode="hash"/>

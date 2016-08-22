@@ -6,24 +6,24 @@
   
   <p:option name="docx-file-uri" required="true"/>
   
-  <p:output port="result">
+  <p:output port="_Z_FINAL">
     <p:pipe port="result" step="final"/>
   </p:output>
   
-  <p:output port="interimA" primary="false">
+  <p:output port="_A_extracted" primary="false">
     <p:pipe port="result" step="slops-extracted"/>
   </p:output>
-  <p:output port="interimB" primary="false">
+  <p:output port="_B_scrubbed" primary="false">
     <p:pipe port="result" step="scrubbed"/>
   </p:output>
-  <p:output port="interimC" primary="false">
+  <p:output port="_C_collapsed" primary="false">
     <p:pipe port="result" step="collapsed"/>
   </p:output>
   
-  <p:serialization port="result" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="interimA" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="interimB" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="interimC" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_B_scrubbed"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_collapsed" indent="true" omit-xml-declaration="true"/>
   
   <p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
