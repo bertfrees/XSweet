@@ -7,7 +7,8 @@
   xmlns:coko="http://coko.foundation/xslt/wordml/util"
   exclude-result-prefixes="#all">
   
-  <xsl:output indent="yes" omit-xml-declaration="yes"/>
+  <!-- Indent should really be no, but for testing. -->
+  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
   
   <xsl:param as="xs:string" name="show-css">yes</xsl:param>
 

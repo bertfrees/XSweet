@@ -7,6 +7,9 @@
   xmlns:coko="http://coko.foundation/xslt/wordml/util"
   exclude-result-prefixes="#all">
   
+  <!-- Indent should really be no, but for testing. -->
+  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
