@@ -10,18 +10,30 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
   
+  <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
   </xsl:template>
   
+  <!-- Copy 'p', and merge what's inside it. -->
   <xsl:template match="p">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:call-template name="collapse-ilk"/>
     </xsl:copy>
   </xsl:template>
+  
+  <!-- Merge logic accepts a sequence of nodes (by default,
+       children of the context node where called) and returns
+       sequences where 'like' nodes in sequence are merged.
+       So <u>Moby </u><u>Dick</u> comes back <u>Moby Dick</u>.
+  
+       'Likeness' is established by coko:node-hash, and permits elements
+       of the same type and attribute values to be merged accorrding
+       to logic given in the hashing templates.
+  -->
   
   <xsl:template name="collapse-ilk">
     <xsl:param name="among" select="node()"/>
@@ -48,7 +60,7 @@
   </xsl:function>
   
   <!-- Note we're going to collapse things with the same (local) name
-       though in different namespaces - this ain't lookin to be namespace safe -->
+       though in different namespaces - this ain't lookin to be namespace safe. -->
   <xsl:template match="*" mode="hash">
     <xsl:value-of select="local-name()"/>
     <xsl:for-each select="@*">
@@ -62,13 +74,15 @@
     <xsl:value-of select="local-name(),." separator="="/>
   </xsl:template>
  
-  <!-- These guys should never collapse so their hash is always unique -->
+  <!-- These guys should never collapse so their hash is always unique to them.-->
   <xsl:template match="div | p" mode="hash">
     <xsl:value-of select="local-name(.)"/>
     <xsl:value-of select="generate-id(.)"/>
   </xsl:template>
   
-  <xsl:template match="text() | comment() | processing-instruction()" mode="hash"/>
+  <xsl:template match="text() | comment() | processing-instruction()" mode="hash">
+    <xsl:value-of select="generate-id(.)"/>
+  </xsl:template>
 
   
 </xsl:stylesheet>
