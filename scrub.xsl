@@ -22,9 +22,9 @@
   
   <!-- Remove any 'span' element that has nothing but @style
        (but retain its contents). -->
-  <xsl:template match="span[empty(@* except @style)]">
+  <!--<xsl:template match="span[empty(@* except @style)]">
     <xsl:apply-templates/>
-  </xsl:template>
+  </xsl:template>-->
   
   <!-- Remove any @style attribute at all. -->
   <xsl:template match="@style"/>
