@@ -27,7 +27,7 @@
   </xsl:template>-->
   
   <!-- Remove any @style attribute at all. -->
-  <xsl:template match="@style"/>
+  <!--<xsl:template match="@style"/>-->
   
   
 </xsl:stylesheet>
