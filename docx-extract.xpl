@@ -13,17 +13,21 @@
   <p:output port="_A_extracted" primary="false">
     <p:pipe port="result" step="slops-extracted"/>
   </p:output>
-  <p:output port="_B_scrubbed" primary="false">
+  <p:output port="_B_arranged" primary="false">
+    <p:pipe port="result" step="notes-arranged"/>
+  </p:output>
+  <p:output port="_C_scrubbed" primary="false">
     <p:pipe port="result" step="scrubbed"/>
   </p:output>
-  <p:output port="_C_collapsed" primary="false">
+  <p:output port="_D_tightened" primary="false">
     <p:pipe port="result" step="collapsed"/>
   </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_B_scrubbed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C_collapsed" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_scrubbed" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
   
   <p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
@@ -38,6 +42,12 @@
       <p:document href="docx-html-extract.xsl"/>
     </p:input>
     <p:with-param name="show-css" select="'yes'"/>
+  </p:xslt>
+  
+  <p:xslt name="notes-arranged">
+    <p:input port="stylesheet">
+      <p:document href="handle-notes.xsl"/>
+    </p:input>
   </p:xslt>
   
   <p:xslt name="scrubbed">
