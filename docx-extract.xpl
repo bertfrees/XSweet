@@ -35,7 +35,7 @@
   
   <p:xslt name="slops-extracted">
     <p:input port="stylesheet">
-      <p:document href="quickndirty2.xsl"/>
+      <p:document href="docx-html-extract.xsl"/>
     </p:input>
     <p:with-param name="show-css" select="'yes'"/>
   </p:xslt>
