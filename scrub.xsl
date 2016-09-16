@@ -17,6 +17,11 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- Strip these, retaining their contents. -->
+  <xsl:template match="position | iCs | lang | vertAlign | noProof">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
   <!-- Remove any 'p' element that has nothing but whitespace. -->
   <xsl:template match="p[not(matches(.,'\S'))]"/>
   
