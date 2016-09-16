@@ -37,7 +37,7 @@
   <xsl:template match="w:body">
     <body>
       <div class="docx-body">
-      <xsl:apply-templates select="w:p"/>
+        <xsl:apply-templates select="w:p"/>
       </div>
       <div class="docx-endnotes">
         <xsl:apply-templates select="$endnotes-doc/*/w:endnote"/>
@@ -61,8 +61,13 @@
         <xsl:attribute name="class" select="@w:val"/>
       </xsl:for-each>
       
-      <xsl:apply-templates select="w:r"/>
+      <xsl:apply-templates select="*"/>
     </p>
+  </xsl:template>
+  
+  <!-- Nothing to see here :-( keep going. -->
+  <xsl:template match="w:hyperlink">
+    <xsl:apply-templates/>
   </xsl:template>
   
   <xsl:function name="coko:css-literal" as="xs:string?">
@@ -163,7 +168,7 @@
   
   <!-- This should match any formatting we don't wish to see among wrapped inline elements;
        note that the same formatting properties may be detected in/by CSS reflection instead. -->
-  <xsl:template priority="5" match="w:rPr/w:sz | w:rPr/w:szCs | w:rPr/w:rFonts | w:wPr/w:color">
+  <xsl:template priority="5" match="w:rPr/w:sz | w:rPr/w:szCs | w:rPr/w:rFonts | w:rPr/w:color">
     <!-- Just do the next one. -->
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
