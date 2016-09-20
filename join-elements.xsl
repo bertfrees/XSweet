@@ -8,7 +8,7 @@
   exclude-result-prefixes="#all">
   
   <!-- Indent should really be no, but for testing. -->
-  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
   <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
@@ -55,13 +55,13 @@
   <xsl:function name="coko:node-hash" as="xs:string">
     <xsl:param name="n" as="node()"/>
     <xsl:value-of separator="|">
-      <xsl:apply-templates select="$n" mode="hash"/>
+      <xsl:apply-templates mode="signature" select="$n"/>
     </xsl:value-of>
   </xsl:function>
   
   <!-- Note we're going to collapse things with the same (local) name
        though in different namespaces - this ain't lookin to be namespace safe. -->
-  <xsl:template match="*" mode="hash">
+  <xsl:template mode="signature" match="*">
     <xsl:value-of select="local-name()"/>
     <xsl:for-each select="@*">
       <xsl:sort select="local-name()"/>
@@ -70,19 +70,29 @@
     </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="@*" mode="hash">
+  <xsl:template mode="signature" match="@*">
     <xsl:value-of select="local-name(),." separator="="/>
   </xsl:template>
  
   <!-- These guys should never collapse so their hash is always unique to them.-->
-  <xsl:template match="div | p" mode="hash">
+  <xsl:template mode="signature" match="div | p">
     <xsl:value-of select="local-name(.)"/>
     <xsl:value-of select="generate-id(.)"/>
   </xsl:template>
   
-  <xsl:template match="text() | comment() | processing-instruction()" mode="hash">
-    <xsl:value-of select="generate-id(.)"/>
+  <!-- ws-only text nodes, PIs and comments should be merged with adjacent elements
+       iff those nodes are being merged together. -->
+  <xsl:template mode="signature" match="text() | comment() | processing-instruction()">
+    <xsl:variable name="fore" select="preceding-sibling::*[1]/coko:node-hash(.)"/>
+    <xsl:variable name="aft"  select="following-sibling::*[1]/coko:node-hash(.)"/>
+    <xsl:value-of select="if ($fore = $aft) then $fore else generate-id(.)"/>
   </xsl:template>
 
+  <!-- However, text nodes that are not ws-only should not merge with adjacent elements
+       even when they are alike e.g. <i>there</i> it goes <i>again</i> ... -->
+  <!-- This template has a supervening priority over the preceding one, i.e. 0.5 to -0.5 -->
+  <xsl:template mode="signature" match="text()[matches(.,'\S')]">
+    <xsl:value-of select="generate-id(.)"/>
+  </xsl:template>
   
 </xsl:stylesheet>
