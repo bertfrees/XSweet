@@ -8,7 +8,7 @@
   exclude-result-prefixes="#all">
   
   <!-- Indent should really be no, but for testing. -->
-  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
   <xsl:param as="xs:string" name="show-css">yes</xsl:param>
 

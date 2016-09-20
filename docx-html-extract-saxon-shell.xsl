@@ -19,7 +19,7 @@
   <!-- Overriding imported binding  yes|no -->
   <xsl:param    as="xs:string"  name="show-css">yes</xsl:param>
   
-  <xsl:output indent="yes" omit-xml-declaration="yes"/>
+  <xsl:output indent="no" omit-xml-declaration="yes"/>
  
  
   <xsl:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
