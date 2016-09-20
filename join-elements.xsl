@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:coko="http://coko.foundation/xslt/wordml/util"
+  xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
   
   <!-- Indent should really be no, but for testing. -->
@@ -30,14 +30,14 @@
        sequences where 'like' nodes in sequence are merged.
        So <u>Moby </u><u>Dick</u> comes back <u>Moby Dick</u>.
   
-       'Likeness' is established by coko:node-hash, and permits elements
+       'Likeness' is established by xsw:node-signature, and permits elements
        of the same type and attribute values to be merged accorrding
        to logic given in the hashing templates.
   -->
   
   <xsl:template name="collapse-ilk">
     <xsl:param name="among" select="node()"/>
-    <xsl:for-each-group select="$among" group-adjacent="coko:node-hash(.)">
+    <xsl:for-each-group select="$among" group-adjacent="xsw:node-signature(.)">
       <xsl:for-each select="current-group()[1]/self::*">
         <!-- In the element case, splice in an element. -->
         <xsl:copy>
@@ -52,7 +52,7 @@
     </xsl:for-each-group>
   </xsl:template>
 
-  <xsl:function name="coko:node-hash" as="xs:string">
+  <xsl:function name="xsw:node-signature" as="xs:string">
     <xsl:param name="n" as="node()"/>
     <xsl:value-of separator="|">
       <xsl:apply-templates mode="signature" select="$n"/>
@@ -83,8 +83,8 @@
   <!-- ws-only text nodes, PIs and comments should be merged with adjacent elements
        iff those nodes are being merged together. -->
   <xsl:template mode="signature" match="text() | comment() | processing-instruction()">
-    <xsl:variable name="fore" select="preceding-sibling::*[1]/coko:node-hash(.)"/>
-    <xsl:variable name="aft"  select="following-sibling::*[1]/coko:node-hash(.)"/>
+    <xsl:variable name="fore" select="preceding-sibling::*[1]/xsw:node-signature(.)"/>
+    <xsl:variable name="aft"  select="following-sibling::*[1]/xsw:node-signature(.)"/>
     <xsl:value-of select="if ($fore = $aft) then $fore else generate-id(.)"/>
   </xsl:template>
 

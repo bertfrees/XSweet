@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:coko="http://coko.foundation/xslt/wordml/util"
+  xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
   
   <!-- Indent should really be no, but for testing. -->
@@ -70,15 +70,15 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <xsl:function name="coko:css-literal" as="xs:string?">
+  <xsl:function name="xsw:css-literal" as="xs:string?">
     <xsl:param name="run" as="element(w:r)"/>
     <xsl:if test="$css-reflect">
       <xsl:apply-templates select="$run/w:rPr" mode="render-css"/>
     </xsl:if>
   </xsl:function>
   
-  <xsl:template match="w:r[matches(coko:css-literal(.), '\S')]">
-    <span style="{normalize-space(coko:css-literal(.))}">
+  <xsl:template match="w:r[matches(xsw:css-literal(.), '\S')]">
+    <span style="{normalize-space(xsw:css-literal(.))}">
       <xsl:call-template name="format-components"/>
     </span>
   </xsl:template>
@@ -88,7 +88,7 @@
   </xsl:template>
   
   <xsl:template name="format-components">
-    <xsl:for-each-group select="* except w:rPr" group-adjacent="coko:has-format(.)">
+    <xsl:for-each-group select="* except w:rPr" group-adjacent="xsw:has-format(.)">
       <!--  current-grouping-key() is always true for some elements, and true for all when
               there is no w:rPr. The effect of the group-adjacent is to "bundle" elements
               to be wrapped in formatting, or not, depending on the element type. For example,
@@ -184,7 +184,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:function name="coko:has-format" as="xs:boolean">
+  <xsl:function name="xsw:has-format" as="xs:boolean">
     <xsl:param name="n" as="node()"/>
     <xsl:variable name="n-is-callout" as="xs:boolean">
       <xsl:apply-templates select="$n" mode="is-callout"/>

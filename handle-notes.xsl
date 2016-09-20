@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:coko="http://coko.foundation/xslt/wordml/util"
+  xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
   
   <!-- Indent should really be no, but for testing. -->
@@ -28,7 +28,7 @@
   <!-- Retrieveing endnotes, keep only those that are referenced, in their order of reference. -->
   <xsl:template match="div[@class='docx-endnotes']">
     <xsl:variable name="notes" select="div[@class='docx-endnote']"/>
-    <xsl:for-each select="../div[@class='docx-body']//a[@class='endnoteReference'][coko:is-first-enref(.)]">
+    <xsl:for-each select="../div[@class='docx-body']//a[@class='endnoteReference'][xsw:is-first-enref(.)]">
       <xsl:variable name="href" select="@href"/>
       <xsl:apply-templates select="$notes[concat('#',@id)=$href]"/>
     </xsl:for-each>
@@ -57,7 +57,7 @@
   
   <xsl:key name="endnoteRef-by-href" match="a[@class='endnoteReference']"  use="@href"/>
   
-  <xsl:function name="coko:is-first-enref" as="xs:boolean">
+  <xsl:function name="xsw:is-first-enref" as="xs:boolean">
     <xsl:param name="enref" as="element(a)"/>
     <!-- Boolean returns true() iff this is the first endnoteRef with its @id (and hence target). -->
     <xsl:sequence select="($enref/@class='endnoteReference') and ($enref is key('endnoteRef-by-href',$enref/@href,root($enref))[1])"/>
@@ -65,7 +65,7 @@
   
   <xsl:template match="a[@class='endnoteReference']" mode="get-number">
     <xsl:for-each select="key('endnoteRef-by-href',@href)[1]">
-      <xsl:number level="any" count="a[@class='endnoteReference'][coko:is-first-enref(.)]"/>
+      <xsl:number level="any" count="a[@class='endnoteReference'][xsw:is-first-enref(.)]"/>
     </xsl:for-each>
   </xsl:template>
 
