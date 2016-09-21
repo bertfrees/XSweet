@@ -25,13 +25,18 @@
   <!-- Remove any 'p' element that has nothing but whitespace. -->
   <xsl:template match="p[not(matches(.,'\S'))]"/>
 
-  <!-- And likewise drop any descendant of p that must have content to
-       be meaningful. -->
-  <xsl:template match="p//*[not(matches(.,'\S'))]">
-    <xsl:if test="exists(descendant-or-self::img | descendant-or-self::br | descendant-or-self::hr)">
-      <xsl:next-match/>
-    </xsl:if>
+  <!-- Inline elements that are truly empty can be stripped. -->
+  <xsl:template match="p//*[empty(*) and not(string(.))]">
+    <xsl:apply-templates/>
   </xsl:template>
+  
+  <!-- Except these guys of course ... -->
+  <xsl:template priority="5" match="img | br | hr">
+    <xsl:copy>
+      <xsl:apply-templates select="node() | @*"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- Remove any 'span' element that has nothing but @style
        (but retain its contents). -->
   <!--<xsl:template match="span[empty(@* except @style)]">
