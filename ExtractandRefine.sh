@@ -19,6 +19,7 @@ EXTRACT="docx-html-extract.xsl"                       # "Extraction" stylesheet
 REFINE1="handle-notes.xsl"                            # "Refinement" stylesheets
 REFINE2="scrub.xsl"
 REFINE3="join-elements.xsl"
+REFINE4="zorba-map.xsl"
 
 # Intermediate and final outputs (serializations) are all left on the file system.
 
