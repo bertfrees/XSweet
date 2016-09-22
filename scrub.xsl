@@ -37,15 +37,12 @@
     </xsl:copy>
   </xsl:template>
   
-  <!-- Remove any 'span' element that has nothing but @style
-       (but retain its contents). -->
-  <!--<xsl:template match="span[empty(@* except @style)]">
-    <xsl:apply-templates/>
-  </xsl:template>-->
+  <!-- Otherwise @style is rewritten to normalize its CSS. -->
   
-  <!-- @style is rewritten to normalize its CSS. -->
   <xsl:template match="@style">
-    <xsl:variable name="properties" select="tokenize(.,';\s*')"/>
+    <!-- Acquire properties by breaking at ';\s*' (semi-colon) and keeping only those that match
+         a regex (requiring a colon followed by non-ws). -->
+    <xsl:variable name="properties" select="tokenize(.,';\s*')[matches(.,':\s*\S')]"/>
     <!-- Doesn't handle just any CSS; assumes single space after ':' is normal. -->
     <!-- Grouping by value serves to remove duplicates. -->
     <xsl:attribute name="style">
