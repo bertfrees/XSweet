@@ -4,6 +4,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  
+  xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
   
@@ -25,6 +27,7 @@
   
   <!-- Run on 'document.xml' inside a .docx -->
   
+  <!-- Note that unprefixed elements are in namespace http://www.w3.org/1999/xhtml --> 
   <xsl:template match="/w:document">
     <html>
       <head>

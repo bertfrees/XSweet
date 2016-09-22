@@ -3,6 +3,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
   
   <!-- Indent should really be no, but for testing. -->
