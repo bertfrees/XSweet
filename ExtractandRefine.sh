@@ -34,3 +34,6 @@ echo Made $DOCNAME-REFINED_2.html
 $saxonHE -xsl:$REFINE3 -s:$DOCNAME-REFINED_2.html -o:$DOCNAME-REFINED_3.html
 echo Made $DOCNAME-REFINED_3.html
 
+$saxonHE -xsl:$REFINE4 -s:$DOCNAME-REFINED_3.html -o:$DOCNAME-REFINED_4.html
+echo Made $DOCNAME-REFINED_4.html
+
