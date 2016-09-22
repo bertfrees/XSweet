@@ -22,12 +22,16 @@
   <p:output port="_D_tightened" primary="false">
     <p:pipe port="result" step="collapsed"/>
   </p:output>
+  <p:output port="_E_mapped" primary="false">
+    <p:pipe port="result" step="mapped"/>
+  </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C_scrubbed" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
   
   <p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
@@ -59,6 +63,12 @@
   <p:xslt name="collapsed">
     <p:input port="stylesheet">
       <p:document href="join-elements.xsl"/>
+    </p:input>
+  </p:xslt>
+  
+  <p:xslt name="mapped">
+    <p:input port="stylesheet">
+      <p:document href="zorba-map.xsl"/>
     </p:input>
   </p:xslt>
   
