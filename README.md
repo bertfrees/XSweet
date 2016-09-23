@@ -1,4 +1,5 @@
-DOCX-xslt - XSLT for extraction of document contents from MS Office Open XML
+XSweet - XSLT for Pubsweet
+Including extraction of document contents from MS Office Open XML into HTML
 
 Wendell Piez for Coko Foundation
 From July 2016
