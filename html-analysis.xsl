@@ -32,6 +32,32 @@
       </xsl:for-each-group>
       </ul>
     </div>
+    <div>
+      <h2>Abstract tree hierarchy (by signature)</h2>
+      <xsl:call-template name="element-hierarchy"/>
+    </div>
+    
+  </xsl:template>
+  
+  <xsl:template name="element-hierarchy">
+    <xsl:param name="n" select="/*/*"/>
+    <xsl:if test="exists($n)">
+      <ul>
+        <xsl:for-each-group select="$n" group-by="xsw:signature(.)">
+          <li>
+            <span class="e">
+              <xsl:value-of select="current-grouping-key()"/>
+            </span>
+            <span class="count">
+              <xsl:value-of select="count(current-group())"/>
+            </span>
+            <xsl:call-template name="element-hierarchy">
+              <xsl:with-param name="n" select="current-group()/*"/>
+            </xsl:call-template>
+          </li>
+        </xsl:for-each-group>
+      </ul>
+    </xsl:if>
   </xsl:template>
   
   <xsl:function name="xsw:signature" as="xs:string">
