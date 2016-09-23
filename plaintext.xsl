@@ -11,7 +11,8 @@
   
   <!-- We don't actually have to copy anything but in case we run
        in XProc we actually need to emit XML despite aiming for plain text.
-       (The wrapper element should be removed in serialization.) -->
+       So we copy the document element. (Its tagging will be dropped when
+       the result is serialized with method 'text.) -->
   <xsl:template match="/*">
     <xsl:copy>
       <xsl:apply-templates/>
@@ -19,7 +20,6 @@
   </xsl:template>
   
   <!-- Elements directly under 'div' get 2 x LF -->
-  
   <xsl:template match="div/*">
     <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:apply-templates/>

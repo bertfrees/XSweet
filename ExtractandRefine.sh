@@ -20,6 +20,7 @@ REFINE1="handle-notes.xsl"                            # "Refinement" stylesheets
 REFINE2="scrub.xsl"
 REFINE3="join-elements.xsl"
 REFINE4="zorba-map.xsl"
+RIPTEXT="plaintext.xsl"
 
 # Intermediate and final outputs (serializations) are all left on the file system.
 
@@ -37,4 +38,7 @@ echo Made $DOCNAME-REFINED_3.html
 
 $saxonHE -xsl:$REFINE4 -s:$DOCNAME-REFINED_3.html -o:$DOCNAME-REFINED_4.html
 echo Made $DOCNAME-REFINED_4.html
+
+$saxonHE -xsl:$RIPTEXT -s:$DOCNAME-REFINED_4.html -o:$DOCNAME.txt
+echo Made $DOCNAME.txt
 
