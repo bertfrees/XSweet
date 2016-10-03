@@ -60,13 +60,24 @@
   <!-- //w:p/w:pPr/w:pStyle -->
   <xsl:template match="w:p">
     <p>
+      <!-- Copying any style declaration -->
       <xsl:for-each select="w:pPr/w:pStyle">
         <xsl:attribute name="class" select="@w:val"/>
       </xsl:for-each>
       
+      <!-- Also promoting some properties to CSS @style -->
+      <xsl:variable name="style">
+        <xsl:apply-templates mode="render-css" select="w:pPr"/>
+      </xsl:variable>
+      <xsl:if test="matches($style,'\S')">
+        <xsl:attribute name="style" select="$style"/>
+      </xsl:if>
       <xsl:apply-templates select="*"/>
     </p>
   </xsl:template>
+  
+  <!-- Drop in default traversal -->
+  <xsl:template match="w:pPr"/>
   
   <!-- Nothing to see here :-( keep going. -->
   <xsl:template match="w:hyperlink">
@@ -207,11 +218,50 @@
 
   <xsl:template match="*" mode="render-css"/>
   
-  <xsl:template mode="render-css" match="w:rPr">
-   <xsl:value-of separator="; ">
-     <xsl:apply-templates mode="#current"/>
-   </xsl:value-of><!---->
+  <xsl:template mode="render-css" match="w:pPr | w:rPr">
+    <xsl:value-of separator="; ">
+      <xsl:apply-templates mode="#current"/>
+    </xsl:value-of><!---->
   </xsl:template>
+  
+  <!-- Inside w:pPr -->
+  <xsl:template mode="render-css" match="w:ind" as="xs:string*">
+    <xsl:apply-templates mode="#current" select="@w:left | @w:right | @w:firstLine | @w:hanging"/>
+  </xsl:template>
+
+  <xsl:template mode="render-css" match="w:spacing" as="xs:string*">
+    <xsl:apply-templates mode="#current" select="@w:before | @w:after"/>
+  </xsl:template>
+  
+  <xsl:template mode="render-css" match="w:ind/@* | w:spacing/@*">
+    <xsl:value-of>
+      <xsl:apply-templates mode="css-property" select="."/>
+      <xsl:text>: </xsl:text>
+      <xsl:value-of select=". div 20"/>
+      <xsl:text>pt</xsl:text>
+    </xsl:value-of>
+  </xsl:template>
+  
+  <xsl:template priority="2" mode="render-css" match="w:ind/@w:hanging">
+    <xsl:value-of>
+      <xsl:text>text-indent: -</xsl:text>
+      <xsl:value-of select=". div 20"/>
+      <xsl:text>pt</xsl:text>
+    </xsl:value-of>
+    <xsl:value-of>
+      <xsl:text>padding-left: </xsl:text>
+      <xsl:value-of select=". div 20"/>
+      <xsl:text>pt</xsl:text>
+    </xsl:value-of>
+  </xsl:template>
+
+
+  <xsl:template mode="css-property" match="w:spacing/@w:before">margin-top</xsl:template>
+  <xsl:template mode="css-property" match="w:spacing/@w:after" >margin-bottom</xsl:template>
+  <xsl:template mode="css-property" match="w:ind/@w:left"      >margin-left</xsl:template>
+  <xsl:template mode="css-property" match="w:ind/@w:right"     >margin-right</xsl:template>
+  <xsl:template mode="css-property" match="w:ind/@w:firstLine" >text-indent</xsl:template>
+  
   
   <xsl:template mode="render-css" as="xs:string" match="w:rFonts">
     <xsl:value-of>
