@@ -32,12 +32,6 @@
   <p:output port="_E_mapped" primary="false">
     <p:pipe port="result" step="mapped"/>
   </p:output>
-  <p:output port="_F_plaintext" primary="false">
-    <p:pipe port="result" step="plaintext"/>
-  </p:output>
-  <p:output port="_G_analysis" primary="false">
-    <p:pipe port="result" step="analysis"/>
-  </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
@@ -45,8 +39,6 @@
   <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_F_plaintext" method="text" />
-  <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>
   
   <!-- Now it beginneth. -->
   
@@ -82,24 +74,5 @@
   </p:xslt>
 
   <p:identity name="final"/>
-
-  <p:xslt name="analysis">
-    <p:input port="source">
-      <p:pipe port="result" step="collapsed"/>
-    </p:input>
-    <p:input port="stylesheet">
-      <p:document href="html-analysis.xsl"/>
-    </p:input>
-  </p:xslt>
-  
-  
-  <p:xslt name="plaintext">
-    <p:input port="source">
-      <p:pipe port="result" step="mapped"/>
-    </p:input>
-    <p:input port="stylesheet">
-      <p:document href="plaintext.xsl"/>
-    </p:input>
-  </p:xslt>
 
 </p:declare-step>
