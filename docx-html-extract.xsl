@@ -14,11 +14,13 @@
   
   <xsl:param as="xs:string" name="show-css">yes</xsl:param>
 
-  <xsl:variable name="endnotes-doc"  select="document('endnotes.xml',/)"/>
-  <xsl:variable name="footnotes-doc" select="document('footnotes.xml',/)"/>
-  
-  <xsl:key name="footnotes-by-id" match="w:footnote" use="@w:id"/>
-  
+  <xsl:variable name="endnotes-doc"  select="document('endnotes.xml',/)[doc-available('endnotes.xml')]"/>
+
+  <!-- Reinstate footnotes handling when we have some. -->
+  <!-- <xsl:variable name="footnotes-doc" select="document('footnotes.xml',/)"/>
+       <xsl:key name="footnotes-by-id" match="w:footnote" use="@w:id"/> -->
+
+
   <!-- Turn $show-css to 'yes' to switch on $css-reflect. -->
   <!-- $show-css supplements the traversal with @style markers wherever certain
        kinds of formatting (e.g. font shift indicators including the spurious font shifts
@@ -46,7 +48,7 @@
         <xsl:apply-templates select="$endnotes-doc/*/w:endnote"/>
       </div>
       <!--<div class="docx-footnotes">
-        <xsl:apply-templates select="$endnotes-doc/*/w:footnote"/>
+        <xsl:apply-templates select="$footnotes-doc/*/w:footnote"/>
       </div>-->
     </body>
   </xsl:template>
@@ -134,12 +136,14 @@
     </a>
   </xsl:template>
 
-  <!-- Again overriding the default behavior for w:r/*, to the same effect. -->
-  <xsl:template match="w:footnoteReference" priority="3">
+  <!-- Again overriding the default behavior for w:r/*, to the same effect.
+       Check and switch on when we do footnotes. 
+       See line 50 or so (template @match='w:body') -->
+  <!--<xsl:template match="w:footnoteReference" priority="3">
     <div class="footnote_fetched">
       <xsl:apply-templates select="key('footnotes-by-id',@w:id,$footnotes-doc)"/>
     </div>
-  </xsl:template>
+  </xsl:template>-->
   
   <!-- w:rPr works by pushing its contents through its children one at a time
        in sibling succession, given them each an opportunity to wrap the results. -->
@@ -263,17 +267,18 @@
   <xsl:template mode="css-property" match="w:ind/@w:firstLine" >text-indent</xsl:template>
   
   
-  <xsl:template mode="render-css" as="xs:string" match="w:rFonts">
+  <xsl:template mode="render-css" as="xs:string" match="w:rFonts[exists(@w:ascii|@w:cs|@w:hAnsi|@w:eastAsia)]">
     <xsl:value-of>
       <xsl:text>font-family: </xsl:text>
-      <xsl:value-of select="@w:ascii"/>
+      <xsl:value-of select="(@w:ascii,@w:cs, @w:hAnsi, @w:eastAsia)[1]"/>
     </xsl:value-of>
   </xsl:template>
   
   <xsl:template mode="render-css" as="xs:string" match="w:sz | w:szCs">
     <xsl:value-of>
       <xsl:text>font-size: </xsl:text>
-      <xsl:value-of select="@w:val"/>
+      <xsl:value-of select="@w:val div 2"/>
+      <xsl:text>pt</xsl:text>
     </xsl:value-of>
   </xsl:template>
   
