@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc"
-  xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0">
+  xmlns:xsw="http://coko.foundation/xsweet"
+  xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0"
+  type="xsw:docx-escalate" name="docx-escalate">
   
   <p:input port="parameters" kind="parameter"/>
   
   <p:option name="docx-file-uri" required="true"/>
   
-  <!--<p:output port="_Z_FINAL">
+  <p:output port="_Z_FINAL">
     <p:pipe port="result" step="final"/>
   </p:output>
   
+  <p:output port="_D_tightened" primary="false">
+    <p:pipe port="_D_tightened" step="document-production"/>
+  </p:output>
+  <!--
   <p:output port="_A_extracted" primary="false">
     <p:pipe port="result" step="slops-extracted"/>
   </p:output>
@@ -41,64 +48,31 @@
   <p:serialization port="_F_plaintext" method="text" />
   <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>
   -->
+  <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
+  
+  
+  <p:import href="docx-document-production.xpl"/>
+  
   <p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
   <!-- Validate HTML5 results here:  http://validator.w3.org/nu/ -->
 
-  <!--<p:load>
+  <p:load>
     <p:with-option name="href" select="$document-path"/>
   </p:load>
   
-  <p:xslt name="slops-extracted">
-    <p:input port="stylesheet">
-      <p:document href="docx-html-extract.xsl"/>
-    </p:input>
-    <p:with-param name="show-css" select="'yes'"/>
-  </p:xslt>
+  <xsw:docx-document-production name="document-production"/>
   
-  <p:xslt name="notes-arranged">
-    <p:input port="stylesheet">
-      <p:document href="handle-notes.xsl"/>
-    </p:input>
-  </p:xslt>
-  
-  <p:xslt name="scrubbed">
-    <p:input port="stylesheet">
-      <p:document href="scrub.xsl"/>
-    </p:input>
-  </p:xslt>
-  
-  <p:xslt name="collapsed">
-    <p:input port="stylesheet">
-      <p:document href="join-elements.xsl"/>
-    </p:input>
-  </p:xslt>
-  
-  <p:xslt name="mapped">
-    <p:input port="stylesheet">
-      <p:document href="zorba-map.xsl"/>
-    </p:input>
-  </p:xslt>
-
-  <p:identity name="final"/>
-
   <p:xslt name="analysis">
     <p:input port="source">
-      <p:pipe port="result" step="collapsed"/>
+      <p:pipe port="_D_tightened" step="document-production"/>
     </p:input>
     <p:input port="stylesheet">
-      <p:document href="html-analysis.xsl"/>
+      <p:document href="collapse-paragraphs.xsl"/>
     </p:input>
   </p:xslt>
   
+  <p:identity name="final"/>
   
-  <p:xslt name="plaintext">
-    <p:input port="source">
-      <p:pipe port="result" step="mapped"/>
-    </p:input>
-    <p:input port="stylesheet">
-      <p:document href="plaintext.xsl"/>
-    </p:input>
-  </p:xslt>-->
-
 </p:declare-step>
