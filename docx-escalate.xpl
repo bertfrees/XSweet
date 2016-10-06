@@ -2,6 +2,8 @@
 
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc"
   xmlns:xsw="http://coko.foundation/xsweet"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0"
   type="xsw:docx-escalate" name="docx-escalate">
   
@@ -13,8 +15,11 @@
     <p:pipe port="result" step="final"/>
   </p:output>
   
-  <p:output port="_D_tightened" primary="false">
+  <p:output port="_D_in" primary="false">
     <p:pipe port="_D_tightened" step="document-production"/>
+  </p:output>
+  <p:output port="_E_digested" primary="false">
+    <p:pipe port="result" step="digest-paragraphs"/>
   </p:output>
   <!--
   <p:output port="_A_extracted" primary="false">
@@ -49,8 +54,8 @@
   <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>
   -->
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
-  
+  <p:serialization port="_E_digested"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_D_in" indent="true" omit-xml-declaration="true"/>
   
   <p:import href="docx-document-production.xpl"/>
   
@@ -64,7 +69,8 @@
   
   <xsw:docx-document-production name="document-production"/>
   
-  <p:xslt name="analysis">
+  <!-- Promotes detectable paragraph-wide styles into CSS on @style -->
+  <p:xslt name="normalize-paragraphs">
     <p:input port="source">
       <p:pipe port="_D_tightened" step="document-production"/>
     </p:input>
@@ -74,5 +80,32 @@
   </p:xslt>
   
   <p:identity name="final"/>
+  
+  <p:xslt name="digest-paragraphs">
+    <p:input port="stylesheet">
+      <p:inline>
+        <xsl:stylesheet version="2.0"
+          xmlns="http://www.w3.org/1999/xhtml"
+          xpath-default-namespace="http://www.w3.org/1999/xhtml"
+          exclude-result-prefixes="#all">
+          
+          <xsl:template match="/">
+            <ul>
+              <xsl:apply-templates select="//div[@class='docx-body']/p" mode="digest"/>
+            </ul>
+          </xsl:template>
+          
+          <xsl:template match="p" mode="digest">
+            <li>
+              <xsl:text>p</xsl:text>
+              <xsl:value-of select="@class/concat('.',.)"/>
+              <xsl:value-of select="@style/concat(' { ',., ' }')"/>
+            </li>
+          </xsl:template>
+        </xsl:stylesheet>
+        
+      </p:inline>
+    </p:input>
+  </p:xslt>
   
 </p:declare-step>

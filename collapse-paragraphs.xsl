@@ -42,5 +42,84 @@ Note the following mappings:
 
   -->
   
+  <xsl:template match="p">
+    <xsl:variable name="css-proxy" as="element()">
+      <style>
+        <xsl:apply-templates select="@style" mode="as-attributes"/>
+        <xsl:call-template name="override-styles"/>
+      </style>
+    </xsl:variable>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <!-- Now overwriting @style ... -->
+      <xsl:for-each select="$css-proxy[exists(@*)]">
+        <!-- ... only when there are properties as attributes on $css-proxy ... -->
+        <xsl:attribute name="style">
+            <xsl:for-each select="@*">
+              <!-- sorting them backwards for show -->
+              <xsl:sort data-type="text" select="name()"  order="descending"/>
+              <xsl:if test="position() gt 1">; </xsl:if>
+              <xsl:value-of select="name()"/>
+              <xsl:text>: </xsl:text>
+              <xsl:value-of select="."/>
+            </xsl:for-each>
+        </xsl:attribute>
+      </xsl:for-each>
+      <!--<xsl:copy-of select="$css-proxy"/>-->
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
   
+  <!-- We can strip 'span' elements when they are coextensive with their wrapping p and
+       have nothing but @style to offer, as the latter is being promoted. -->
+  <xsl:template match="p//span[empty(@class)]
+    [normalize-space(.) = normalize-space(ancestor::p[1])]">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <!-- Note we leave 'u', 'i' and 'b' in place despite also promoting them to CSS. -->
+  
+  <xsl:template name="override-styles">
+    <!-- Under certain conditions, descends tree to collect CSS style property assignments
+      returning them as attributes (captured on a proxy). -->
+    <xsl:if test="count(*) eq 1 and normalize-space(.) = normalize-space(*[1])">
+      <xsl:for-each select="*">
+        <xsl:apply-templates select=". | @style" mode="as-attributes"/>
+        <!-- descend recursively -->
+        <xsl:call-template name="override-styles"/>
+      </xsl:for-each>
+      
+    </xsl:if>
+  </xsl:template>
+  
+  
+<!-- 'as-attributes mode' loads up a proxy element with CSS properties. We exploit
+     the fact that attributes overwrite other attributes of the same name, added
+     earlier (since attributes must be uniquely named) to de-duplicate our CSS ...
+  i.e. font-size will come out only once, with whatever value was declared deepest.
+  
+  Note that elements as well as @style values will prompt CSS properties being added in this way. -->
+  <xsl:template match="*" mode="as-attributes"/>
+  
+  <xsl:template match="u" mode="as-attributes">
+    <xsl:attribute name="text-decoration">underline</xsl:attribute>
+  </xsl:template>
+  
+  <xsl:template match="i" mode="as-attributes">
+    <xsl:attribute name="font-style">italic</xsl:attribute>
+  </xsl:template>
+  
+  <xsl:template match="b" mode="as-attributes">
+    <xsl:attribute name="font-weight">bold</xsl:attribute>
+  </xsl:template>
+  
+  <xsl:template match="@style" mode="as-attributes">
+    <xsl:for-each select="tokenize(.,'\s*;\s*')">
+      <xsl:attribute name="{replace(.,':.*$','')}"
+        select="replace(.,'^.*:\s*','')"/>
+    </xsl:for-each>
+  </xsl:template>
+  
+  
+
 </xsl:stylesheet>
