@@ -14,7 +14,7 @@
   
   <xsl:param as="xs:string" name="show-css">yes</xsl:param>
 
-  <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml',document-uri())"/>
+  <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml',document-uri(/))"/>
   
   <xsl:variable name="endnotes-doc"
     select="if (doc-available($endnotes-file)) then doc($endnotes-file) else ()"/>
