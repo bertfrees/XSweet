@@ -83,29 +83,22 @@
   
   <p:xslt name="digest-paragraphs">
     <p:input port="stylesheet">
+      <p:document href="digest-paragraphs.xsl"/>
+    </p:input>
+  </p:xslt>
+  
+  
+  <!--<p:xslt name="">
+    <p:input port="stylesheet">
       <p:inline>
         <xsl:stylesheet version="2.0"
           xmlns="http://www.w3.org/1999/xhtml"
           xpath-default-namespace="http://www.w3.org/1999/xhtml"
-          exclude-result-prefixes="#all">
-          
-          <xsl:template match="/">
-            <ul>
-              <xsl:apply-templates select="//div[@class='docx-body']/p" mode="digest"/>
-            </ul>
-          </xsl:template>
-          
-          <xsl:template match="p" mode="digest">
-            <li>
-              <xsl:text>p</xsl:text>
-              <xsl:value-of select="@class/concat('.',.)"/>
-              <xsl:value-of select="@style/concat(' { ',., ' }')"/>
-            </li>
-          </xsl:template>
-        </xsl:stylesheet>
-        
+          exclude-result-prefixes="#all"/>
       </p:inline>
     </p:input>
-  </p:xslt>
+  </p:xslt>-->
+  
+  
   
 </p:declare-step>
