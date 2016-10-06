@@ -14,7 +14,10 @@
   
   <xsl:param as="xs:string" name="show-css">yes</xsl:param>
 
-  <xsl:variable name="endnotes-doc"  select="document('endnotes.xml',/)[doc-available('endnotes.xml')]"/>
+  <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml',document-uri())"/>
+  
+  <xsl:variable name="endnotes-doc"
+    select="if (doc-available($endnotes-file)) then doc($endnotes-file) else ()"/>
 
   <!-- Reinstate footnotes handling when we have some. -->
   <!-- <xsl:variable name="footnotes-doc" select="document('footnotes.xml',/)"/>
