@@ -18,43 +18,16 @@
   <p:output port="_D_in" primary="false">
     <p:pipe port="_D_tightened" step="document-production"/>
   </p:output>
-  <p:output port="_E_digested" primary="false">
-    <p:pipe port="result" step="digest-paragraphs"/>
+  <p:output port="_E_ready" primary="false">
+    <p:pipe port="result" step="ready"/>
   </p:output>
-  <!--
-  <p:output port="_A_extracted" primary="false">
-    <p:pipe port="result" step="slops-extracted"/>
+  <p:output port="_F_headers-xslt" primary="false">
+    <p:pipe port="result" step="headers-xslt"/>
   </p:output>
-  <p:output port="_B_arranged" primary="false">
-    <p:pipe port="result" step="notes-arranged"/>
-  </p:output>
-  <p:output port="_C_scrubbed" primary="false">
-    <p:pipe port="result" step="scrubbed"/>
-  </p:output>
-  <p:output port="_D_tightened" primary="false">
-    <p:pipe port="result" step="collapsed"/>
-  </p:output>
-  <p:output port="_E_mapped" primary="false">
-    <p:pipe port="result" step="mapped"/>
-  </p:output>
-  <p:output port="_F_plaintext" primary="false">
-    <p:pipe port="result" step="plaintext"/>
-  </p:output>
-  <p:output port="_G_analysis" primary="false">
-    <p:pipe port="result" step="analysis"/>
-  </p:output>
+  <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   
-  <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_F_plaintext" method="text" />
-  <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>
-  -->
-  <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_E_digested"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_E_ready"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_F_headers-xslt" indent="true"/>
   <p:serialization port="_D_in" indent="true" omit-xml-declaration="true"/>
   
   <p:import href="docx-document-production.xpl"/>
@@ -79,13 +52,39 @@
     </p:input>
   </p:xslt>
   
-  <p:identity name="final"/>
+  <p:identity name="ready"/>
   
+  <!-- To produce the header mapping xslt we go back to the normalized source:
+       first we build an analysis table -->
   <p:xslt name="digest-paragraphs">
     <p:input port="stylesheet">
       <p:document href="digest-paragraphs.xsl"/>
     </p:input>
   </p:xslt>
+  
+  <!-- Then we generate an XSLT stylesheet from it -->
+  <p:xslt name="headers-xslt">
+    <p:input port="stylesheet">
+      <p:document href="header-map-xslt-generate.xsl"/>
+    </p:input>
+  </p:xslt>
+
+  <!-- Now we go back to 'ready' -->
+  <p:identity>
+  <p:input port="source">
+    <p:pipe port="result" step="ready"/>
+  </p:input>
+  </p:identity>
+  
+  <!-- This is the loop! where we apply the stylesheet we have generated. -->
+  <p:xslt name="omg-apply-the-header-mapping-xslt">
+    <p:input port="stylesheet">
+      <p:pipe port="result" step="headers-xslt"/>
+    </p:input>
+  </p:xslt>
+  
+  <p:identity name="final"/>
+  
   
   
   <!--<p:xslt name="">

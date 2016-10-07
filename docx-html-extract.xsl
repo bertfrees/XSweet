@@ -67,13 +67,20 @@
     <p>
       <!-- Copying any style declaration -->
       <xsl:for-each select="w:pPr/w:pStyle">
-        <xsl:attribute name="class" select="@w:val"/>
+        <!-- strip periods, colons and non-XML name chars (this includes spaces) -->
+        <xsl:variable name="safer" select="replace(@w:val,'[\.:\C]','')"/>
+        <xsl:attribute name="class">
+          <!-- Drop in a _ if the first character is not an initial name char in XML (or HTML NMTOKEN) -->
+          <xsl:if test="matches($safer,'^\I')">_</xsl:if>
+          <xsl:value-of select="$safer"/>
+        </xsl:attribute>
       </xsl:for-each>
       
-      <!-- Also promoting some properties to CSS @style -->
+      <!-- Also promoting (some) properties to CSS @style -->
       <xsl:variable name="style">
         <xsl:apply-templates mode="render-css" select="w:pPr"/>
       </xsl:variable>
+      <!-- Adding the attribute only when there is a value. -->
       <xsl:if test="matches($style,'\S')">
         <xsl:attribute name="style" select="$style"/>
       </xsl:if>
