@@ -54,19 +54,19 @@
       xpath-default-namespace="http://www.w3.org/1999/xhtml"
       exclude-result-prefixes="#all">
       
-      <xsw:variable name="in">
-        <xsl:copy-of select="div[@class='grouped']"/>
-      </xsw:variable>
-
-
-      <xsl:apply-templates select="div[@class='grouped']/div[@class='level-group']/*" mode="xslt-produce"/>
-
+      
       <xsw:template match="node() | @*">
         <xsw:copy>
           <xsw:apply-templates select="node() | @*"/>
         </xsw:copy>
       </xsw:template>
 
+      <xsl:apply-templates select="div[@class='grouped']/div[@class='level-group']/*" mode="xslt-produce"/>
+
+      <xsw:variable name="in">
+        <xsl:copy-of select="div"/>
+      </xsw:variable>
+      
     </xsw:stylesheet>
   </xsl:template>
   
@@ -86,13 +86,20 @@
         <xsl:value-of select="."/>
         <xsl:text>']</xsl:text>
       </xsl:for-each>
+      <!-- If font-style was not given explicity it must be missing to match. -->
+      <xsl:if test="empty(@style/tokenize(.,'\s*;\s*')[starts-with(.,'font-size:')])">
+        <xsl:text>[empty(@style/tokenize(.,'\s*;\s*')[starts-with(.,'font-size:')])]</xsl:text>
+      </xsl:if>
+      <xsl:if test="@data-always-caps='true'">
+        <xsl:text>[.=upper-case(.)]</xsl:text>
+      </xsl:if>
     </xsl:variable>
     <xsw:template match="{$match}">
       <xsl:variable name="h-level" select="count(..|../following-sibling::div)"/>
-      <xsl:attribute name="priority" select="101 - $h-level"/>
+      <xsl:attribute name="priority" select="count(. | preceding-sibling::* | ../preceding-sibling::*/*)"/>
       <xsw:element name="h{$h-level}">
         <xsw:copy-of select="@*"/>
-        <xsw:comment> was <xsw:value-of select="local-name()"/> </xsw:comment>
+        <xsw:comment> was <xsl:value-of select="$match"/> </xsw:comment>
         <xsw:apply-templates/>
       </xsw:element>
     </xsw:template>

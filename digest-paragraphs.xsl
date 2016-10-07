@@ -71,7 +71,7 @@
   </xsl:variable>
 
   <xsl:variable name="p-proxies-measured">
-    <xsl:for-each-group select="$p-proxies/*" group-adjacent="string-join((@class,@style),' # ')">
+    <xsl:for-each-group select="$p-proxies/*" group-adjacent="string-join((@class,@style,@data-all-caps),' # ')">
       <xsl:for-each select="current-group()">
         <xsl:copy>
           <xsl:copy-of select="@*"/>
@@ -85,16 +85,9 @@
   <xsl:variable name="p-proxies-assimilated">
     <!-- Consolidates info about individual p elements into sets -->
     <xsl:for-each-group select="$p-proxies-measured/*" group-by="string-join((@class,@style),' # ')">
-      <!-- Sorting numerically on the value of assigned font-size note units are assumed
-              all to be the same! btw no font-size comes back as 12. -->
-      
-      <!-- We might be sorting again in the next step but just for the eye... -->
-      <xsl:sort select="xsw:nominal-size(.)" data-type="number"/>
-      <!-- finally sorting on @style itself, to flush out italics, bold and colors. -->
-      <xsl:sort select="if (tokenize(@style,'\s*;\s*')='font-style: italic') then 1 else 0" data-type="number"/>
-      <xsl:sort select="if (tokenize(@style,'\s*;\s*')='font-weight: bold')  then 1 else 0" data-type="number"/>
-      <!-- Within these categories colors are going to be distinguished haphazardly. -->
-      <!-- . is the first member of the group -->
+      <!-- Note: not sorting yet these are in arbitrary order. -->
+      <!-- But we will still treat all-caps groups separate from others with the same properties. -->
+      <xsl:for-each-group select="current-group()" group-by="@data-allcaps">
       <xsl:copy>
         <xsl:copy-of select="@class, @style"/>
         <xsl:attribute name="data-nominal-fontsize" select="xsw:nominal-size(.)"/>
@@ -104,6 +97,7 @@
         <xsl:attribute name="data-always-caps"      select="not(current-group()/@data-allcaps='false')"/>
         <xsl:attribute name="data-never-fullstop"   select="not(current-group()/@data-lastchar = '.')"/>
       </xsl:copy>
+      </xsl:for-each-group>
     </xsl:for-each-group>
   </xsl:variable>
 
@@ -133,17 +127,20 @@
   
   <xsl:variable name="p-proxies-grouped">
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="@data-nominal-fontsize">
-      
+      <xsl:sort select="current-grouping-key()" data-type="number"/>        
       <xsl:for-each-group select="current-group()"
         group-by="tokenize(@style,'\s*;\s*')='font-style: italic'">
         <xsl:sort select="string(current-grouping-key())"/><!-- 'false' oder 'true' -->
         
         <xsl:for-each-group select="current-group()"
           group-by="tokenize(@style,'\s*;\s*')='font-weight: bold'">
-          <xsl:sort select="string(current-grouping-key())"/><!-- 'false' oder 'true' -->
-          <div class="level-group">
-            <xsl:sequence select="current-group()"/>
-          </div>
+          
+          <xsl:for-each-group select="current-group()" group-by="@data-always-caps">
+            <xsl:sort select="string(current-grouping-key())"/><!-- 'false' oder 'true' -->
+            <div class="level-group">
+              <xsl:sequence select="current-group()"/>
+            </div>
+          </xsl:for-each-group>
         </xsl:for-each-group>
       </xsl:for-each-group>
     </xsl:for-each-group>
