@@ -42,6 +42,8 @@
   
   <xsl:namespace-alias stylesheet-prefix="xsw" result-prefix="xsl"/>
   
+  <xsl:param name="debug-mode" as="xs:string">silent</xsl:param>
+  
   <xsl:template match="body">
     
     <!--       xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -62,10 +64,12 @@
       </xsw:template>
 
       <xsl:apply-templates select="div[@class='grouped']/div[@class='level-group']/*" mode="xslt-produce"/>
-
+      
+      <xsl:if test="not($debug-mode='silent')">
       <xsw:variable name="in">
         <xsl:copy-of select="div"/>
       </xsw:variable>
+      </xsl:if>
       
     </xsw:stylesheet>
   </xsl:template>

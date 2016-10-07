@@ -117,17 +117,17 @@
   <!-- Never keep a p unless instructed otherwise -->
   <xsl:template mode="keep-headers" match="*"/>
 
+  <!-- Always keep lines that never show full stops (hey what can go wrong) -->
   <xsl:template mode="keep-headers" priority="100" match="p[@data-never-fullstop = 'true']">
     <xsl:sequence select="."/>
   </xsl:template>
 
   <!-- Never a header if the commonest type of 'p' -->
-  <xsl:template mode="keep-headers" priority="99" match="p[not(../@data-count &gt; @data-count)]"/>
+  <xsl:template mode="keep-headers" priority="99"  match="p[not(../@data-count &gt; @data-count)]"/>
 
   <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
        less than 120 chars long on average, and is bigger than *someone* -->
-  <xsl:template mode="keep-headers" priority="98"
-    match="p[@data-average-run &lt; 4]
+  <xsl:template mode="keep-headers" priority="98"  match="p[@data-average-run &lt; 4]
       [@data-nominal-font-size &gt; ../@data-nominal-font-size]
       [@data-average-length &lt;= 120]">
     <!-- Casual polling suggests char length for headers in English
@@ -137,12 +137,13 @@
 
 
   <xsl:variable name="p-proxies-grouped">
+    <!-- Yes we know the XML syntax is harsh don't worry it's compiled away, this is very fast! -->
     <xsl:choose>
       <xsl:when test="$p-proxies-filtered/*[matches(@class, $headerRegex,'i')]">
         <xsl:call-template name="group-proxies-by-header-level"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="group-proxies-by-font-size"/>
+        <xsl:call-template name="group-proxies-by-font"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
@@ -151,27 +152,30 @@
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="replace(@class, '\D', '')">
       <xsl:sort select="current-grouping-key()" data-type="number" order="descending"/>
 
+      <!-- If the data assigns header levels hell we'll take em. -->
+      <!-- Notice the header level they come out isn't necessarily the stated header level (i.e. h2 might be level 3 if there is no level 2) -->
       <div class="level-group">
         <xsl:sequence select="current-group()"/>
       </div>
     </xsl:for-each-group>
   </xsl:template>
 
-
-  <xsl:template name="group-proxies-by-font-size">
+  <xsl:template name="group-proxies-by-font">
+    <!-- Alternatively we can sort and group by font properties including primarily size. -->
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="@data-nominal-fontsize">
       <xsl:sort select="current-grouping-key()" data-type="number"/>
+      
       <xsl:for-each-group select="current-group()"
         group-by="tokenize(@style, '\s*;\s*') = 'font-style: italic'">
-        <xsl:sort select="string(current-grouping-key())"/>
-        <!-- 'false' oder 'true' -->
+        <xsl:sort select="string(current-grouping-key())"/><!-- 'false' or 'true' -->
 
         <xsl:for-each-group select="current-group()"
           group-by="tokenize(@style, '\s*;\s*') = 'font-weight: bold'">
 
           <xsl:for-each-group select="current-group()" group-by="@data-always-caps">
-            <xsl:sort select="string(current-grouping-key())"/>
-            <!-- 'false' oder 'true' -->
+            <xsl:sort select="string(current-grouping-key())"/><!-- likewise -->
+
+            <!-- Now we've split and ordered them, they can be grouped. -->
             <div class="level-group">
               <xsl:sequence select="current-group()"/>
             </div>
@@ -182,38 +186,45 @@
   </xsl:template>
 
 
-  <!-- grouping / filtering $assimilated for mapping to header levels -->
-  <!---->
+<!-- Mode 'digest' is the initial (first) pass over the document, which boils down all paragraph-level 
+  objects (they will be 'p' in the input) into informative little proxies of themselves.
+  
+  So for example
+  <p style="font-size: 14pt">CHAPTER 1</p>
+  
+  becomes
+  <p data-lastchar="1" data-allcaps="true" data-length="9" style="font-size: 14pt"/>
 
+  Note that @style may be rewritten (only properties in which we will later be interested, are kept).
+  
+  Analysis proceeds from there in subsequent passes.
 
-
+  -->
 
   <xsl:template match="p" mode="digest">
     <!-- lastchar shows the last (non-whitespace) character in the 'p'. -->
     <p data-lastchar="{replace(.,'^.*(\S)\s*$','$1')}" data-allcaps="{. = upper-case(.)}"
       data-length="{string-length(.)}">
       <xsl:copy-of select="@class"/>
-      <xsl:apply-templates select="@style" mode="refine"/>
+      <xsl:apply-templates select="@style" mode="digest"/>
     </p>
   </xsl:template>
 
   <!-- In the desired order. -->
   <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'color'"/>
 
-  <xsl:template mode="refine" match="p/@style">
+  <xsl:template mode="digest" match="p/@style">
     <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
 
     <xsl:variable name="refined-style">
-      <xsl:for-each
-        select="
-          $keepers[some $p in $props
-            satisfies starts-with($p, .)]">
+      <xsl:for-each select="$keepers[some $p in $props satisfies starts-with($p, .)]">
         <xsl:variable name="keeper" select="."/>
         <xsl:if test="position() gt 1">; </xsl:if>
         <xsl:value-of select="$props[starts-with(., $keeper)]"/>
       </xsl:for-each>
     </xsl:variable>
 
+    <!-- Add an attribute iff there is a 'refined' value. -->
     <xsl:if test="matches($refined-style, '\S')">
       <xsl:attribute name="style" select="$refined-style"/>
     </xsl:if>
