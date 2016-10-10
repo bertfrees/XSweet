@@ -99,7 +99,7 @@
     </xsl:for-each-group>
   </xsl:variable>
 
-  <xsl:param as="xs:string" name="headerRegex">h(ead|eader|eading)?\d\d?</xsl:param>
+  <xsl:param as="xs:string" name="headerRegex">^h(ead|eader|eading)?\d\d?</xsl:param>
 
   <xsl:variable name="p-proxies-filtered">
     <xsl:variable name="named-headers" select="$p-proxies-assimilated/*[matches(@class, $headerRegex, 'i')]"/>
@@ -112,7 +112,6 @@
     </xsl:if>
 
   </xsl:variable>
-
 
   <!-- Never keep a p unless instructed otherwise -->
   <xsl:template mode="keep-headers" match="*"/>
@@ -154,7 +153,7 @@
 
       <!-- If the data assigns header levels hell we'll take em. -->
       <!-- Notice the header level they come out isn't necessarily the stated header level (i.e. h2 might be level 3 if there is no level 2) -->
-      <div class="level-group">
+      <div class="hX">
         <xsl:sequence select="current-group()"/>
       </div>
     </xsl:for-each-group>
@@ -176,7 +175,7 @@
             <xsl:sort select="string(current-grouping-key())"/><!-- likewise -->
 
             <!-- Now we've split and ordered them, they can be grouped. -->
-            <div class="level-group">
+            <div class="hX">
               <xsl:sequence select="current-group()"/>
             </div>
           </xsl:for-each-group>

@@ -9,33 +9,15 @@
   <xsl:output indent="yes"/>
   
 <!-- Example input - all these have been identified as headers -
-    <div class="grouped">
+    <div class="hX">
       <div class="level-group">
-        <p style="font-size: 10pt; font-weight: bold"
-          data-nominal-fontsize="10"
-          data-count="1"
-          data-average-length="18"
-          data-average-run="1"
-          data-always-caps="true"
-          data-never-fullstop="true"/>
+        <p style="font-weight: bold"/>
       </div>
-      <div class="level-group">
-        <p style="font-size: 10pt; font-style: italic; font-weight: bold"
-          data-nominal-fontsize="10"
-          data-count="10"
-          data-average-length="67.2"
-          data-average-run="1"
-          data-always-caps="false"
-          data-never-fullstop="true"/>
+      <div class="hX">
+        <p style="font-size: 10pt; font-weight: bold"/>
       </div>
-      <div class="level-group">
-        <p style="font-weight: bold"
-          data-nominal-fontsize="12"
-          data-count="3"
-          data-average-length="27.67"
-          data-average-run="3"
-          data-always-caps="false"
-          data-never-fullstop="true"/>
+      <div class="hX">
+        <p style="font-size: 10pt; font-style: italic; font-weight: bold"/>
       </div>
     </div>
 -->  
@@ -63,7 +45,7 @@
         </xsw:copy>
       </xsw:template>
 
-      <xsl:apply-templates select="div[@class='grouped']/div[@class='level-group']/*" mode="xslt-produce"/>
+      <xsl:apply-templates select="div[@class='grouped']/div[@class='hX']/*" mode="xslt-produce"/>
       
       <xsl:if test="not($debug-mode='silent')">
       <xsw:variable name="in">
@@ -77,7 +59,7 @@
   
   <!-- Template writes XSLT templates  -->
   
-  <xsl:template match="div[@class='level-group']/*" mode="xslt-produce">
+  <xsl:template match="div[@class='hX']/*" mode="xslt-produce">
     <xsl:variable name="match">
       <xsl:value-of select="local-name()"/>
       <xsl:for-each select="@class">
@@ -99,8 +81,8 @@
       </xsl:if>
     </xsl:variable>
     <xsw:template match="{$match}">
-      <xsl:variable name="h-level" select="count(..|../following-sibling::div)"/>
-      <xsl:attribute name="priority" select="count(. | preceding-sibling::* | ../preceding-sibling::*/*)"/>
+      <xsl:variable name="h-level" select="count(..|../following-sibling::div[@class='hX'])"/>
+      <xsl:attribute name="priority" select="count(. | preceding-sibling::* | ../preceding-sibling::div[@class='hX']/*)"/>
       <xsw:element name="h{$h-level}">
         <xsw:copy-of select="@*"/>
         <xsw:comment> was <xsl:value-of select="$match"/> </xsw:comment>

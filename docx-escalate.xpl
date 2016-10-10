@@ -21,14 +21,18 @@
   <p:output port="_E_ready" primary="false">
     <p:pipe port="result" step="ready"/>
   </p:output>
-  <p:output port="_F_headers-xslt" primary="false">
-    <p:pipe port="result" step="headers-xslt"/>
+  <p:output port="_F_digested" primary="false">
+    <p:pipe port="result" step="digest-paragraphs"/>
   </p:output>
-  <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
-  
-  <p:serialization port="_E_ready"     indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_F_headers-xslt" indent="true"/>
-  <p:serialization port="_D_in" indent="true" omit-xml-declaration="true"/>
+  <p:output port="_X_escalator-xslt" primary="false">
+    <p:pipe port="result" step="escalator-xslt"/>
+  </p:output>
+
+  <p:serialization port="_D_in"             indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_E_ready"          indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_F_digested"       indent="true"/>
+  <p:serialization port="_X_escalator-xslt" indent="true"/>
+  <p:serialization port="_Z_FINAL"          indent="true" omit-xml-declaration="true"/>
   
   <p:import href="docx-document-production.xpl"/>
   
@@ -63,29 +67,27 @@
   </p:xslt>
   
   <!-- Then we generate an XSLT stylesheet from it -->
-  <p:xslt name="headers-xslt">
+  <p:xslt name="escalator-xslt">
     <p:input port="stylesheet">
-      <p:document href="header-map-xslt-generate.xsl"/>
+      <p:document href="escalator-xslt-generate.xsl"/>
     </p:input>
   </p:xslt>
 
   <!-- Now we go back to 'ready' -->
   <p:identity>
-  <p:input port="source">
-    <p:pipe port="result" step="ready"/>
-  </p:input>
+    <p:input port="source">
+      <p:pipe port="result" step="ready"/>
+    </p:input>
   </p:identity>
   
-  <!-- This is the loop! where we apply the stylesheet we have generated. -->
+  <!-- This is the loop! where we apply the stylesheet we have generated -->
   <p:xslt name="omg-apply-the-header-mapping-xslt">
     <p:input port="stylesheet">
-      <p:pipe port="result" step="headers-xslt"/>
+      <p:pipe port="result" step="escalator-xslt"/>
     </p:input>
   </p:xslt>
   
   <p:identity name="final"/>
-  
-  
   
   <!--<p:xslt name="">
     <p:input port="stylesheet">
