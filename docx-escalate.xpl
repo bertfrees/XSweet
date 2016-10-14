@@ -15,22 +15,22 @@
     <p:pipe port="result" step="final"/>
   </p:output>
   
-  <p:output port="_D_in" primary="false">
-    <p:pipe port="_D_tightened" step="document-production"/>
+  <p:output port="_F_in" primary="false">
+    <p:pipe port="_F_rinsed" step="document-production"/>
   </p:output>
-  <p:output port="_E_ready" primary="false">
+  <p:output port="_M_ready" primary="false">
     <p:pipe port="result" step="ready"/>
   </p:output>
-  <p:output port="_F_digested" primary="false">
+  <p:output port="_N_digested" primary="false">
     <p:pipe port="result" step="digest-paragraphs"/>
   </p:output>
   <p:output port="_X_escalator-xslt" primary="false">
     <p:pipe port="result" step="escalator-xslt"/>
   </p:output>
 
-  <p:serialization port="_D_in"             indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_E_ready"          indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_F_digested"       indent="true"/>
+  <p:serialization port="_F_in"             indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_M_ready"          indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_N_digested"       indent="true"/>
   <p:serialization port="_X_escalator-xslt" indent="true"/>
   <p:serialization port="_Z_FINAL"          indent="true" omit-xml-declaration="true"/>
   
@@ -49,7 +49,7 @@
   <!-- Promotes detectable paragraph-wide styles into CSS on @style -->
   <p:xslt name="normalize-paragraphs">
     <p:input port="source">
-      <p:pipe port="_D_tightened" step="document-production"/>
+      <p:pipe port="_F_rinsed" step="document-production"/>
     </p:input>
     <p:input port="stylesheet">
       <p:document href="collapse-paragraphs.xsl"/>

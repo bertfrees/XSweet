@@ -48,8 +48,9 @@
     <xsl:variable name="inherited-font-family" select="../ancestor::*/tokenize(@style,'\s*;\s*') (: a CSS property on an ancestor :)
       (: declaring font-family :) [matches(.,'^font-family:')]
       (: first one available happens to be the closest :) [1]"/>
-    
-    <xsl:variable name="included-properties" select="$properties[not(.=$inherited-font-family)]"/>
+    <xsl:variable name="default-font-size" as="xs:string">font-size: 12pt</xsl:variable>
+
+    <xsl:variable name="included-properties" select="$properties[not(.=($inherited-font-family,$default-font-size))]"/>
     <!-- Doesn't handle just any CSS; assumes single space after ':' is normal. -->
     <!-- Grouping by value serves to remove duplicates. -->
     <xsl:if test="exists($included-properties)">

@@ -73,13 +73,19 @@
   
   <p:xslt name="mapped">
     <p:input port="stylesheet">
-      <p:document href="zorba-map.xsl"/>
+      <p:document href="ucp-cleanup.xsl"/>
+    </p:input>
+  </p:xslt>
+  
+  <p:xslt name="pre-rinsed">
+    <p:input port="stylesheet">
+      <p:document href="final-rinse.xsl"/>
     </p:input>
   </p:xslt>
   
   <p:xslt name="rinsed">
     <p:input port="stylesheet">
-      <p:document href="final-rinse.xsl"/>
+      <p:document href="join-elements.xsl"/>
     </p:input>
   </p:xslt>
   
