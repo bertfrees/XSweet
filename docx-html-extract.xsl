@@ -57,9 +57,13 @@
   </xsl:template>
 
   <xsl:template match="w:endnote">
-      <div class="docx-endnote" id="en{@w:id}">
-        <xsl:apply-templates select="w:p"/>
-      </div>
+    <div class="docx-endnote" id="en{@w:id}">
+      <xsl:apply-templates select="w:p"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="w:endnoteRef">
+    <span class="endnoteRef"><xsl:comment> value to be generated </xsl:comment></span>
   </xsl:template>
   
   <!-- //w:p/w:pPr/w:pStyle -->

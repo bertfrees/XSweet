@@ -42,8 +42,8 @@
     </xsl:copy>
   </xsl:template>
   
-  <!--<span class="EndnoteReference"/> inside end note text also needs expansion. -->
-  <xsl:template match="span[@class='EndnoteReference'][not(normalize-space(.))]">
+  <!--<span class="endnoteRef"/> inside end note text was produced from w:endnoteRef, and also requires expansion. -->
+  <xsl:template match="span[@class='endnoteRef'][not(normalize-space(.))]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates mode="get-number"
