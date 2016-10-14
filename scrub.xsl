@@ -24,11 +24,16 @@
   
   <!-- Remove any 'p' element that has nothing but whitespace. -->
   <xsl:template match="p[not(matches(.,'\S'))]"/>
-
+  
+  
   <!-- Inline elements that are truly empty can be stripped. -->
   <xsl:template match="p//*[empty(*) and not(string(.))]">
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <!-- And for some elements (which can appear in combination) we will be even more choosy. -->
+  <xsl:template priority="2" match="span[not(matches(.,'\S'))] |
+             u[not(matches(.,'\S'))] | i[not(matches(.,'\S'))] | b[not(matches(.,'\S'))]"/>
   
   <!-- Except these guys of course ... -->
   <xsl:template priority="5" match="img | br | hr">
