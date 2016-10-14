@@ -63,7 +63,7 @@
     <xsl:variable name="match">
       <xsl:value-of select="local-name()"/>
       <xsl:for-each select="@class">
-        <xsl:text>[@class/tokenize(.,'\s*') = '</xsl:text>
+        <xsl:text>[@class/tokenize(.,'\s+') = '</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>']</xsl:text>
       </xsl:for-each>
