@@ -37,22 +37,31 @@
     </xsl:copy>
   </xsl:template>
   
-  <!-- Otherwise @style is rewritten to normalize its CSS. -->
+  <!-- Otherwise @style is rewritten to normalize its CSS.
+       Note we can get 'naked' spans (without @class or @style) which may require later cleanup. -->
   
   <xsl:template match="@style">
     <!-- Acquire properties by breaking at ';\s*' (semi-colon) and keeping only those that match
          a regex (requiring a colon followed by non-ws). -->
     <xsl:variable name="properties" select="tokenize(.,';\s*')[matches(.,':\s*\S')]"/>
+    
+    <xsl:variable name="inherited-font-family" select="../ancestor::*/tokenize(@style,'\s*;\s*') (: a CSS property on an ancestor :)
+      (: declaring font-family :) [matches(.,'^font-family:')]
+      (: first one available happens to be the closest :) [1]"/>
+    
+    <xsl:variable name="included-properties" select="$properties[not(.=$inherited-font-family)]"/>
     <!-- Doesn't handle just any CSS; assumes single space after ':' is normal. -->
     <!-- Grouping by value serves to remove duplicates. -->
-    <xsl:attribute name="style">
-      <xsl:for-each-group select="$properties" group-by=".">
-        <!-- And also permits us to sort them. -->
-        <xsl:sort select="."/>
-        <xsl:if test="not(position() eq 1)">; </xsl:if>
-        <xsl:value-of select="."/>
-      </xsl:for-each-group>
-    </xsl:attribute>
+    <xsl:if test="exists($included-properties)">
+      <xsl:attribute name="style">
+        <xsl:for-each-group select="$included-properties" group-by=".">
+          <!-- And also permits us to sort them. -->
+          <xsl:sort select="."/>
+          <xsl:if test="not(position() eq 1)">; </xsl:if>
+          <xsl:value-of select="."/>
+        </xsl:for-each-group>
+      </xsl:attribute>
+    </xsl:if>
   </xsl:template>
   
 </xsl:stylesheet>
