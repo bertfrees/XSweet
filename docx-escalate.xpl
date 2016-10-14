@@ -89,7 +89,7 @@
 
   <p:xslt name="cleanup">
     <p:input port="stylesheet">
-      <p:document href="cleanup.xsl"/>
+      <p:document href="final-rinse.xsl"/>
     </p:input>
   </p:xslt>
   

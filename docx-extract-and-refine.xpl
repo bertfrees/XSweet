@@ -27,6 +27,9 @@
   <p:output port="_E_mapped" primary="false">
     <p:pipe port="_E_mapped" step="document-production"/>
   </p:output>
+  <p:output port="_F_rinsed" primary="false">
+    <p:pipe port="_F_rinsed" step="document-production"/>
+  </p:output>
   
   <p:output port="_F_plaintext" primary="false">
     <p:pipe port="result" step="plaintext"/>
@@ -41,6 +44,7 @@
   <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
   
   <p:serialization port="_F_plaintext" method="text" />
   <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>

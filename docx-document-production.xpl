@@ -32,6 +32,9 @@
   <p:output port="_E_mapped" primary="false">
     <p:pipe port="result" step="mapped"/>
   </p:output>
+  <p:output port="_F_rinsed" primary="false">
+    <p:pipe port="result" step="rinsed"/>
+  </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
@@ -39,6 +42,7 @@
   <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_D_tightened" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
   
   <!-- Now it beginneth. -->
   
@@ -72,7 +76,13 @@
       <p:document href="zorba-map.xsl"/>
     </p:input>
   </p:xslt>
-
+  
+  <p:xslt name="rinsed">
+    <p:input port="stylesheet">
+      <p:document href="final-rinse.xsl"/>
+    </p:input>
+  </p:xslt>
+  
   <p:identity name="final"/>
 
 </p:declare-step>
