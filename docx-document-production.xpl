@@ -83,11 +83,6 @@
     </p:input>
   </p:xslt>
   
-  <p:xslt name="rinsed">
-    <p:input port="stylesheet">
-      <p:document href="join-elements.xsl"/>
-    </p:input>
-  </p:xslt>
   
   <p:identity name="final"/>
 
