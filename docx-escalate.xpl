@@ -47,16 +47,12 @@
   <xsw:docx-document-production name="document-production"/>
   
   <!-- Promotes detectable paragraph-wide styles into CSS on @style -->
-  <p:xslt name="normalize-paragraphs">
+  
+  <p:identity name="ready">
     <p:input port="source">
       <p:pipe port="_F_rinsed" step="document-production"/>
     </p:input>
-    <p:input port="stylesheet">
-      <p:document href="collapse-paragraphs.xsl"/>
-    </p:input>
-  </p:xslt>
-  
-  <p:identity name="ready"/>
+  </p:identity>
   
   <!-- To produce the header mapping xslt we go back to the normalized source:
        first we build an analysis table -->
