@@ -77,12 +77,11 @@
     </p:input>
   </p:xslt>
   
-  <p:xslt name="pre-rinsed">
+  <p:xslt name="rinsed">
     <p:input port="stylesheet">
       <p:document href="final-rinse.xsl"/>
     </p:input>
   </p:xslt>
-  
   
   <p:identity name="final"/>
 
