@@ -18,14 +18,14 @@
   <p:output port="_B_arranged" primary="false">
     <p:pipe port="_B_arranged" step="document-production"/>
   </p:output>
-  <p:output port="_C_scrubbed" primary="false">
-    <p:pipe port="_C_scrubbed" step="document-production"/>
+  <p:output port="_C1_scrubbed" primary="false">
+    <p:pipe port="_C1_scrubbed" step="document-production"/>
   </p:output>
-  <p:output port="_D_folded"  primary="false">
-    <p:pipe port="_D_folded"  step="document-production"/>
+  <p:output port="_C2_trimmed"  primary="false">
+    <p:pipe port="_C2_trimmed"  step="document-production"/>
   </p:output>
-  <p:output port="_D_trimmed"  primary="false">
-    <p:pipe port="_D_trimmed"  step="document-production"/>
+  <p:output port="_C3_folded"  primary="false">
+    <p:pipe port="_C3_folded"  step="document-production"/>
   </p:output>
   <p:output port="_E_mapped" primary="false">
     <p:pipe port="_E_mapped" step="document-production"/>
@@ -44,9 +44,9 @@
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_D_folded"    indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_D_trimmed"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C1_scrubbed"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C2_trimmed"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C3_folded"    indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
   
@@ -67,7 +67,7 @@
   
   <p:xslt name="analysis">
     <p:input port="source">
-      <p:pipe port="_D_trimmed" step="document-production"/>
+      <p:pipe port="_C3_folded" step="document-production"/>
     </p:input>
     <p:input port="stylesheet">
       <p:document href="html-analysis.xsl"/>
