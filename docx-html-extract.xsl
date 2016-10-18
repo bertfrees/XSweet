@@ -294,16 +294,12 @@
     </xsl:value-of>
   </xsl:template>
   
-<<<<<<< Updated upstream
   <xsl:template mode="render-css" as="xs:string?" match="w:szCs[.=(../w:sz)]"/>
   
-  <xsl:template mode="render-css" as="xs:string" match="w:sz | w:szCs">
-=======
   <!-- Font size for complex scripts (szCs) is just noise. -->
   <xsl:template mode="render-css" as="xs:string?" match="w:szCs"/>
   
   <xsl:template mode="render-css" as="xs:string" match="w:sz">
->>>>>>> Stashed changes
     <xsl:value-of>
       <xsl:text>font-size: </xsl:text>
       <xsl:value-of select="@w:val div 2"/>
