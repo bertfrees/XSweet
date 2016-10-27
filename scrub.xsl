@@ -23,7 +23,7 @@
   </xsl:template>
   
   <!-- Remove any 'p' element that has nothing but whitespace. -->
-  <xsl:template match="p[not(matches(.,'\S'))]"/>
+  <!--<xsl:template match="p[not(matches(.,'\S'))]"/>-->
   
   
   <!-- Inline elements that are truly empty can be stripped. -->
