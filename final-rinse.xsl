@@ -14,6 +14,12 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- Remove any 'p' element that is truly empty - nothing but whitespace, no elements.
+       (Empty inline elements were stripped by generic logic: see scrub.xsl.) -->
+  <!--<xsl:template match="p[not(matches(.,'\S'))][empty(*)]"/>-->
+  
+  <!-- Rewrite @style to remove properties duplicative of inherited properties -->
+  
   <xsl:template match="@style">
     <xsl:variable name="here" select=".."/>
     <!-- Any CSS properties not declared on an ancestor are significant. -->
@@ -29,6 +35,7 @@
       </xsl:for-each>
     </xsl:variable>
     
+    <!-- Only if we have an item in sequence $significant (a sequence of strings) do we produce a new @style. --> 
     <xsl:if test="exists($significant)">
       <xsl:attribute name="style">
         <xsl:value-of select="$significant" separator="; "/>
@@ -42,7 +49,7 @@
         <xsl:apply-templates select="@style"/>
       </span>
     </xsl:variable>
-    <xsl:choose><!-- We only copy the span if it has a class -->
+    <xsl:choose><!-- We only copy the span if it has a class, -->
       <xsl:when test="matches(@class,'\S')">
         <xsl:next-match/>
       </xsl:when>
