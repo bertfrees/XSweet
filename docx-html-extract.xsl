@@ -134,7 +134,10 @@
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
+          <!-- redundant span introduced so white space is captured properly. -->
+          <span>
           <xsl:apply-templates select="current-group()"/>
+          </span>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>

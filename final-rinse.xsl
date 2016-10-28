@@ -44,22 +44,11 @@
   </xsl:template>
   
   <xsl:template match="span">
-    <xsl:variable name="newStyle">
-      <span>
-        <xsl:apply-templates select="@style"/>
-      </span>
-    </xsl:variable>
-    <xsl:choose><!-- We only copy the span if it has a class, -->
-      <xsl:when test="matches(@class,'\S')">
-        <xsl:next-match/>
-      </xsl:when>
-      <xsl:when test="exists($newStyle/span/@style)"><!-- or if it has a style after reduction -->
-        <xsl:next-match/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@style"/>
+      <xsl:apply-templates/>
+    </xsl:copy>
   </xsl:template>
   
   <xsl:template match="b[ancestor::*[contains(@style,'font-weight')][1]/tokenize(@style,'\s*;\s*') = 'font-weight: bold']">
@@ -74,7 +63,7 @@
     <xsl:apply-templates/>  
   </xsl:template>
   
-  <xsl:template match="b/b | i/i | u/u | b[not(matches(.,'\S'))] | i[not(matches(.,'\S'))] | u[not(matches(.,'\S'))]" priority="5">
+  <xsl:template match="b/b | i/i | u/u" priority="5">
     <xsl:apply-templates/>
   </xsl:template>
 </xsl:stylesheet>

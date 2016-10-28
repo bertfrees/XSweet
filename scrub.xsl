@@ -31,7 +31,6 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <!-- Except these guys of course ... -->
   <xsl:template priority="5" match="img | br | hr">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
