@@ -4,6 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" 
   
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xsw="http://coko.foundation/xsweet"
@@ -42,6 +43,12 @@
     </html>
   </xsl:template>
   
+  <!-- DrawingML - we traverse in case there's content buried therein, but we do not pursue. -->
+  
+  <xsl:template match="wp:*">
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+  
   <xsl:template match="w:body">
     <body>
       <div class="docx-body">
@@ -56,6 +63,12 @@
     </body>
   </xsl:template>
 
+  <xsl:template match="w:drawing">
+    <div class="drawing">
+      <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+  
   <xsl:template match="w:endnote">
     <div class="docx-endnote" id="en{@w:id}">
       <xsl:apply-templates select="w:p"/>
@@ -134,7 +147,10 @@
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
+          <!-- redundant span introduced so white space is captured properly. -->
+          <span>
           <xsl:apply-templates select="current-group()"/>
+          </span>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>

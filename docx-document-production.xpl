@@ -42,8 +42,8 @@
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C1_scrubbed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C2_trimmed"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C1_scrubbed" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C2_trimmed"  indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_C3_folded"   indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
@@ -81,7 +81,6 @@
       <p:document href="collapse-paragraphs.xsl"/>
     </p:input>
   </p:xslt>
-  
   
   <p:xslt name="mapped">
     <p:input port="stylesheet">
