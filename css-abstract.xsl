@@ -64,13 +64,13 @@
       <xsl:if test="$props = 'font-weight: bold'">bold</xsl:if>
       <xsl:if test="$props = 'font-style: italic'">italic</xsl:if>
       <xsl:for-each select="$props[starts-with(., 'color:')]">
-        <xsl:sequence select="replace(., '^color:|\C', '')"/>
+        <xsl:sequence select="replace(., ':|\C', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-family:')]">
         <xsl:sequence select="replace(., '(^font-family:|\C)', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-size:')]">
-        <xsl:sequence select="replace(., '(^font-size:|\C)', '')"/>
+        <xsl:sequence select="replace(., '(^font-|:|\C)', '')"/>
       </xsl:for-each>
     </xsl:value-of>
   </xsl:template>
