@@ -2,14 +2,11 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns="http://www.w3.org/1999/xhtml" xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all" xmlns:fn="http://www.example.com/fn">
 
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
-
-  <xsl:param as="xs:string" name="show-css">yes</xsl:param>
 
   <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml', document-uri(/))"/>
   <xsl:variable name="styles-file" select="resolve-uri('styles.xml', document-uri(/))"/>
@@ -29,13 +26,8 @@
        <xsl:key name="footnotes-by-id" match="w:footnote" use="@w:id"/> -->
 
 
-  <!-- Turn $show-css to 'yes' to switch on $css-reflect. -->
-  <!-- $show-css supplements the traversal with @style markers wherever certain
-       kinds of formatting (e.g. font shift indicators including the spurious font shifts
-       left in by word processors) are indicated in the text; it can be very noisy. -->
-  <xsl:variable as="xs:boolean" name="css-reflect" select="$show-css = 'yes'"/>
-
-  <!-- Run on 'document.xml' inside a .docx -->
+  
+ <!-- Run on 'document.xml' inside a .docx -->
 
   <!-- Note that unprefixed elements are in namespace http://www.w3.org/1999/xhtml -->
   <xsl:template match="/w:document">
@@ -53,8 +45,8 @@
   </xsl:template>
 
   <!-- DrawingML - we traverse in case there's content buried therein, but we do not pursue. -->
-
-  <xsl:template match="wp:*">
+  <xsl:template match="wp:*" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+    <!-- Nor do we pick up text unless we kick back into the w: namespace. -->
     <xsl:apply-templates select="*"/>
   </xsl:template>
 
@@ -92,7 +84,7 @@
 
   <!-- //w:p/w:pPr/w:pStyle -->
   <xsl:function name="xsw:safeClass" as="xs:string">
-    <xsl:param name="val" as="attribute(w:val)"/>
+    <xsl:param name="val" as="attribute()"/>
     <xsl:variable name="safer" select="replace($val, '[\.:\C]', '')"/>
     <xsl:value-of>
       <!-- Drop in a _ if the first character is not an initial name char in XML (or HTML NMTOKEN) -->
@@ -131,21 +123,16 @@
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:function name="xsw:css-literal" as="xs:string?">
-    <xsl:param name="run" as="element(w:r)"/>
-    <xsl:if test="$css-reflect">
-      <xsl:apply-templates select="$run/w:rPr" mode="render-css"/>
-    </xsl:if>
-  </xsl:function>
-
-  <xsl:template match="w:r[matches(xsw:css-literal(.), '\S')]">
-    <span style="{normalize-space(xsw:css-literal(.))}">
+  <xsl:template match="w:r">
+    <span>
+      <xsl:variable name="literal-css">
+        <xsl:apply-templates select="w:rPr" mode="render-css"/>
+      </xsl:variable>
+      <xsl:if test="matches($literal-css,'\S')">
+        <xsl:attribute name="style" select="$literal-css"/>
+      </xsl:if>
       <xsl:call-template name="format-components"/>
     </span>
-  </xsl:template>
-
-  <xsl:template match="w:r">
-    <xsl:call-template name="format-components"/>
   </xsl:template>
 
   <xsl:template name="format-components">
@@ -165,10 +152,8 @@
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
-          <!-- redundant span introduced so white space is captured properly. -->
-          <span>
-            <xsl:apply-templates select="current-group()"/>
-          </span>
+          <!-- to get whitespace, for example -->
+          <xsl:apply-templates select="current-group()"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>
@@ -368,8 +353,8 @@
   </xsl:template>
 
   <xsl:template match="w:styles/*">
-    <xsl:text>&#xA;</xsl:text>
-    <xsl:value-of select="w:name/concat('.', xsw:safeClass(@w:val))"/>
+    <xsl:text>&#xA;.</xsl:text>
+    <xsl:value-of select="xsw:safeClass(@w:styleId)"/>
     <xsl:text> { </xsl:text>
     <xsl:for-each select="w:pPr, w:rPr">
       <xsl:if test="position() gt 1">; </xsl:if>
