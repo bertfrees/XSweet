@@ -38,6 +38,9 @@
   <p:output port="_F_rinsed" primary="false">
     <p:pipe port="result" step="rinsed"/>
   </p:output>
+  <p:output port="_G_rewired" primary="false">
+    <p:pipe port="result" step="rewired"/>
+  </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
@@ -47,6 +50,7 @@
   <p:serialization port="_C3_folded"   indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_G_rewired"   indent="true" omit-xml-declaration="true"/>
   
   <!-- Now it beginneth. -->
   
@@ -91,6 +95,12 @@
   <p:xslt name="rinsed">
     <p:input port="stylesheet">
       <p:document href="final-rinse.xsl"/>
+    </p:input>
+  </p:xslt>
+  
+  <p:xslt name="rewired">
+    <p:input port="stylesheet">
+      <p:document href="css-abstract.xsl"/>
     </p:input>
   </p:xslt>
   
