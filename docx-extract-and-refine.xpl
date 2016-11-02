@@ -34,10 +34,10 @@
     <p:pipe port="_F_rinsed" step="document-production"/>
   </p:output>
   
-  <p:output port="_F_plaintext" primary="false">
+  <p:output port="_O_plaintext" primary="false">
     <p:pipe port="result" step="plaintext"/>
   </p:output>
-  <p:output port="_G_analysis" primary="false">
+  <p:output port="_O_analysis" primary="false">
     <p:pipe port="result" step="analysis"/>
   </p:output>
   
@@ -50,8 +50,8 @@
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
   
-  <p:serialization port="_F_plaintext" method="text" />
-  <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_O_plaintext" method="text" />
+  <p:serialization port="_O_analysis"  indent="true" omit-xml-declaration="true"/>
   
   <p:import href="docx-document-production.xpl"/>
   

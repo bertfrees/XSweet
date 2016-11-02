@@ -43,6 +43,10 @@
     </xsl:if>
   </xsl:template>
   
+  <xsl:template match="span[empty(@style|@class)]">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
   <xsl:template match="span">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
