@@ -10,6 +10,7 @@
 
   <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml', document-uri(/))"/>
   <xsl:variable name="styles-file" select="resolve-uri('styles.xml', document-uri(/))"/>
+  <!-- We have no interest in stylesWithEffects.xml. -->
 
   <xsl:variable name="endnotes-doc"
     select="if (doc-available($endnotes-file)) then doc($endnotes-file)
@@ -356,11 +357,28 @@
     <xsl:text>&#xA;.</xsl:text>
     <xsl:value-of select="xsw:safeClass(@w:styleId)"/>
     <xsl:text> { </xsl:text>
+      <xsl:apply-templates select="." mode="writeCSS"/>
+    <xsl:text> }</xsl:text>
+  </xsl:template>
+  
+  <xsl:template mode="writeCSS" match="w:styles/*">
+    
+    <!-- To traverse to linked styles ... -->
+    <!--<xsl:param name="visited" select="()"/>
+    
+    <xsl:for-each select="key('styles-by-id',(w:link/@w:val[false()] | w:basedOn/@w:val)[not(.=$visited)])">
+      <xsl:apply-templates select="." mode="writeCSS">
+        <xsl:with-param name="visited" select="($visited,@w:styleID)"/>
+      </xsl:apply-templates>
+      <xsl:text>; // </xsl:text>
+      <xsl:value-of select="@w:styleId"/>
+      <xsl:text>&#xA;  </xsl:text>
+    </xsl:for-each> -->
+    
     <xsl:for-each select="w:pPr, w:rPr">
       <xsl:if test="position() gt 1">; </xsl:if>
       <xsl:apply-templates select="." mode="render-css"/>
     </xsl:for-each>
-    <xsl:text> }</xsl:text>
   </xsl:template>
 
 </xsl:stylesheet>
