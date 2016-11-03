@@ -33,25 +33,29 @@
   <p:output port="_F_rinsed" primary="false">
     <p:pipe port="_F_rinsed" step="document-production"/>
   </p:output>
+  <p:output port="_G_rewired" primary="false">
+    <p:pipe port="_G_rewired" step="document-production"/>
+  </p:output>
   
-  <p:output port="_F_plaintext" primary="false">
+  <p:output port="_O_plaintext" primary="false">
     <p:pipe port="result" step="plaintext"/>
   </p:output>
-  <p:output port="_G_analysis" primary="false">
+  <p:output port="_O_analysis" primary="false">
     <p:pipe port="result" step="analysis"/>
   </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C1_scrubbed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C2_trimmed"   indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C3_folded"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C1_scrubbed" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C2_trimmed"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C3_folded"   indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_mapped"    indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_G_rewired"   indent="true" omit-xml-declaration="true"/>
   
-  <p:serialization port="_F_plaintext" method="text" />
-  <p:serialization port="_G_analysis"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_O_plaintext" method="text" />
+  <p:serialization port="_O_analysis"  indent="true" omit-xml-declaration="true"/>
   
   <p:import href="docx-document-production.xpl"/>
   

@@ -15,10 +15,18 @@
     </xsl:copy>
   </xsl:template>
   
-   <xsl:template match="span[@style='font-family: Helvetica'][empty(@class)]">
-     <xsl:apply-templates/>
-   </xsl:template>
+  <!-- Deprecating these ... since @style info is factored out ...
+    
+    <xsl:template match="span[@style='font-family: Helvetica'][empty(@class)]">
+    <xsl:apply-templates/>
+  </xsl:template>
   
-  <xsl:template match="@style[.='font-family: Helvetica']"/>
+  <xsl:template match="@style[.='font-family: Helvetica']"/> -->
+  
+  <xsl:template match="text()[matches(.,'^https?:')][string(.) castable as xs:anyURI]">
+    <a href="{encode-for-uri(.)}">
+      <xsl:value-of select="."/>
+    </a>
+  </xsl:template>
     
 </xsl:stylesheet>
