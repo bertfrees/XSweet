@@ -379,7 +379,7 @@
          <xsl:apply-templates select="." mode="render-css"/>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:value-of select="$css-snippets" separator="; "/>
+    <xsl:value-of select="$css-snippets[matches(.,'\S')]" separator="; "/>
   </xsl:template>
 
 </xsl:stylesheet>
