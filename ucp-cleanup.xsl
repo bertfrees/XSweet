@@ -23,7 +23,7 @@
   
   <xsl:template match="@style[.='font-family: Helvetica']"/> -->
   
-  <xsl:template match="text()[string(.) castable as xs:anyURI]">
+  <xsl:template match="text()[matches(.,'^https?:')][string(.) castable as xs:anyURI]">
     <a href="{encode-for-uri(.)}">
       <xsl:value-of select="."/>
     </a>
