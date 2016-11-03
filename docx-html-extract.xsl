@@ -374,11 +374,12 @@
       <xsl:value-of select="@w:styleId"/>
       <xsl:text>&#xA;  </xsl:text>
     </xsl:for-each> -->
-    
-    <xsl:for-each select="w:pPr, w:rPr">
-      <xsl:if test="position() gt 1">; </xsl:if>
-      <xsl:apply-templates select="." mode="render-css"/>
-    </xsl:for-each>
+    <xsl:variable name="css-snippets" as="xs:string*">
+      <xsl:for-each select="w:pPr, w:rPr">
+         <xsl:apply-templates select="." mode="render-css"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:value-of select="$css-snippets" separator="; "/>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -61,18 +61,27 @@
       <xsl:text>xsw_</xsl:text>
       <!-- Since we're looking at a sequence of strings, we can't write path expressions (in 2.0). -->
       <xsl:for-each select="$props[starts-with(., 'margin-')]">
+        <xsl:text>m</xsl:text>
         <xsl:sequence select="replace(., '(^margin-|[:\s\.])', '')"/>
       </xsl:for-each>
-      <xsl:if test="$props = 'font-weight: bold'">bold</xsl:if>
-      <xsl:if test="$props = 'font-style: italic'">italic</xsl:if>
-      <xsl:for-each select="$props[starts-with(., 'color:')]">
-        <xsl:sequence select="replace(., '^color:|\C', '')"/>
+      <xsl:for-each select="$props[starts-with(., 'padding-')]">
+        <xsl:text>p</xsl:text>
+        <xsl:sequence select="replace(., '(^padding-|[:\s\.])', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-family:')]">
         <xsl:sequence select="replace(., '(^font-family:|\C)', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-size:')]">
         <xsl:sequence select="replace(., '(^font-size:|\C)', '')"/>
+      </xsl:for-each>
+      <xsl:for-each select="$props[starts-with(., 'text-indent:')]">
+        <xsl:sequence select="replace(., '(^text-|:|\C)', '')"/>
+      </xsl:for-each>
+      <xsl:if test="$props = 'font-weight: bold'">bold</xsl:if>
+      <xsl:if test="$props = 'font-style: italic'">italic</xsl:if>
+      <xsl:if test="$props = 'text-decoration: underline'">underline</xsl:if>
+      <xsl:for-each select="$props[starts-with(., 'color:')]">
+        <xsl:sequence select="replace(., '^color:|\C', '')"/>
       </xsl:for-each>
     </xsl:value-of>
   </xsl:template>
