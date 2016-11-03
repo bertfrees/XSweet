@@ -38,7 +38,6 @@
           <xsl:sequence select="$abstracted-css"/>
         </style>
       </xsl:if>
-      
     </xsl:copy>
   </xsl:template>
   
@@ -54,23 +53,25 @@
     </xsl:for-each-group>
   </xsl:template>
   
+  <!-- Emits a string translating a value sequence into a @class-compatible string --> 
   <xsl:template match="@style" mode="styleClass">
     <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
-    
     <xsl:value-of>
+      <xsl:text>xsw_</xsl:text>
+      <!-- Since we're looking at a sequence of strings, we can't write path expressions (in 2.0). -->
       <xsl:for-each select="$props[starts-with(., 'margin-')]">
         <xsl:sequence select="replace(., '(^margin-|[:\s\.])', '')"/>
       </xsl:for-each>
       <xsl:if test="$props = 'font-weight: bold'">bold</xsl:if>
       <xsl:if test="$props = 'font-style: italic'">italic</xsl:if>
       <xsl:for-each select="$props[starts-with(., 'color:')]">
-        <xsl:sequence select="replace(., ':|\C', '')"/>
+        <xsl:sequence select="replace(., '^color:|\C', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-family:')]">
         <xsl:sequence select="replace(., '(^font-family:|\C)', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-size:')]">
-        <xsl:sequence select="replace(., '(^font-|:|\C)', '')"/>
+        <xsl:sequence select="replace(., '(^font-size:|\C)', '')"/>
       </xsl:for-each>
     </xsl:value-of>
   </xsl:template>
