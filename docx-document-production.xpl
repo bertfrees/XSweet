@@ -88,7 +88,7 @@
   
   <p:xslt name="mapped">
     <p:input port="stylesheet">
-      <p:document href="ucp-cleanup.xsl"/>
+      <p:document href="ucp-fixup.xsl"/>
     </p:input>
   </p:xslt>
   
