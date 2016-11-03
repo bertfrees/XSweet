@@ -33,6 +33,10 @@
   <!-- Remove any 'p' element that has nothing but whitespace. -->
   <!--<xsl:template match="p[not(matches(.,'\S'))]"/>-->
   
+  <!-- We're going to keep 'tab' although invalid in the target - since it is too early to expand (presumably to tab/ws) -->
+  <xsl:template match="tab" priority="99">
+    <tab/>
+  </xsl:template>
   
   <!-- Inline elements that are truly empty can be stripped. -->
   <xsl:template match="p//*[empty(*) and not(string(.))]">

@@ -4,7 +4,9 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
   xmlns="http://www.w3.org/1999/xhtml"
-  xpath-default-namespace="http://www.w3.org/1999/xhtml">
+  xpath-default-namespace="http://www.w3.org/1999/xhtml"
+  
+  exclude-result-prefixes="#all">
 
   <!-- Removes redundant tagging from HTML based on @style analysis, element type e.g. redundant b, i, u etc. -->
   
@@ -53,6 +55,10 @@
       <xsl:apply-templates select="@style"/>
       <xsl:apply-templates/>
     </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="tab">
+    <span class="tab">&#x9;</span>
   </xsl:template>
   
   <xsl:template match="b[ancestor::*[contains(@style,'font-weight')][1]/tokenize(@style,'\s*;\s*') = 'font-weight: bold']">

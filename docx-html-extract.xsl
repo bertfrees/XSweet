@@ -38,7 +38,7 @@
         <style type="text/css">
           <!-- Retrieving and writing only those styles actually used.
                #Todo: traverse style derivation tree to pick up defaults. -->
-          <xsl:apply-templates select="//w:pStyle/key('styles-by-id',@w:val, $styles)"/>
+          <xsl:apply-templates select="//(w:pStyle|w:rStyle)/key('styles-by-id',@w:val, $styles)"/>
         </style>
       </head>
       <xsl:apply-templates select="w:body"/>
@@ -207,6 +207,7 @@
     </xsl:element>
   </xsl:template>
 
+  
   <xsl:template priority="4" match="w:rPr/w:bCs">
     <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
     <!-- But note this template is overridden below for most w:bCs as we consider it redundant when already bold. -->
@@ -225,7 +226,12 @@
       <xsl:call-template name="tuck-next"/>
     </span>
   </xsl:template>
-
+  
+  <xsl:template match="w:tab">
+    <!-- Not html, but we'll survive -->
+    <tab/>
+  </xsl:template>
+  
   <!-- This should match any formatting we don't wish to see among wrapped inline elements;
        note that the same formatting properties may be detected in/by CSS reflection instead. -->
   <xsl:template priority="5"
@@ -252,7 +258,7 @@
     <xsl:variable name="n-is-callout" as="xs:boolean">
       <xsl:apply-templates select="$n" mode="is-callout"/>
     </xsl:variable>
-    <xsl:sequence select="exists($n/../w:rPr) and not($n-is-callout)"/>
+    <xsl:sequence select="($n is $n/self::w:tab) or exists($n/../w:rPr) and not($n-is-callout)"/>
   </xsl:function>
 
   <!-- Since we don't want to see these wrapped in formatting ...  -->
@@ -266,8 +272,8 @@
 
 
   <xsl:template match="*" mode="render-css"/>
-
-  <xsl:template mode="render-css" match="w:pPr | w:rPr">
+  
+  <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr">
     <xsl:value-of separator="; ">
       <xsl:apply-templates mode="#current"/>
     </xsl:value-of>
@@ -344,7 +350,21 @@
     </xsl:value-of>
   </xsl:template>
 
-
+  <!-- Wrapper mode 'transcribe-css' enables us to call render-css but also
+       override it in cases. -->
+  <xsl:template match="*" mode="transcribe-css">
+    <xsl:apply-templates select="." mode="render-css"/>
+  </xsl:template>
+  
+  <xsl:template match="w:b" mode="transcribe-css">
+    <xsl:text>font-weight: bold</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="w:i" mode="transcribe-css">
+    <xsl:text>font-style: italic</xsl:text>
+  </xsl:template>
+  
+  
   <!-- Generating CSS from Word (paragraph and text) styles. -->
 
   <xsl:template match="w:styles">
@@ -376,7 +396,7 @@
     </xsl:for-each> -->
     <xsl:variable name="css-snippets" as="xs:string*">
       <xsl:for-each select="w:pPr, w:rPr">
-         <xsl:apply-templates select="." mode="render-css"/>
+         <xsl:apply-templates select="." mode="transcribe-css"/>
       </xsl:for-each>
     </xsl:variable>
     <xsl:value-of select="$css-snippets[matches(.,'\S')]" separator="; "/>

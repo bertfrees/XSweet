@@ -76,7 +76,7 @@
   </xsl:template>
  
   <!-- These guys should never collapse so their hash is always unique to them.-->
-  <xsl:template mode="signature" match="div | p">
+  <xsl:template mode="signature" match="div | p | tab">
     <xsl:value-of select="local-name(.)"/>
     <xsl:value-of select="generate-id(.)"/>
   </xsl:template>
