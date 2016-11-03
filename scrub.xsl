@@ -22,6 +22,14 @@
     <xsl:apply-templates/>
   </xsl:template>
   
+  <xsl:template match="caps | strike">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <xsl:template match="caps//text()">
+    <xsl:value-of select="upper-case(.)"/>
+  </xsl:template>
+  
   <!-- Remove any 'p' element that has nothing but whitespace. -->
   <!--<xsl:template match="p[not(matches(.,'\S'))]"/>-->
   

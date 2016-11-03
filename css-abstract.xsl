@@ -24,6 +24,7 @@
         <xsl:for-each select="@style/../@class"><xsl:text> </xsl:text></xsl:for-each>
         <xsl:apply-templates select="@style" mode="styleClass"/>
       </xsl:attribute>
+      <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
   
