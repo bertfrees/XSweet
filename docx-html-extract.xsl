@@ -317,6 +317,17 @@
     </xsl:value-of>
   </xsl:template>
 
+  <!-- <w:jc w:val="center"/> doing center, left, right, justified (ha) -->
+  <!--http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_Jc.html-->
+  
+  <!-- With apologies, not supporting other values of text alignment in Word. -->
+  <xsl:template priority="2" mode="render-css" match="w:jc[@w:val=('left','right','center','both')]">
+    <xsl:value-of>
+      <xsl:text>text-align: </xsl:text>
+      <xsl:value-of select="if (@w:val = 'both') then 'justify' else @w:val"/>
+    </xsl:value-of>
+  </xsl:template>
+  
   <xsl:template priority="2" mode="render-css" match="w:ind/@w:hanging">
     <xsl:value-of>
       <xsl:text>text-indent: -</xsl:text>
@@ -329,7 +340,6 @@
       <xsl:text>pt</xsl:text>
     </xsl:value-of>
   </xsl:template>
-
 
   <xsl:template mode="css-property" match="w:spacing/@w:before">margin-top</xsl:template>
   <xsl:template mode="css-property" match="w:spacing/@w:after">margin-bottom</xsl:template>

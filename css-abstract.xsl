@@ -60,12 +60,15 @@
     <xsl:value-of>
       <xsl:text>xsw_</xsl:text>
       <!-- Since we're looking at a sequence of strings, we can't write path expressions (in 2.0). -->
+      <xsl:for-each select="$props[starts-with(., 'text-align:')]">
+        <xsl:sequence select="replace(., '(^text-align|[:\s\.])', '')"/>
+      </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'margin-')]">
-        <xsl:text>m</xsl:text>
+        <xsl:text>margin</xsl:text>
         <xsl:sequence select="replace(., '(^margin-|[:\s\.])', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'padding-')]">
-        <xsl:text>p</xsl:text>
+        <xsl:text>pad</xsl:text>
         <xsl:sequence select="replace(., '(^padding-|[:\s\.])', '')"/>
       </xsl:for-each>
       <xsl:for-each select="$props[starts-with(., 'font-family:')]">
