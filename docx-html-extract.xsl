@@ -207,15 +207,36 @@
     </xsl:element>
   </xsl:template>
 
-  
-  <xsl:template priority="4" match="w:rPr/w:bCs">
+
+  <!-- http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_VerticalAlignRun.html -->
+  <!--<w:vertAlign w:val="superscript"/>-->
+  <xsl:template priority="4" match="w:rPr/w:vertAlign[@w:val='superscript']">
     <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
     <!-- But note this template is overridden below for most w:bCs as we consider it redundant when already bold. -->
+    <sup>
+      <xsl:call-template name="tuck-next"/>
+    </sup>
+  </xsl:template>
+  
+  <xsl:template priority="4" match="w:rPr/w:vertAlign[@w:val='subscript']">
+    <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
+    <!-- But note this template is overridden below for most w:bCs as we consider it redundant when already bold. -->
+    <sub>
+      <xsl:call-template name="tuck-next"/>
+    </sub>
+  </xsl:template>
+  
+  <xsl:template priority="4" match="w:rPr[exists(w:b)]/w:bCs">
+    <xsl:call-template name="tuck-next"/>
+</xsl:template>
+  
+  <xsl:template priority="3" match="w:rPr/w:bCs">    <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
+    <!-- But note this template is overridden above for most w:bCs as we consider it redundant when already bold. -->
     <b class="bCs">
       <xsl:call-template name="tuck-next"/>
     </b>
   </xsl:template>
-
+  
   <xsl:template priority="5" match="w:u[not(matches(@w:val, '\S'))]">
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
@@ -235,9 +256,7 @@
   <!-- This should match any formatting we don't wish to see among wrapped inline elements;
        note that the same formatting properties may be detected in/by CSS reflection instead. -->
   <xsl:template priority="5"
-    match="
-      w:rPr/w:sz | w:rPr/w:szCs | w:rPr/w:rFonts | w:rPr/w:color | w:rPr/w:shd | w:rPr/w:smallCaps |
-      w:bCs">
+    match="w:rPr/w:sz | w:rPr/w:szCs | w:rPr/w:rFonts | w:rPr/w:color | w:rPr/w:shd | w:rPr/w:smallCaps">
     <!-- Just do the next one. -->
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
