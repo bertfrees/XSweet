@@ -226,15 +226,9 @@
     </sub>
   </xsl:template>
   
-  <xsl:template priority="4" match="w:rPr[exists(w:b)]/w:bCs">
-    <xsl:call-template name="tuck-next"/>
-</xsl:template>
-  
-  <xsl:template priority="3" match="w:rPr/w:bCs">    <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
-    <!-- But note this template is overridden above for most w:bCs as we consider it redundant when already bold. -->
-    <b class="bCs">
+  <xsl:template priority="3" match="w:rPr/w:bCs">
+    <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
       <xsl:call-template name="tuck-next"/>
-    </b>
   </xsl:template>
   
   <xsl:template priority="5" match="w:u[not(matches(@w:val, '\S'))]">
@@ -292,7 +286,7 @@
 
   <xsl:template match="*" mode="render-css"/>
   
-  <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr">
+  <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr" as="xs:string?">
     <xsl:value-of separator="; ">
       <xsl:apply-templates mode="#current"/>
     </xsl:value-of>
@@ -308,7 +302,7 @@
     <xsl:apply-templates mode="#current" select="@w:before | @w:after"/>
   </xsl:template>
 
-  <xsl:template mode="render-css" match="w:ind/@* | w:spacing/@*">
+  <xsl:template mode="render-css" match="w:ind/@* | w:spacing/@*" as="xs:string">
     <xsl:value-of>
       <xsl:apply-templates mode="css-property" select="."/>
       <xsl:text>: </xsl:text>
@@ -321,21 +315,18 @@
   <!--http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_Jc.html-->
   
   <!-- With apologies, not supporting other values of text alignment in Word. -->
-  <xsl:template priority="2" mode="render-css" match="w:jc[@w:val=('left','right','center','both')]">
+  <xsl:template priority="2" mode="render-css" match="w:jc[@w:val=('left','right','center','both')]" as="xs:string">
     <xsl:value-of>
       <xsl:text>text-align: </xsl:text>
       <xsl:value-of select="if (@w:val = 'both') then 'justify' else @w:val"/>
     </xsl:value-of>
   </xsl:template>
   
-  <xsl:template priority="2" mode="render-css" match="w:ind/@w:hanging">
+  <xsl:template priority="2" mode="render-css" match="w:ind/@w:hanging" as="xs:string">
     <xsl:value-of>
       <xsl:text>text-indent: -</xsl:text>
       <xsl:value-of select=". div 20"/>
-      <xsl:text>pt</xsl:text>
-    </xsl:value-of>
-    <xsl:value-of>
-      <xsl:text>padding-left: </xsl:text>
+      <xsl:text>pt; padding-left: </xsl:text>
       <xsl:value-of select=". div 20"/>
       <xsl:text>pt</xsl:text>
     </xsl:value-of>
@@ -381,15 +372,15 @@
 
   <!-- Wrapper mode 'transcribe-css' enables us to call render-css but also
        override it in cases. -->
-  <xsl:template match="*" mode="transcribe-css">
+  <xsl:template match="*" mode="transcribe-css" as="xs:string*">
     <xsl:apply-templates select="." mode="render-css"/>
   </xsl:template>
   
-  <xsl:template match="w:b" mode="transcribe-css">
+  <xsl:template match="w:b" mode="transcribe-css" as="xs:string">
     <xsl:text>font-weight: bold</xsl:text>
   </xsl:template>
   
-  <xsl:template match="w:i" mode="transcribe-css">
+  <xsl:template match="w:i" mode="transcribe-css" as="xs:string">
     <xsl:text>font-style: italic</xsl:text>
   </xsl:template>
   
@@ -411,24 +402,26 @@
   </xsl:template>
   
   <xsl:template mode="writeCSS" match="w:styles/*">
-    
+
     <!-- To traverse to linked styles ... -->
-    <!--<xsl:param name="visited" select="()"/>
-    
-    <xsl:for-each select="key('styles-by-id',(w:link/@w:val[false()] | w:basedOn/@w:val)[not(.=$visited)])">
+    <xsl:param name="visited" select="()"/>
+
+    <!-- First, recurse to linked style(s) not yet visited. -->
+    <xsl:for-each select="key('styles-by-id', (w:link/@w:val[false()] | w:basedOn/@w:val)[not(. = $visited)])">
       <xsl:apply-templates select="." mode="writeCSS">
-        <xsl:with-param name="visited" select="($visited,@w:styleID)"/>
+
       </xsl:apply-templates>
-      <xsl:text>; // </xsl:text>
-      <xsl:value-of select="@w:styleId"/>
-      <xsl:text>&#xA;  </xsl:text>
-    </xsl:for-each> -->
-    <xsl:variable name="css-snippets" as="xs:string*">
-      <xsl:for-each select="w:pPr, w:rPr">
-         <xsl:apply-templates select="." mode="transcribe-css"/>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:value-of select="$css-snippets[matches(.,'\S')]" separator="; "/>
+      <xsl:text>&#xA;    </xsl:text>
+    </xsl:for-each>
+
+    <xsl:for-each select="w:pPr, w:rPr">
+      <xsl:apply-templates select="." mode="transcribe-css"/>
+      <xsl:text>; </xsl:text>
+    </xsl:for-each>
+    <xsl:text>/* </xsl:text>
+    <xsl:value-of select="@w:styleId"/>
+    <xsl:text>*/</xsl:text>
+
   </xsl:template>
 
 </xsl:stylesheet>
