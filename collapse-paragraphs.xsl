@@ -56,8 +56,7 @@ Note the following mappings:
         <!-- ... only when there are properties as attributes on $css-proxy ... -->
         <xsl:attribute name="style">
             <xsl:for-each select="@*">
-              <!-- sorting them backwards for show -->
-              <xsl:sort data-type="text" select="name()"  order="descending"/>
+              <xsl:sort data-type="text" select="name()"/>
               <xsl:if test="position() gt 1">; </xsl:if>
               <xsl:value-of select="name()"/>
               <xsl:text>: </xsl:text>
@@ -115,11 +114,8 @@ Note the following mappings:
   
   <xsl:template match="@style" mode="as-attributes">
     <xsl:for-each select="tokenize(.,'\s*;\s*')">
-      <xsl:attribute name="{replace(.,':.*$','')}"
-        select="replace(.,'^.*:\s*','')"/>
+      <xsl:attribute name="{replace(.,':.*$','')}" select="replace(.,'^.*:\s*','')"/>
     </xsl:for-each>
   </xsl:template>
-  
-  
 
 </xsl:stylesheet>
