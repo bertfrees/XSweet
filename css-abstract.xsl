@@ -71,6 +71,7 @@
         <xsl:text>pad</xsl:text>
         <xsl:sequence select="replace(., '(^padding-|[:\s\.])', '')"/>
       </xsl:for-each>
+      <xsl:if test="some $p in $props satisfies matches($p,'^font-(family|size)')">font</xsl:if>
       <xsl:for-each select="$props[starts-with(., 'font-family:')]">
         <xsl:sequence select="replace(., '(^font-family:|\C)', '')"/>
       </xsl:for-each>
