@@ -13,19 +13,6 @@
      via a template cascade - i.e., more than a single transformation
      can be performed over a single element.
     
-    xsw:classes - xs:string* - tokenizes @class for handling
-     xsw:hasClass - xs:boolean - true iff a value of @class matches
-
-Possible mods wanted?
-
-     demonstrations of
-     add, remove, replace class
-     
-     add style property
-     remove style property
-     
-     cast style or combination of style properties into class
-
 Ultimately this could support a little language kinda like:
 
 where { font-size: 18pt } .FreeForm
@@ -51,88 +38,80 @@ providing mappings across @class (considered as NMTOKENS) and @style (considered
 
   -->
 
+<!-- How to use (until we implement a next-layer-up):
+       match using appropriate key for class (name), style (property or property-value)
+       call execute-tweak with replacement values.
+       
+       Note it is possible to pass in multiple values for parameters using , and ; within style and class settings.
+       
+       i.e. 
+            <with-param name="removeStyleProperties">font-size; font-weight</with-param>
+       removes both the properties named.
 
+       Note also that control of style values is by property for removal (i.e., remove any/all 'font-size' property),
+       but by property-value pair for addition (i.e., add 'font-size: larger").
+
+       Not that you should be adding @style!
+
+  -->
 
   <!-- Implementation of rule given above. -->
   
-  <xsl:template match="key('elements-by-propertyValue','font-size: 18pt')[. intersect key('elements-by-class','Freeform')]" priority="12">
-    <xsl:variable name="ran">
-      <xsl:next-match/>
-    </xsl:variable>
-    <xsl:for-each select="$ran/*">
-      <xsl:copy>
-        <xsl:copy-of select="@* except (@style | @class)"/>
-        <xsl:call-template name="tweakStyle">
-          <xsl:with-param name="removeProperties" select="'font-size'"/>
-          <xsl:with-param name="addPropertyValues" select="'color: red'"></xsl:with-param>
-        </xsl:call-template>
-        <xsl:call-template name="tweakClass">
-          <xsl:with-param name="add">FreeFormNew</xsl:with-param>
-          <xsl:with-param name="remove">FreeForm</xsl:with-param>
-        </xsl:call-template>
-        
-        <xsl:apply-templates/>
-      </xsl:copy>
-    </xsl:for-each>
+  <xsl:template  priority="12" match="key('elements-by-propertyValue','font-size: 18pt')
+                         [. intersect key('elements-by-class',        'Freeform')]"      >
+
+    <xsl:call-template name="executeTweak">
+      <xsl:with-param name="removeStyleProperties"  >font-size</xsl:with-param>
+      <xsl:with-param name="addStylePropertyValues" >color: red</xsl:with-param>
+      <xsl:with-param name="removeClass"            >FreeForm</xsl:with-param>
+      <xsl:with-param name="addClass"               >FreeFormNew</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
-  <xsl:template match="key('elements-by-property','margin-bottom')" priority="11">
-    <xsl:variable name="ran">
-      <xsl:next-match/>
-    </xsl:variable>
-    <xsl:for-each select="$ran/*">
-      <xsl:copy>
-        <xsl:copy-of select="@* except @style"/>
-        <xsl:call-template name="tweakStyle">
-          <xsl:with-param name="removeProperties" select="'margin-bottom'"/>
-        </xsl:call-template>
-        <xsl:apply-templates/>
-      </xsl:copy>
-    </xsl:for-each>
+  <xsl:template priority="11" match="key('elements-by-propertyValue','font-family: Arial Unicode MS')">
+    <xsl:call-template name="executeTweak">
+      <xsl:with-param name="removeStyleProperties">font-family</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
-  <xsl:template match="key('elements-by-propertyValue','font-family: Arial Unicode MS')" priority="10.5">
-    <xsl:variable name="ran">
-      <xsl:next-match/>
-    </xsl:variable>
-    <xsl:for-each select="$ran/*">
-      <xsl:copy>
-        <xsl:copy-of select="@* except (@class | @style)"/>
-        <xsl:call-template name="tweakStyle">
-          <xsl:with-param name="removeProperties">font-family</xsl:with-param>
-        </xsl:call-template>
-        <xsl:call-template name="tweakClass">
-          <!--<xsl:with-param name="add">sans-serif</xsl:with-param>-->
-        </xsl:call-template>
-        <xsl:apply-templates/>
-      </xsl:copy>
-    </xsl:for-each>
-  </xsl:template>
-  
-  <xsl:template match="key('elements-by-propertyValue','text-indent: 36pt')" priority="10">
-    <xsl:variable name="ran">
-      <xsl:next-match/>
-    </xsl:variable>
-    <xsl:for-each select="$ran/*">
-      <xsl:copy>
-        <xsl:copy-of select="@* except (@class | @style)"/>
-        <xsl:call-template name="tweakStyle">
-          <xsl:with-param name="removeProperties" select="'text-indent'"/>
-        </xsl:call-template>
-        <xsl:call-template name="tweakClass">
-          <xsl:with-param name="add" select="'indented'"/>
-        </xsl:call-template>
-        <xsl:apply-templates/>
-      </xsl:copy>
-    </xsl:for-each>
+  <xsl:template priority="10" match="key('elements-by-propertyValue','text-indent: 36pt')">
+    <xsl:call-template name="executeTweak">
+      <xsl:with-param name="addClass" select="'indented'"/>
+    </xsl:call-template>
   </xsl:template>
   
 <!-- Infrastructure should not require modification. -->
-  
+
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template name="executeTweak">
+    <!-- for class, a string with , delimiters; for style, a string with ; delimiters -->
+    <xsl:param name="addClass"    select="()" as="xs:string?"/>
+    <xsl:param name="removeClass" select="()" as="xs:string?"/>
+    <xsl:param name="addStylePropertyValues"    select="()" as="xs:string?"/>
+    <xsl:param name="removeStyleProperties"     select="()" as="xs:string?"/>
+    
+    <xsl:variable name="ran">
+      <xsl:next-match/>
+    </xsl:variable>
+    <xsl:for-each select="$ran/*">
+      <xsl:copy>
+        <xsl:copy-of select="@* except (@class | @style)"/>
+        <xsl:call-template name="tweakStyle">
+          <xsl:with-param name="removeProperties"  select="tokenize($removeStyleProperties, '\s*;\s*')"/>
+          <xsl:with-param name="addPropertyValues" select="tokenize($addStylePropertyValues,'\s*;\s*')"/>
+        </xsl:call-template>
+        <xsl:call-template name="tweakClass">
+          <xsl:with-param name="remove" select="tokenize($removeClass,'\s*,\s*')"/>
+          <xsl:with-param name="add"    select="tokenize($addClass,   '\s*,\s*')"/>
+        </xsl:call-template>
+        <xsl:apply-templates/>
+      </xsl:copy>
+    </xsl:for-each>
   </xsl:template>
   
   <xsl:template name="tweakClass">
