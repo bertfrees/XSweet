@@ -65,7 +65,7 @@
   <!-- Then we generate an XSLT stylesheet from it -->
   <p:xslt name="escalator-xslt">
     <p:input port="stylesheet">
-      <p:document href="escalator-xslt-generate.xsl"/>
+      <p:document href="make-header-escalator-xslt.xsl"/>
     </p:input>
   </p:xslt>
 
