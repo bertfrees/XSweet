@@ -7,98 +7,26 @@
   xmlns="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
   
-  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
+<!-- See html-tweak-demo.xsl for an example of how to use this stylesheet fragment. -->
   
-<!-- Stylesheet to rewrite style and class on HTML
-     via a template cascade - i.e., more than a single transformation
-     can be performed over a single element.
-    
-Ultimately this could support a little language kinda like:
-
-where { font-size: 18pt } .FreeForm
-  remove { font-size } .FreeForm
-  add    { color: red } .FreeFormNew
-
-<where>
-  <match>
-    <style>font-size: 18pt</style>
-    <class>FreeForm</class>
-  </match>
-  <remove>
-    <style>font-size</style>
-    <class>FreeForm</class>
-  </remove>
-  <add>
-    <class>FreeFormNew</class>
-    <style>color: red</style>
-  </add>
-</where>
-
-providing mappings across @class (considered as NMTOKENS) and @style (considered as CSS property sets)
-
-  -->
-
-<!-- How to use (until we implement a next-layer-up):
-       match using appropriate key for class (name), style (property or property-value)
-       call execute-tweak with replacement values.
-       
-       Note it is possible to pass in multiple values for parameters using , and ; within style and class settings.
-       
-       i.e. 
-            <with-param name="removeStyleProperties">font-size; font-weight</with-param>
-       removes both the properties named.
-
-       Note also that control of style values is by property for removal (i.e., remove any/all 'font-size' property),
-       but by property-value pair for addition (i.e., add 'font-size: larger").
-
-       Not that you should be adding @style!
-
-  -->
-
-  <!-- Implementation of rule given above. -->
-  
-  <xsl:template  priority="12" match="key('elements-by-propertyValue','font-size: 18pt')
-                         [. intersect key('elements-by-class',        'Freeform')]"      >
-
-    <xsl:call-template name="executeTweak">
-      <xsl:with-param name="removeStyleProperties"  >font-size</xsl:with-param>
-      <xsl:with-param name="addStylePropertyValues" >color: red</xsl:with-param>
-      <xsl:with-param name="removeClass"            >FreeForm</xsl:with-param>
-      <xsl:with-param name="addClass"               >FreeFormNew</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-  
-  <xsl:template priority="11" match="key('elements-by-propertyValue','font-family: Arial Unicode MS')">
-    <xsl:call-template name="executeTweak">
-      <xsl:with-param name="removeStyleProperties">font-family</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-  
-  <xsl:template priority="10" match="key('elements-by-propertyValue','text-indent: 36pt')">
-    <xsl:call-template name="executeTweak">
-      <xsl:with-param name="addClass" select="'indented'"/>
-    </xsl:call-template>
-  </xsl:template>
-  
-<!-- Infrastructure should not require modification. -->
-
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template name="executeTweak">
+  <xsl:template name="makeTweak">
     <!-- for class, a string with , delimiters; for style, a string with ; delimiters -->
-    <xsl:param name="addClass"    select="()" as="xs:string?"/>
-    <xsl:param name="removeClass" select="()" as="xs:string?"/>
-    <xsl:param name="addStylePropertyValues"    select="()" as="xs:string?"/>
-    <xsl:param name="removeStyleProperties"     select="()" as="xs:string?"/>
+    <xsl:param name="addClass"               select="()" as="xs:string?"/>
+    <xsl:param name="removeClass"            select="()" as="xs:string?"/>
+    <xsl:param name="addStylePropertyValues" select="()" as="xs:string?"/>
+    <xsl:param name="removeStyleProperties"  select="()" as="xs:string?"/>
     
-    <xsl:variable name="ran">
+    <xsl:variable name="alreadyTweaked">
       <xsl:next-match/>
     </xsl:variable>
-    <xsl:for-each select="$ran/*">
+    <xsl:for-each select="$alreadyTweaked/*"><!-- change context to results of applying templates
+      which we expect to be a single (html) element -->
       <xsl:copy>
         <xsl:copy-of select="@* except (@class | @style)"/>
         <xsl:call-template name="tweakStyle">
@@ -109,7 +37,7 @@ providing mappings across @class (considered as NMTOKENS) and @style (considered
           <xsl:with-param name="remove" select="tokenize($removeClass,'\s*,\s*')"/>
           <xsl:with-param name="add"    select="tokenize($addClass,   '\s*,\s*')"/>
         </xsl:call-template>
-        <xsl:apply-templates/>
+        <xsl:copy-of select="child::node()"/>
       </xsl:copy>
     </xsl:for-each>
   </xsl:template>
