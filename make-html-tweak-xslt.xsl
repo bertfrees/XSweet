@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsw="http://coko.foundation/xsweet"
-  >
+   exclude-result-prefixes="#all">
 
   <xsl:output indent="yes"/>
 
@@ -43,8 +43,7 @@
       xmlns="http://www.w3.org/1999/xhtml"
       
     -->
-    <xsw:stylesheet version="2.0" xpath-default-namespace="http://www.w3.org/1999/xhtml"
-      exclude-result-prefixes="#all">
+    <xsw:stylesheet version="2.0" exclude-result-prefixes="#all">
 
 
       <!--<xsw:template match="node() | @*">
@@ -90,7 +89,7 @@
   -->
 
   <xsl:template match="where" mode="xslt-produce">
-    <xsw:template priority="{count(.|preceding-sibling::where)}">
+    <xsw:template priority="{count(.|following-sibling::where)}">
       <xsl:attribute name="match">
         <xsl:apply-templates mode="keyPattern" select="match/*[1]"/>
         <xsl:for-each select="match/*[1]/following-sibling::*">
