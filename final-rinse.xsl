@@ -9,6 +9,8 @@
   exclude-result-prefixes="#all">
 
   <!-- Removes redundant tagging from HTML based on @style analysis, element type e.g. redundant b, i, u etc. -->
+
+  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
   <xsl:template match="node() | @*">
     <xsl:copy>
