@@ -7,8 +7,6 @@
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
    exclude-result-prefixes="#all">
   
-  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
-  
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
