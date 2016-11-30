@@ -54,7 +54,7 @@
   <xsl:template match="w:body">
     <body>
       <div class="docx-body">
-        <xsl:apply-templates select="w:p"/>
+        <xsl:apply-templates select="w:p | w:tbl"/>
       </div>
       <div class="docx-endnotes">
         <xsl:apply-templates select="$endnotes-doc/*/w:endnote"/>
@@ -116,6 +116,24 @@
     </p>
   </xsl:template>
 
+  <xsl:template match="w:tbl">
+    <table>
+      <xsl:apply-templates select="w:tr"/>
+    </table>
+  </xsl:template>
+  
+  <xsl:template match="w:tr">
+    <tr>
+      <xsl:apply-templates select="w:tc"/>
+    </tr>
+  </xsl:template>
+  
+  <xsl:template match="w:tc">
+    <td>
+      <xsl:apply-templates select="w:p"/>
+    </td>
+  </xsl:template>
+  
   <!-- Drop in default traversal -->
   <xsl:template match="w:pPr"/>
 
