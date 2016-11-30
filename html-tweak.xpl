@@ -14,17 +14,17 @@
   
   <p:input port="parameters" kind="parameter"/>
   
-  <p:output port="_Z_FINAL">
+  <p:output port="result" primary="true">
     <p:pipe port="result" step="final"/>
   </p:output>
   
-  <p:output port="_X_htmlTweakXSLT" primary="false">
+  <p:output port="htmlTweakXSLT" primary="false">
     <p:pipe port="result" step="html-tweak-xsl"/>
   </p:output>
   
-  <p:serialization port="_Z_FINAL" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="result" indent="true" omit-xml-declaration="true"/>
   
-  <p:serialization port="_X_htmlTweakXSLT" indent="true" />
+  <p:serialization port="htmlTweakXSLT" indent="true" />
   
   <!-- First we step aside and generate a transformation from a spec... -->
   <p:xslt name="html-tweak-xsl">

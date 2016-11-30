@@ -411,17 +411,21 @@
       <xsl:apply-templates select="." mode="writeCSS">
 
       </xsl:apply-templates>
-      <xsl:text>&#xA;    </xsl:text>
+      <xsl:text>  </xsl:text>
     </xsl:for-each>
 
-    <xsl:for-each select="w:pPr, w:rPr">
-      <xsl:apply-templates select="." mode="transcribe-css"/>
-      <xsl:text>; </xsl:text>
-    </xsl:for-each>
     <xsl:text>/* </xsl:text>
     <xsl:value-of select="@w:styleId"/>
     <xsl:text>*/</xsl:text>
-
+    
+    <xsl:variable name="css-produced" as="xs:string*">
+      <xsl:apply-templates select="." mode="transcribe-css"/>
+    </xsl:variable>
+    
+    <xsl:if test="some $css in $css-produced satisfies normalize-space($css)">
+      <xsl:value-of select="$css-produced" separator="; "/>
+    </xsl:if>
+   
   </xsl:template>
 
 </xsl:stylesheet>
