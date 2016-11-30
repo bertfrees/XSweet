@@ -44,7 +44,6 @@
   <p:serialization port="_C3_folded"   indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_D_mapped"    indent="true" omit-xml-declaration="true"/>
   
-  
   <!-- Now it beginneth. -->
   
   <p:xslt name="slops-extracted">

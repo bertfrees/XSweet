@@ -15,8 +15,8 @@
     <p:pipe port="result" step="final"/>
   </p:output>
   
-  <p:output port="_F_in" primary="false">
-    <p:pipe port="_F_rinsed" step="document-production"/>
+  <p:output port="in" primary="false">
+    <p:pipe port="_Z_FINAL" step="document-production"/>
   </p:output>
   <p:output port="_M_ready" primary="false">
     <p:pipe port="result" step="ready"/>
@@ -28,7 +28,7 @@
     <p:pipe port="result" step="escalator-xslt"/>
   </p:output>
 
-  <p:serialization port="_F_in"             indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="in"                indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_M_ready"          indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_N_digested"       indent="true"/>
   <p:serialization port="_X_escalator-xslt" indent="true"/>
@@ -50,7 +50,7 @@
   
   <p:identity name="ready">
     <p:input port="source">
-      <p:pipe port="_F_rinsed" step="document-production"/>
+      <p:pipe port="_D_mapped" step="document-production"/>
     </p:input>
   </p:identity>
   
