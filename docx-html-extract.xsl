@@ -423,24 +423,22 @@
 
     <!-- To traverse to linked styles ... -->
     <xsl:param name="visited" select="()"/>
-
     <!-- First, recurse to linked style(s) not yet visited. -->
-    <xsl:for-each select="key('styles-by-id', (w:link/@w:val[false()] | w:basedOn/@w:val)[not(. = $visited)])">
-      <xsl:apply-templates select="." mode="writeCSS">
-
+      <xsl:apply-templates mode="writeCSS"
+        select="key('styles-by-id', (w:link/@w:val[false()] | w:basedOn/@w:val)[empty(. intersect $visited)])">
+        <xsl:with-param name="visited" select="$visited, ."/>
       </xsl:apply-templates>
       <xsl:text>  </xsl:text>
-    </xsl:for-each>
 
     <xsl:text>/* </xsl:text>
     <xsl:value-of select="@w:styleId"/>
-    <xsl:text>*/</xsl:text>
+    <xsl:text>*/ </xsl:text>
     
     <xsl:variable name="css-produced" as="xs:string*">
-      <xsl:apply-templates select="." mode="transcribe-css"/>
+      <xsl:apply-templates select="w:pPr | w:rPr" mode="transcribe-css"/>
     </xsl:variable>
     
-    <xsl:if test="some $css in $css-produced satisfies normalize-space($css)">
+    <xsl:if test="some $css in $css-produced satisfies normalize-space($css) or true()">
       <xsl:value-of select="$css-produced" separator="; "/>
     </xsl:if>
    
