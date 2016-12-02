@@ -438,7 +438,7 @@
       <xsl:apply-templates select="w:pPr | w:rPr" mode="transcribe-css"/>
     </xsl:variable>
     
-    <xsl:if test="some $css in $css-produced satisfies normalize-space($css) or true()">
+    <xsl:if test="some $css in $css-produced satisfies normalize-space($css)">
       <xsl:value-of select="$css-produced" separator="; "/>
     </xsl:if>
    
