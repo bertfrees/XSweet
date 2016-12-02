@@ -423,13 +423,8 @@
 
     <!-- To traverse to linked styles ... -->
     <xsl:param name="visited" select="()"/>
-    <!-- First, recurse to linked style(s) not yet visited. -->
-      <xsl:apply-templates mode="writeCSS"
-        select="key('styles-by-id', (w:link/@w:val[false()] | w:basedOn/@w:val)[empty(. intersect $visited)])">
-        <xsl:with-param name="visited" select="$visited, ."/>
-      </xsl:apply-templates>
-      <xsl:text>  </xsl:text>
-
+    
+    <xsl:if test="exists($visited)">; </xsl:if>
     <xsl:text>/* </xsl:text>
     <xsl:value-of select="@w:styleId"/>
     <xsl:text>*/ </xsl:text>
@@ -439,7 +434,12 @@
     </xsl:variable>
     
     <xsl:value-of select="$css-produced[matches(.,'\S')]" separator="; "/>
-   
+    
+    <xsl:apply-templates mode="writeCSS"
+      select="key('styles-by-id', (w:link/@w:val[false()] | w:basedOn/@w:val)[empty(. intersect $visited)])">
+      <xsl:with-param name="visited" select="$visited, ."/>
+    </xsl:apply-templates>
+    
   </xsl:template>
 
 </xsl:stylesheet>
