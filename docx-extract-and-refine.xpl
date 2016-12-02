@@ -9,7 +9,7 @@
   <p:option name="docx-file-uri" required="true"/>
   
   <p:output port="_Z_FINAL">
-    <p:pipe port="_Z_FINAL" step="document-production"/>
+    <p:pipe port="result" step="rewired"/>
   </p:output>
   
   <p:output port="_A_extracted" primary="false">
