@@ -225,7 +225,8 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="w:rPr/w:b[@val='0'] | w:rPr/w:i[@val='0'] | w:rPr/w:u[@val='0']">
+  <xsl:template priority="10" match="w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] | 
+    w:rPr/w:smallCaps[@w:val='0'] | w:rPr/w:color[@w:val='000000']">
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
   
@@ -390,11 +391,13 @@
     <xsl:text>font-variant: small-caps</xsl:text>
   </xsl:template>
 
-  <xsl:template mode="render-css" as="xs:string" match="w:color">
+  <xsl:template mode="render-css" as="xs:string?" match="w:color">
+    <xsl:if test="not(@w:val='000000')">
     <xsl:value-of>
       <xsl:text>color: </xsl:text>
       <xsl:value-of select="@w:val/replace(., '^\d', '#$0')"/>
     </xsl:value-of>
+    </xsl:if>
   </xsl:template>
 
   <!-- Wrapper mode 'transcribe-css' enables us to call render-css but also
