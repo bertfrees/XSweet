@@ -387,7 +387,7 @@
     </xsl:value-of>
   </xsl:template>
 
-  <xsl:template mode="render-css" as="xs:string" match="w:smallCaps[not(@val=0)]">
+  <xsl:template mode="render-css" as="xs:string" match="w:smallCaps[not(@w:val='0')]">
     <xsl:text>font-variant: small-caps</xsl:text>
   </xsl:template>
 
