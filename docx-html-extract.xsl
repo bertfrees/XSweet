@@ -224,8 +224,12 @@
       <xsl:call-template name="tuck-next"/>
     </xsl:element>
   </xsl:template>
-
-
+  
+  <xsl:template match="w:rPr/w:b[@val='0'] | w:rPr/w:i[@val='0'] | w:rPr/w:u[@val='0']">
+    <xsl:call-template name="tuck-next"/>
+  </xsl:template>
+  
+  
   <!-- http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_VerticalAlignRun.html -->
   <!--<w:vertAlign w:val="superscript"/>-->
   <xsl:template priority="4" match="w:rPr/w:vertAlign[@w:val='superscript']">
@@ -246,7 +250,12 @@
   
   <xsl:template priority="3" match="w:rPr/w:bCs">
     <!-- https://msdn.microsoft.com/en-us/library/documentformat.openxml.wordprocessing.boldcomplexscript(v=office.14).aspx -->
-      <xsl:call-template name="tuck-next"/>
+    <xsl:call-template name="tuck-next"/>
+  </xsl:template>
+  
+  <xsl:template priority="3" match="w:rPr/w:rtl">
+    <!-- https://msdn.microsoft.com/en-us/library/office/aa173442(v=office.11).aspx -->
+    <xsl:call-template name="tuck-next"/>
   </xsl:template>
   
   <xsl:template priority="5" match="w:u[not(matches(@w:val, '\S'))]">
@@ -377,7 +386,7 @@
     </xsl:value-of>
   </xsl:template>
 
-  <xsl:template mode="render-css" as="xs:string" match="w:smallCaps">
+  <xsl:template mode="render-css" as="xs:string" match="w:smallCaps[not(@val=0)]">
     <xsl:text>font-variant: small-caps</xsl:text>
   </xsl:template>
 
@@ -394,11 +403,11 @@
     <xsl:apply-templates select="." mode="render-css"/>
   </xsl:template>
   
-  <xsl:template match="w:b" mode="transcribe-css" as="xs:string">
+  <xsl:template match="w:b[not(@val=0)]" mode="transcribe-css" as="xs:string">
     <xsl:text>font-weight: bold</xsl:text>
   </xsl:template>
   
-  <xsl:template match="w:i" mode="transcribe-css" as="xs:string">
+  <xsl:template match="w:i[not(@val=0)]" mode="transcribe-css" as="xs:string">
     <xsl:text>font-style: italic</xsl:text>
   </xsl:template>
   
