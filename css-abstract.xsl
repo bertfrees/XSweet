@@ -86,7 +86,7 @@
       <xsl:if test="$props = 'font-weight: bold'">bold</xsl:if>
       <xsl:if test="$props = 'font-style: italic'">italic</xsl:if>
       <xsl:if test="$props = 'text-decoration: underline'">underline</xsl:if>
-      <xsl:if test="$props = 'text-decoration: small-caps'">smallcaps</xsl:if>
+      <xsl:if test="$props = 'font-variant: small-caps'">smallcaps</xsl:if>
       <xsl:for-each select="$props[starts-with(., 'color:')]">
         <xsl:sequence select="replace(., '^color:|\C', '')"/>
       </xsl:for-each>
