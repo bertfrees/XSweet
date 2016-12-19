@@ -63,7 +63,7 @@
 
       <xsl:apply-templates  mode="xslt-produce"/>
 
-      <xsw:include href="html-tweak-lib.xsl"/>
+      <xsw:include href="{resolve-uri('html-tweak-lib.xsl',document-uri(document('')) )}"/>
 
     </xsw:stylesheet>
   </xsl:template>
