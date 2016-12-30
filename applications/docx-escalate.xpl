@@ -34,7 +34,7 @@
   <p:serialization port="_X_escalator-xslt" indent="true"/>
   <p:serialization port="_Z_FINAL"          indent="true" omit-xml-declaration="true"/>
   
-  <p:import href="docx-document-production.xpl"/>
+  <p:import href="docx-extract/docx-document-production.xpl"/>
   
   <p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->

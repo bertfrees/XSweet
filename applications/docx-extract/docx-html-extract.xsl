@@ -9,17 +9,26 @@
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
   <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml', document-uri(/))"/>
-  <xsl:variable name="styles-file" select="resolve-uri('styles.xml', document-uri(/))"/>
+  <xsl:variable name="styles-file"   select="resolve-uri('styles.xml',   document-uri(/))"/>
   <!-- We have no interest in stylesWithEffects.xml. -->
 
-  <xsl:variable name="endnotes-doc"
-    select="if (doc-available($endnotes-file)) then doc($endnotes-file)
-                                               else ()"/>
+  <!--<xsl:variable name="endnotes-file" select="'x'"/>
+  <xsl:variable name="styles-file"   select="'x'"/>-->
 
-  <xsl:variable name="styles"
-    select="if (doc-available($styles-file)) then doc($styles-file)
-                                             else ()"/>
-
+  <xsl:variable name="endnotes-doc">
+    <xsl:if test="doc-available($endnotes-file)">
+      <xsl:sequence select="doc($endnotes-file)"/>
+    </xsl:if>
+  </xsl:variable>
+  
+  <!-- If no styles are found we get a root (temporary tree) w/ no branches. -->
+  <xsl:variable name="styles">
+    <xsl:if test="doc-available($styles-file)">
+      <xsl:sequence select="doc($styles-file)"/>
+    </xsl:if>
+  </xsl:variable>
+  
+  
   <xsl:key name="styles-by-id" match="w:style" use="@w:styleId"/>
 
   <!-- Reinstate footnotes handling when we have some. -->

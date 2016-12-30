@@ -9,7 +9,7 @@
   <p:option name="docx-file-uri" required="true"/>
   
   <p:output port="_Z_FINAL">
-    <p:pipe port="result" step="rewired"/>
+    <p:pipe port="result" step="final"/>
   </p:output>
   
   <p:output port="_A_extracted" primary="false">
@@ -18,23 +18,22 @@
   <p:output port="_B_arranged" primary="false">
     <p:pipe port="_B_arranged" step="document-production"/>
   </p:output>
-  <p:output port="_C1_scrubbed" primary="false">
-    <p:pipe port="_C1_scrubbed" step="document-production"/>
+  <p:output port="_C_scrubbed" primary="false">
+    <p:pipe port="_C_scrubbed" step="document-production"/>
   </p:output>
-  <p:output port="_C2_trimmed"  primary="false">
-    <p:pipe port="_C2_trimmed"  step="document-production"/>
+  <p:output port="_D_trimmed" primary="false">
+    <p:pipe port="_D_trimmed" step="document-production"/>
   </p:output>
-  <p:output port="_C3_folded"  primary="false">
-    <p:pipe port="_C3_folded"  step="document-production"/>
+  <p:output port="_E_folded" primary="false">
+    <p:pipe port="_E_folded" step="document-production"/>
   </p:output>
-  <p:output port="_D_mapped" primary="false">
-    <p:pipe port="_D_mapped" step="document-production"/>
+  <p:output port="_F_mapped" primary="false">
+    <p:pipe port="result" step="mapped"/>
   </p:output>
-
-  <p:output port="_F_rinsed" primary="false">
+  <p:output port="_G_rinsed" primary="false">
     <p:pipe port="result" step="rinsed"/>
   </p:output>
-  <p:output port="_G_rewired" primary="false">
+  <p:output port="_H_rewired" primary="false">
     <p:pipe port="result" step="rewired"/>
   </p:output>
   
@@ -48,18 +47,18 @@
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C1_scrubbed" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C2_trimmed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C3_folded"   indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_D_mapped"    indent="true" omit-xml-declaration="true"/>
- 
-  <p:serialization port="_F_rinsed"    indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_G_rewired"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_D_trimmed"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_E_folded"    indent="true" omit-xml-declaration="true"/>
+  
+  <p:serialization port="_F_mapped"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_G_rinsed"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_H_rewired"   indent="true" omit-xml-declaration="true"/>
   
   <p:serialization port="_O_plaintext" method="text" />
   <p:serialization port="_O_analysis"  indent="true" omit-xml-declaration="true"/>
   
-  <p:import href="docx-document-production.xpl"/>
+  <p:import href="docx-extract/docx-document-production.xpl"/>
   
   <p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
@@ -69,35 +68,44 @@
     <p:with-option name="href" select="$document-path"/>
   </p:load>
   
+  
   <xsw:docx-document-production name="document-production"/>
+  
+  <p:xslt name="mapped">
+    <p:input port="stylesheet">
+      <p:document href="local-fixup/ucp-fixup.xsl"/>
+    </p:input>
+  </p:xslt>
   
   <p:xslt name="rinsed">
     <p:input port="stylesheet">
-      <p:document href="final-rinse.xsl"/>
+      <p:document href="html-polish/final-rinse.xsl"/>
     </p:input>
   </p:xslt>
   
   <p:xslt name="rewired">
     <p:input port="stylesheet">
-      <p:document href="css-abstract.xsl"/>
+      <p:document href="css-abstract/css-abstract.xsl"/>
     </p:input>
   </p:xslt>
+ 
+  <p:identity name="final"/>
   
   <p:xslt name="analysis">
-    <p:input port="source">
-      <p:pipe port="_C3_folded" step="document-production"/>
-    </p:input>
+    <!--<p:input port="source">
+      <p:pipe port="_Z_FINAL" step="document-production"/>
+    </p:input>-->
     <p:input port="stylesheet">
-      <p:document href="html-analysis.xsl"/>
+      <p:document href="produce-analysis/html-analysis.xsl"/>
     </p:input>
   </p:xslt>
   
   <p:xslt name="plaintext">
     <p:input port="source">
-      <p:pipe port="result" step="rewired"/>
+      <p:pipe port="result" step="final"/>
     </p:input>
     <p:input port="stylesheet">
-      <p:document href="plaintext.xsl"/>
+      <p:document href="produce-plaintext/plaintext.xsl"/>
     </p:input>
   </p:xslt>
  

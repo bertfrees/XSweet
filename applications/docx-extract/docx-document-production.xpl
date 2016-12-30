@@ -23,26 +23,23 @@
   <p:output port="_B_arranged" primary="false">
     <p:pipe port="result" step="notes-arranged"/>
   </p:output>
-  <p:output port="_C1_scrubbed" primary="false">
+  <p:output port="_C_scrubbed" primary="false">
     <p:pipe port="result" step="scrubbed"/>
   </p:output>
-  <p:output port="_C2_trimmed" primary="false">
+  <p:output port="_D_trimmed" primary="false">
     <p:pipe port="result" step="trimmed"/>
   </p:output>
-  <p:output port="_C3_folded" primary="false">
+  <p:output port="_E_folded" primary="false">
     <p:pipe port="result" step="folded"/>
-  </p:output>
-  <p:output port="_D_mapped" primary="false">
-    <p:pipe port="result" step="mapped"/>
   </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C1_scrubbed" indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C2_trimmed"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C3_folded"   indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_D_mapped"    indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_D_trimmed"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_E_folded"    indent="true" omit-xml-declaration="true"/>
+  
   
   <!-- Now it beginneth. -->
   
@@ -78,11 +75,11 @@
     </p:input>
   </p:xslt>
   
-  <p:xslt name="mapped">
+  <!--<p:xslt name="mapped">
     <p:input port="stylesheet">
       <p:document href="ucp-fixup.xsl"/>
     </p:input>
-  </p:xslt>
+  </p:xslt>-->
   
   <p:identity name="final"/>
 
