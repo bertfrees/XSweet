@@ -50,7 +50,7 @@
   
   <p:identity name="ready">
     <p:input port="source">
-      <p:pipe port="_D_mapped" step="document-production"/>
+      <p:pipe port="_E_folded" step="document-production"/>
     </p:input>
   </p:identity>
   
@@ -58,14 +58,14 @@
        first we build an analysis table -->
   <p:xslt name="digest-paragraphs">
     <p:input port="stylesheet">
-      <p:document href="digest-paragraphs.xsl"/>
+      <p:document href="header-promote/digest-paragraphs.xsl"/>
     </p:input>
   </p:xslt>
   
   <!-- Then we generate an XSLT stylesheet from it -->
   <p:xslt name="escalator-xslt">
     <p:input port="stylesheet">
-      <p:document href="make-header-escalator-xslt.xsl"/>
+      <p:document href="header-promote/make-header-escalator-xslt.xsl"/>
     </p:input>
   </p:xslt>
 
@@ -85,13 +85,13 @@
 
   <p:xslt name="cleanup">
     <p:input port="stylesheet">
-      <p:document href="final-rinse.xsl"/>
+      <p:document href="html-polish/final-rinse.xsl"/>
     </p:input>
   </p:xslt>
   
   <p:xslt name="rewired">
     <p:input port="stylesheet">
-      <p:document href="css-abstract.xsl"/>
+      <p:document href="css-abstract/css-abstract.xsl"/>
     </p:input>
   </p:xslt>
   
