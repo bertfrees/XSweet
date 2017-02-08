@@ -11,85 +11,49 @@
   
   <p:input port="parameters" kind="parameter"/>
   
-  <!--<p:option name="docx-file-uri" required="true"/>-->
-  
   <p:output port="_Z_FINAL" primary="true">
     <p:pipe port="result" step="final"/>
   </p:output>
-  
-  <p:output port="_M_ready" primary="false">
-    <p:pipe port="result" step="ready"/>
-  </p:output>
-  <p:output port="_N_digested" primary="false">
+  <p:output port="_A_digested" primary="false">
     <p:pipe port="result" step="digest-paragraphs"/>
+  </p:output>
+  <p:output port="_B_headers-promoted" primary="false">
+    <p:pipe port="result" step="apply-the-header-mapping-xslt"/>
   </p:output>
   <p:output port="_X_escalator-xslt" primary="false">
     <p:pipe port="result" step="escalator-xslt"/>
   </p:output>
 
-  <!--<p:serialization port="in"                indent="true" omit-xml-declaration="true"/>-->
-  <p:serialization port="_M_ready"          indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_N_digested"       indent="true"/>
-  <p:serialization port="_X_escalator-xslt" indent="true"/>
-  <p:serialization port="_Z_FINAL"          indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_A_digested"         indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_B_headers-promoted" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_X_escalator-xslt"   indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_Z_FINAL"            indent="true" omit-xml-declaration="true"/>
   
-  <!--<p:import href="docx-extract/docx-document-production.xpl"/>-->
+  <p:identity name="in"/>
   
-  <!--<p:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>-->
-  <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
-  <!-- Validate HTML5 results here:  http://validator.w3.org/nu/ -->
-
-  <!--<p:load>
-    <p:with-option name="href" select="$document-path"/>
-  </p:load>-->
-  
-  <!--<xsw:docx-document-production name="document-production"/>-->
-  
-  <!-- Promotes detectable paragraph-wide styles into CSS on @style -->
-  
-  <p:identity name="ready"/>
-  
-  <!-- To produce the header mapping xslt we go back to the normalized source:
-       first we build an analysis table -->
+  <!-- First, reduce the input to a "weighted profile" of its paragraph styles -->
   <p:xslt name="digest-paragraphs">
     <p:input port="stylesheet">
       <p:document href="digest-paragraphs.xsl"/>
     </p:input>
   </p:xslt>
   
-  <!-- Then we generate an XSLT stylesheet from it -->
+  <!-- Then generate an XSLT stylesheet from it -->
   <p:xslt name="escalator-xslt">
     <p:input port="stylesheet">
       <p:document href="make-header-escalator-xslt.xsl"/>
     </p:input>
   </p:xslt>
 
-  <!-- Now we go back to 'ready' -->
-  <p:identity>
-    <p:input port="source">
-      <p:pipe port="result" step="ready"/>
-    </p:input>
-  </p:identity>
-  
   <!-- This is the loop! where we apply the stylesheet we have generated -->
-  <p:xslt name="omg-apply-the-header-mapping-xslt">
-    <p:input port="stylesheet">
+  <p:xslt name="apply-the-header-mapping-xslt">
+    <p:input port="source">
+      <p:pipe port="result" step="in"/>
+    </p:input><p:input port="stylesheet">
       <p:pipe port="result" step="escalator-xslt"/>
     </p:input>
   </p:xslt>
 
-  <!--<p:xslt name="cleanup">
-    <p:input port="stylesheet">
-      <p:document href="final-rinse.xsl"/>
-    </p:input>
-  </p:xslt>
-  
-  <p:xslt name="rewired">
-    <p:input port="stylesheet">
-      <p:document href="css-abstract.xsl"/>
-    </p:input>
-  </p:xslt>-->
-  
   <p:identity name="final"/>
   
   <!--<p:xslt name="">
