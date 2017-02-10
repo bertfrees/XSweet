@@ -38,6 +38,7 @@
       xpath-default-namespace="http://www.w3.org/1999/xhtml"
       exclude-result-prefixes="#all">
       
+      <xsw:output method="xml"  omit-xml-declaration="yes"/>
       
       <xsw:template match="node() | @*">
         <xsw:copy>
@@ -85,7 +86,7 @@
       <xsl:attribute name="priority" select="count(. | preceding-sibling::* | ../preceding-sibling::div[@class='hX']/*)"/>
       <xsw:element name="h{$h-level}">
         <xsw:copy-of select="@*"/>
-        <xsw:comment> was <xsl:value-of select="$match"/> </xsw:comment>
+        <!--<xsw:comment> was <xsl:value-of select="$match"/> </xsw:comment>-->
         <xsw:apply-templates/>
       </xsw:element>
     </xsw:template>
