@@ -5,11 +5,19 @@
   xmlns="http://www.w3.org/1999/xhtml" xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all" xmlns:fn="http://www.example.com/fn">
 
+<!-- For docs on WordML, see (at least):
+  
+  http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/index.html
+  
+  -->
+
+
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
-  <xsl:variable name="endnotes-file" select="resolve-uri('endnotes.xml', document-uri(/))"/>
-  <xsl:variable name="styles-file"   select="resolve-uri('styles.xml',   document-uri(/))"/>
+  <xsl:variable name="endnotes-file"  select="resolve-uri('endnotes.xml',  document-uri(/))"/>
+  <xsl:variable name="footnotes-file" select="resolve-uri('footnotes.xml', document-uri(/))"/>
+  <xsl:variable name="styles-file"    select="resolve-uri('styles.xml',    document-uri(/))"/>
   <!-- We have no interest in stylesWithEffects.xml. -->
 
   <!--<xsl:variable name="endnotes-file" select="'x'"/>
@@ -18,6 +26,12 @@
   <xsl:variable name="endnotes-doc">
     <xsl:if test="doc-available($endnotes-file)">
       <xsl:sequence select="doc($endnotes-file)"/>
+    </xsl:if>
+  </xsl:variable>
+  
+  <xsl:variable name="footnotes-doc">
+    <xsl:if test="doc-available($footnotes-file)">
+      <xsl:sequence select="doc($footnotes-file)"/>
     </xsl:if>
   </xsl:variable>
   
@@ -68,9 +82,9 @@
       <div class="docx-endnotes">
         <xsl:apply-templates select="$endnotes-doc/*/w:endnote"/>
       </div>
-      <!--<div class="docx-footnotes">
+      <div class="docx-footnotes">
         <xsl:apply-templates select="$footnotes-doc/*/w:footnote"/>
-      </div>-->
+      </div>
     </body>
   </xsl:template>
 
@@ -85,13 +99,20 @@
       <xsl:apply-templates select="w:p"/>
     </div>
   </xsl:template>
-
-  <xsl:template match="w:endnoteRef">
-    <span class="endnoteRef">
+  
+  <xsl:template match="w:endnoteRef | w:footnoteRef">
+    <span class="{local-name()}">
       <xsl:comment> value to be generated </xsl:comment>
     </span>
   </xsl:template>
 
+  <xsl:template match="w:footnote">
+    <div class="docx-footnote" id="fn{@w:id}">
+      <xsl:apply-templates select="w:p"/>
+    </div>
+  </xsl:template>
+  
+  
   <!-- //w:p/w:pPr/w:pStyle -->
   <xsl:function name="xsw:safeClass" as="xs:string">
     <xsl:param name="val" as="attribute()"/>
@@ -199,7 +220,17 @@
       </xsl:if>
     </a>
   </xsl:template>
-
+  
+  <xsl:template match="w:footnoteReference" priority="3">
+    <!-- Just like the endnoteReference -->
+    <a class="footnoteReference" href="#fn{@w:id}">
+      <xsl:apply-templates/>
+      <xsl:if test="empty(node())">
+        <xsl:comment> (generated) </xsl:comment>
+      </xsl:if>
+    </a>
+  </xsl:template>
+  
   <!-- Again overriding the default behavior for w:r/*, to the same effect.
        Check and switch on when we do footnotes. 
        See line 50 or so (template @match='w:body') -->
