@@ -18,6 +18,16 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- Insert a comment into any empty div or p so as not to confuse poor HTML parsers. -->
+  <xsl:template match="div | p | h1 | h2 | h3 | h4 | h5 | h6">
+    <xsl:copy>
+      <xsl:apply-templates select="node() | @*"/>
+      <xsl:if test="empty(*) and not(matches(.,'\S'))">
+        <xsl:comment> empty </xsl:comment>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- Remove any 'p' element that is truly empty - nothing but whitespace, no elements.
        (Empty inline elements were stripped by generic logic: see scrub.xsl.) -->
   <!--<xsl:template match="p[not(matches(.,'\S'))][empty(*)]"/>-->
