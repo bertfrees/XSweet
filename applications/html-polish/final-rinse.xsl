@@ -18,6 +18,13 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- Disable when auto-indenting - this introduces cosmetic whitespace into
+       an assumed text-brick. -->
+  <xsl:template match="head | head//* | body | body/* | p | h1 | h2 | h3 | h4 | h5 | h6" priority="10">
+    <xsl:text>&#xA;</xsl:text>
+    <xsl:next-match/>
+  </xsl:template>
+  
   <!-- Insert a comment into any empty div or p so as not to confuse poor HTML parsers. -->
   <xsl:template match="div | p | h1 | h2 | h3 | h4 | h5 | h6">
     <xsl:copy>
