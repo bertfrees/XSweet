@@ -342,10 +342,10 @@
     <xsl:sequence select="($n is $n/self::w:tab) or exists($n/../w:rPr) and not($n-is-callout)"/>
   </xsl:function>
 
-  <!-- Since we don't want to see these wrapped in formatting ...  -->
+  <!-- If we didn't want to see these wrapped in formatting ...
   <xsl:template match="w:footnoteReference | w:endnoteReference" mode="is-callout" as="xs:boolean">
     <xsl:sequence select="true()"/>
-  </xsl:template>
+  </xsl:template>  -->
 
   <xsl:template match="*" mode="is-callout" as="xs:boolean">
     <xsl:sequence select="false()"/>
