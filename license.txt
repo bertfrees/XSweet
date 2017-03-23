@@ -1,4 +1,4 @@
-Copyright (c) 2016, Brave New Software
+Copyright (c) 2017, Aspiration Tech
 
 MIT License (https://opensource.org/licenses/MIT)
 
