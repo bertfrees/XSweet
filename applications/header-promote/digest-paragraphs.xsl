@@ -63,7 +63,8 @@
 
 
   <xsl:variable name="p-proxies">
-    <xsl:apply-templates select="//div[@class = 'docx-body']/p" mode="digest"/>
+    <!-- Only paragraphs with contents are examined for header promotion. -->
+    <xsl:apply-templates select="//div[@class = 'docx-body']/p[matches(string(.),'S')]" mode="digest"/>
   </xsl:variable>
 
   <xsl:variable name="p-proxies-measured">
