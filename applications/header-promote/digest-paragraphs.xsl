@@ -137,7 +137,8 @@
 
   <!-- Step 3. -->
   <xsl:variable name="p-proxies-assimilated">
-    <!-- Consolidates info about individual p elements into sets -->
+    <!-- Consolidates info about individual p elements into sets. Note proxies are no longer in document order
+         as each one now represents a collection of similar paragraphs. Info acquired earlier is crunched. -->
     <xsl:for-each-group select="$p-proxies-measured/*"
       group-by="string-join((@class, @style), ' # ')">
       <!-- Note: not sorting yet these are in arbitrary order. -->
@@ -146,8 +147,8 @@
       <xsl:for-each-group select="current-group()" group-by="@data-allcaps">
         <xsl:copy>
           <xsl:copy-of select="@class, @style"/>
-          <!-- Notice data-group-key changes; the old one is dumped. -->
-          <xsl:attribute name="data-group-key"        select="concat($data-group-key,(if (current-grouping-key()) then '-allcaps' else ()))"/>
+          <!-- Notice data-group-key changes. -->
+          <xsl:attribute name="data-group-key"        select="concat($data-group-key,(if (current-grouping-key()) then ' # All caps' else ()))"/>
           <xsl:attribute name="data-nominal-fontsize" select="xsw:nominal-size(.)"/>
           <xsl:attribute name="data-count"            select="count(current-group())"/>
           <xsl:attribute name="data-average-length"   select="format-number(sum(current-group()/@data-length) div count(current-group()), '0.##')"/>
@@ -159,14 +160,20 @@
     </xsl:for-each-group>
   </xsl:variable>
 
+  <!-- Regex establishes which Paragraph Styles are pre-emptive for purposes of header promotion.
+       The match will be non-ws sensitive, so 'head1' and 'Head1' are matched alike.
+       NB earlier @class value normalization has removed spaces @class should match \i\c* (XML NAME production)
+   -->
   <xsl:param as="xs:string" name="headerRegex">^h(ead|eader|eading)?\d\d?</xsl:param>
 
   <xsl:variable name="p-proxies-filtered">
+    <!-- $named-headers holds pre-emptive headers (by style) if any are found. -->
     <xsl:variable name="named-headers" select="$p-proxies-assimilated/*[matches(@class, $headerRegex, 'i')]"/>
 
     <!-- If we have explicitly named headers, we'll keep em. -->
     <xsl:sequence select="$named-headers"/>
 
+    <!-- If not, we accept the assimilated proxies - pushing them through a mode to decide which ones we want. -->
     <xsl:if test="empty($named-headers)">
       <xsl:apply-templates select="$p-proxies-assimilated/*" mode="keep-headers"/>
     </xsl:if>
@@ -207,12 +214,11 @@
     </xsl:choose>
   </xsl:variable>
 
+  <!-- If headers are given explicitly we can exploit their style names to derive a header level. -->
   <xsl:template name="group-proxies-by-header-level">
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="replace(@class, '\D', '')">
       <xsl:sort select="current-grouping-key()" data-type="number" order="descending"/>
-
-      <!-- If the data assigns header levels hell we'll take em. -->
-      <!-- Notice the header level they come out isn't necessarily the stated header level (i.e. h2 might be level 3 if there is no level 2) -->
+      <!-- Notice the header level resulting isn't necessarily the stated header level (i.e. h2 might be level 3 if there is no level 2) -->
       <div class="hX">
         <xsl:sequence select="current-group()"/>
       </div>
