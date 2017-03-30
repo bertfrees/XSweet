@@ -66,12 +66,62 @@
     </body>
   </xsl:template>
 
-
+<!-- Step 1. Deliver proxies for paragraphs, considered as candidates for header promotion. -->
   <xsl:variable name="p-proxies">
-    <!-- Only paragraphs with contents are examined for header promotion. -->
+    <!-- Only paragraphs with contents are examined for header promotion.
+         matches(string(.),'\S') is true iff non-ws content is present. -->
     <xsl:apply-templates select="//div[@class = 'docx-body']/p[matches(string(.),'\S')]" mode="digest"/>
   </xsl:variable>
 
+  <!-- Mode 'digest' is the initial (first) pass over the document, which boils down all paragraph-level 
+  objects (they will be 'p' in the input) into informative little proxies of themselves.
+  
+  So for example
+  <p style="font-size: 14pt">CHAPTER 1</p>
+  
+  becomes
+  <p data-lastchar="1" data-allcaps="true" data-length="9" style="font-size: 14pt"/>
+
+  Note that @style may be rewritten (only properties in which we will later be interested, are kept).
+  
+  Analysis proceeds from there in subsequent passes. -->
+  
+  <xsl:template match="p" mode="digest">
+    <!-- lastchar shows the last (non-whitespace) character in the 'p'. -->
+    <p data-lastchar="{replace(.,'^.*(\S)\s*$','$1')}"
+       data-allcaps="{. = upper-case(.)}"
+       data-length="{string-length(.)}">
+      <xsl:copy-of select="@class"/>
+      <xsl:apply-templates select="@style" mode="digest"/>
+    </p>
+  </xsl:template>
+  
+  <!-- Names CSS properties in which we are interested, in a normalized order. -->
+  <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'color'"/>
+  
+  <xsl:template mode="digest" match="p/@style">
+    <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
+    
+    <xsl:variable name="refined-style">
+      <xsl:for-each select="$keepers[some $p in $props satisfies starts-with($p, .)]">
+        <xsl:variable name="keeper" select="."/>
+        <xsl:if test="position() gt 1">; </xsl:if>
+        <xsl:value-of select="$props[starts-with(., $keeper)]"/>
+      </xsl:for-each>
+    </xsl:variable>
+    
+    <!-- Add an attribute iff there is a 'refined' value. -->
+    <xsl:if test="matches($refined-style, '\S')">
+      <xsl:attribute name="style" select="$refined-style"/>
+    </xsl:if>
+    
+  </xsl:template>
+  
+  <!-- Step 2. Now we have a set of element proxies (one per non-ws paragraph)
+       we can run over them in contiguous clumps. This enables us to capture
+       info regarding how many contiguous paragraphs appear with a given style -
+       a factor for header promotion. (Inline styling does not affect this grouping,
+       but paragraph-level styling does.) -->
   <xsl:variable name="p-proxies-measured">
     <xsl:for-each-group select="$p-proxies/*"
       group-adjacent="string-join((@class, @style, @data-all-caps), ' # ')">
@@ -79,21 +129,25 @@
         <xsl:copy>
           <xsl:copy-of select="@*"/>
           <xsl:attribute name="data-run" select="count(current-group())"/>
+          <xsl:attribute name="data-group-key" select="current-grouping-key()"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:for-each-group>
   </xsl:variable>
 
-
+  <!-- Step 3. -->
   <xsl:variable name="p-proxies-assimilated">
     <!-- Consolidates info about individual p elements into sets -->
     <xsl:for-each-group select="$p-proxies-measured/*"
       group-by="string-join((@class, @style), ' # ')">
       <!-- Note: not sorting yet these are in arbitrary order. -->
       <!-- But we will still treat all-caps groups separate from others with the same properties. -->
+      <xsl:variable name="data-group-key" select="current-grouping-key()"/>
       <xsl:for-each-group select="current-group()" group-by="@data-allcaps">
         <xsl:copy>
           <xsl:copy-of select="@class, @style"/>
+          <!-- Notice data-group-key changes; the old one is dumped. -->
+          <xsl:attribute name="data-group-key"        select="concat($data-group-key,(if (current-grouping-key()) then '-allcaps' else ()))"/>
           <xsl:attribute name="data-nominal-fontsize" select="xsw:nominal-size(.)"/>
           <xsl:attribute name="data-count"            select="count(current-group())"/>
           <xsl:attribute name="data-average-length"   select="format-number(sum(current-group()/@data-length) div count(current-group()), '0.##')"/>
@@ -190,51 +244,6 @@
     </xsl:for-each-group>
   </xsl:template>
 
-
-<!-- Mode 'digest' is the initial (first) pass over the document, which boils down all paragraph-level 
-  objects (they will be 'p' in the input) into informative little proxies of themselves.
-  
-  So for example
-  <p style="font-size: 14pt">CHAPTER 1</p>
-  
-  becomes
-  <p data-lastchar="1" data-allcaps="true" data-length="9" style="font-size: 14pt"/>
-
-  Note that @style may be rewritten (only properties in which we will later be interested, are kept).
-  
-  Analysis proceeds from there in subsequent passes.
-
-  -->
-
-  <xsl:template match="p" mode="digest">
-    <!-- lastchar shows the last (non-whitespace) character in the 'p'. -->
-    <p data-lastchar="{replace(.,'^.*(\S)\s*$','$1')}" data-allcaps="{. = upper-case(.)}"
-      data-length="{string-length(.)}">
-      <xsl:copy-of select="@class"/>
-      <xsl:apply-templates select="@style" mode="digest"/>
-    </p>
-  </xsl:template>
-
-  <!-- In the desired order. -->
-  <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'color'"/>
-
-  <xsl:template mode="digest" match="p/@style">
-    <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
-
-    <xsl:variable name="refined-style">
-      <xsl:for-each select="$keepers[some $p in $props satisfies starts-with($p, .)]">
-        <xsl:variable name="keeper" select="."/>
-        <xsl:if test="position() gt 1">; </xsl:if>
-        <xsl:value-of select="$props[starts-with(., $keeper)]"/>
-      </xsl:for-each>
-    </xsl:variable>
-
-    <!-- Add an attribute iff there is a 'refined' value. -->
-    <xsl:if test="matches($refined-style, '\S')">
-      <xsl:attribute name="style" select="$refined-style"/>
-    </xsl:if>
-
-  </xsl:template>
 
   <xsl:function name="xsw:nominal-size" as="xs:decimal">
     <xsl:param name="p" as="element(p)"/>
