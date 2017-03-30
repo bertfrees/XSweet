@@ -5,7 +5,7 @@
   exclude-result-prefixes="#all">
 
   <!-- Indent should really be no, but for testing. -->
-  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
+  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
   <!-- 
   Heuristic analysis is implemented as a series of filters.
@@ -43,18 +43,23 @@
   <xsl:template match="/*">
     <body>
       <div class="grouped">
+        <!-- delivers remaining $p-proxies in groups assigning them to header levels (by order) --> 
         <xsl:copy-of select="$p-proxies-grouped"/>
       </div>
       <div class="filtered">
+        <!-- delivers a filtered (reduced) copy of of $p-proxies-assilimated -->
         <xsl:copy-of select="$p-proxies-filtered"/>
       </div>
       <div class="assimilated">
+        <!-- delivers a grouped/digested copy of $p-proxies-measured (step 2) -->
         <xsl:copy-of select="$p-proxies-assimilated"/>
       </div>
       <div class="measured">
+        <!-- deliveres an annotated copy of $p-proxies (step 1). -->
         <xsl:copy-of select="$p-proxies-measured"/>
       </div>
       <div class="digested">
+        <!-- $p-proxies is produced by polling 'p' element children of the docx-body.       -->
         <xsl:copy-of select="$p-proxies"/>
       </div>
 
@@ -64,7 +69,7 @@
 
   <xsl:variable name="p-proxies">
     <!-- Only paragraphs with contents are examined for header promotion. -->
-    <xsl:apply-templates select="//div[@class = 'docx-body']/p[matches(string(.),'S')]" mode="digest"/>
+    <xsl:apply-templates select="//div[@class = 'docx-body']/p[matches(string(.),'\S')]" mode="digest"/>
   </xsl:variable>
 
   <xsl:variable name="p-proxies-measured">
