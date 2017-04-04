@@ -26,6 +26,10 @@
   
   <xsl:param name="debug-mode" as="xs:string">silent</xsl:param>
   
+  <!-- Note that generated stylesheet will error if $extra-match-criteria is anything but an XPath filter expression
+       i.e. '[ booleanExp ]' (with square brackets). -->
+  <xsl:param name="extra-match-criteria">[string-length(.) &lt;= 200]</xsl:param>
+  
   <xsl:template match="body">
     
     <!--       xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -57,7 +61,6 @@
     </xsw:stylesheet>
   </xsl:template>
   
-  
   <!-- Template writes XSLT templates  -->
   
   <xsl:template match="div[@class='hX']/*" mode="xslt-produce">
@@ -80,6 +83,7 @@
       <xsl:if test="@data-always-caps='true'">
         <xsl:text>[.=upper-case(.)]</xsl:text>
       </xsl:if>
+      <xsl:copy-of select="$extra-match-criteria"/>
     </xsl:variable>
     <xsw:template match="{$match}">
       <xsl:variable name="h-level" select="count(..|../following-sibling::div[@class='hX'])"/>
