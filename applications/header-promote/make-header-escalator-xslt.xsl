@@ -27,8 +27,9 @@
   <xsl:param name="debug-mode" as="xs:string">silent</xsl:param>
   
   <!-- Note that generated stylesheet will error if $extra-match-criteria is anything but an XPath filter expression
-       i.e. '[ booleanExp ]' (with square brackets). -->
-  <xsl:param name="extra-match-criteria">[string-length(.) &lt;= 200]</xsl:param>
+       i.e. '[ booleanExp ]' (with square brackets).
+       Exposing it as a parameter isn't recommended unless we can defend against arbitrary XPath injection. -->
+  <xsl:variable name="extra-match-criteria">[string-length(.) &lt;= 200]</xsl:variable>
   
   <xsl:template match="body">
     
