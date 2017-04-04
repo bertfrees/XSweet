@@ -97,7 +97,7 @@
   </xsl:template>
   
   <!-- Names CSS properties in which we are interested, in a normalized order. -->
-  <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'color'"/>
+  <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'text-decoration', 'color'"/>
   
   <xsl:template mode="digest" match="p/@style">
     <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
@@ -236,14 +236,23 @@
 
         <xsl:for-each-group select="current-group()"
           group-by="tokenize(@style, '\s*;\s*') = 'font-weight: bold'">
+          <xsl:sort select="string(current-grouping-key())"/>
+          <!-- likewise -->
 
-          <xsl:for-each-group select="current-group()" group-by="@data-always-caps">
-            <xsl:sort select="string(current-grouping-key())"/><!-- likewise -->
+          <xsl:for-each-group select="current-group()"
+            group-by="tokenize(@style, '\s*;\s*') = 'text-decoration: underline'">
+            <xsl:sort select="string(current-grouping-key())"/>
+            <!-- likewise -->
 
-            <!-- Now we've split and ordered them, they can be grouped. -->
-            <div class="hX">
-              <xsl:sequence select="current-group()"/>
-            </div>
+            <xsl:for-each-group select="current-group()" group-by="@data-always-caps">
+              <xsl:sort select="string(current-grouping-key())"/>
+              <!-- likewise -->
+
+              <!-- Now we've split and ordered them, they can be grouped. -->
+              <div class="hX">
+                <xsl:sequence select="current-group()"/>
+              </div>
+            </xsl:for-each-group>
           </xsl:for-each-group>
         </xsl:for-each-group>
       </xsl:for-each-group>
