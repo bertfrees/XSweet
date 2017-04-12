@@ -202,11 +202,8 @@
     <xsl:sequence select="."/>
   </xsl:template>
   
-  <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
-       less than 120 chars long on average, and is bigger than *someone* -->
+  <!-- Or it could make the grade due to being centered, and not clumping ... -->
   <xsl:template mode="keep-headers" priority="97"  match="p[@data-average-run &lt; 2][xsw:css-prop(.)= 'text-align: center']">
-    <!-- Casual polling suggests char length for headers in English
-         should be 25-40 on ave, compared to li (150-175ish) or p (over 1000) -->
     <xsl:sequence select="."/>
   </xsl:template>
   
