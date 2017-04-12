@@ -202,8 +202,9 @@
     <xsl:sequence select="."/>
   </xsl:template>
   
-  <!-- Or it could make the grade due to being centered, and not clumping ... -->
-  <xsl:template mode="keep-headers" priority="97"  match="p[@data-average-run &lt; 2][xsw:css-prop(.)= 'text-align: center']">
+  <!-- Or it could make the grade due to being centered, short on average, and not clumping ... -->
+  <xsl:template mode="keep-headers" priority="97"
+    match="p[@data-average-run &lt; 2][@data-average-length &lt; 200][xsw:css-prop(.)= 'text-align: center']">
     <xsl:sequence select="."/>
   </xsl:template>
   
