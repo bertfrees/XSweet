@@ -37,9 +37,10 @@
   
   -->
 
-  <xsl:param name="form" as="xs:string">xslt</xsl:param>
+  <!--<xsl:param name="form" as="xs:string">xslt</xsl:param>-->
 
 
+  <xsl:variable name="varName" select="tokenize(@style, '\s*;\s*')"/>
   <xsl:template match="/*">
     <body>
       <div class="grouped">
@@ -97,7 +98,7 @@
   </xsl:template>
   
   <!-- Names CSS properties in which we are interested, in a normalized order. -->
-  <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'text-decoration', 'color'"/>
+  <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'text-decoration', 'color', 'text-align'"/>
   
   <xsl:template mode="digest" match="p/@style">
     <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
@@ -194,14 +195,22 @@
   <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
        less than 120 chars long on average, and is bigger than *someone* -->
   <xsl:template mode="keep-headers" priority="98"  match="p[@data-average-run &lt; 4]
-      [@data-nominal-font-size &gt; ../@data-nominal-font-size]
-      [@data-average-length &lt;= 120]">
+    [@data-nominal-font-size &gt; ../@data-nominal-font-size]
+    [@data-average-length &lt;= 120]">
     <!-- Casual polling suggests char length for headers in English
          should be 25-40 on ave, compared to li (150-175ish) or p (over 1000) -->
     <xsl:sequence select="."/>
   </xsl:template>
-
-
+  
+  <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
+       less than 120 chars long on average, and is bigger than *someone* -->
+  <xsl:template mode="keep-headers" priority="97"  match="p[@data-average-run &lt; 2][xsw:css-prop(.)= 'text-align: center']">
+    <!-- Casual polling suggests char length for headers in English
+         should be 25-40 on ave, compared to li (150-175ish) or p (over 1000) -->
+    <xsl:sequence select="."/>
+  </xsl:template>
+  
+  
   <xsl:variable name="p-proxies-grouped">
     <!-- Yes we know the XML syntax is harsh don't worry it's compiled away, this is very fast! -->
     <xsl:choose>
@@ -225,22 +234,27 @@
     </xsl:for-each-group>
   </xsl:template>
 
+  <xsl:function name="xsw:css-prop" as="xs:string*">
+    <xsl:param name="who" as="element()"/>
+    <xsl:sequence select="for $s in tokenize($who/@style,'\s*;\s*') return normalize-space($s)"/>
+  </xsl:function>
+  
   <xsl:template name="group-proxies-by-font">
     <!-- Alternatively we can sort and group by font properties including primarily size. -->
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="@data-nominal-fontsize">
       <xsl:sort select="current-grouping-key()" data-type="number"/>
       
       <xsl:for-each-group select="current-group()"
-        group-by="tokenize(@style, '\s*;\s*') = 'font-style: italic'">
+        group-by="xsw:css-prop(.) = 'font-style: italic'">
         <xsl:sort select="string(current-grouping-key())"/><!-- 'false' or 'true' -->
 
         <xsl:for-each-group select="current-group()"
-          group-by="tokenize(@style, '\s*;\s*') = 'font-weight: bold'">
+          group-by="xsw:css-prop(.) = 'font-weight: bold'">
           <xsl:sort select="string(current-grouping-key())"/>
           <!-- likewise -->
 
           <xsl:for-each-group select="current-group()"
-            group-by="tokenize(@style, '\s*;\s*') = 'text-decoration: underline'">
+            group-by="xsw:css-prop(.) = 'text-decoration: underline'">
             <xsl:sort select="string(current-grouping-key())"/>
             <!-- likewise -->
 
