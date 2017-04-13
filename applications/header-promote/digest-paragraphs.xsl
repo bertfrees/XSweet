@@ -149,7 +149,7 @@
         <xsl:copy>
           <xsl:copy-of select="@class, @style"/>
           <!-- Notice data-group-key changes. -->
-          <xsl:attribute name="data-group-key"        select="concat($data-group-key,(if (current-grouping-key()) then ' # All caps' else ()))"/>
+          <xsl:attribute name="data-group-key"        select="$data-group-key"/>
           <xsl:attribute name="data-nominal-fontsize" select="xsw:nominal-size(.)"/>
           <xsl:attribute name="data-count"            select="count(current-group())"/>
           <xsl:attribute name="data-average-length"   select="format-number(sum(current-group()/@data-length) div count(current-group()), '0.##')"/>
@@ -216,17 +216,18 @@
         <xsl:call-template name="group-proxies-by-header-level"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="group-proxies-by-font"/>
+        <xsl:call-template name="group-proxies-by-properties"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
   <!-- If headers are given explicitly we can exploit their style names to derive a header level. -->
   <xsl:template name="group-proxies-by-header-level">
+    <xsl:comment> Proxies being grouped by header level as represented </xsl:comment>
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="replace(@class, '\D', '')">
       <xsl:sort select="current-grouping-key()" data-type="number" order="descending"/>
       <!-- Notice the header level resulting isn't necessarily the stated header level (i.e. h2 might be level 3 if there is no level 2) -->
-      <div class="hX">
+      <div class="hX" data-grouping-key="{current-grouping-key()}">
         <xsl:sequence select="current-group()"/>
       </div>
     </xsl:for-each-group>
@@ -237,7 +238,8 @@
     <xsl:sequence select="for $s in tokenize($who/@style,'\s*;\s*') return normalize-space($s)"/>
   </xsl:function>
   
-  <xsl:template name="group-proxies-by-font">
+  <xsl:template name="group-proxies-by-properties">
+    <xsl:comment> Proxies being grouped by property assignment </xsl:comment>
     <!-- Alternatively we can sort and group by font properties including primarily size. -->
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="@data-nominal-fontsize">
       <xsl:sort select="current-grouping-key()" data-type="number"/>
@@ -256,7 +258,7 @@
             <xsl:sort select="string(current-grouping-key())"/>
             <!-- likewise -->
 
-            <xsl:for-each-group select="current-group()" group-by="@data-always-caps">
+            <xsl:for-each-group select="current-group()" group-by="@data-always-caps"><!-- this time a string not a boolean 'false' or 'true' -->
               <xsl:sort select="string(current-grouping-key())"/>
               <!-- likewise -->
 
