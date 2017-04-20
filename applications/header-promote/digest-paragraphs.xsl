@@ -165,19 +165,19 @@
        The match will be non-ws sensitive, so 'head1' and 'Head1' are matched alike.
        NB earlier @class value normalization has removed spaces @class should match \i\c* (XML NAME production)
    -->
-  <xsl:param as="xs:string" name="headerRegex">^h(ead|eader|eading)?\d\d?</xsl:param>
+  <!--<xsl:param as="xs:string" name="headerRegex">^h(ead|eader|eading)?\d\d?</xsl:param>-->
 
   <xsl:variable name="p-proxies-filtered">
     <!-- $named-headers holds pre-emptive headers (by style) if any are found. -->
-    <xsl:variable name="named-headers" select="$p-proxies-assimilated/*[matches(@class, $headerRegex, 'i')]"/>
+    <!--<xsl:variable name="named-headers" select="$p-proxies-assimilated/*[matches(@class, $headerRegex, 'i')]"/>-->
 
     <!-- If we have explicitly named headers, we'll keep em. -->
-    <xsl:sequence select="$named-headers"/>
+    <!--<xsl:sequence select="$named-headers"/>-->
 
     <!-- If not, we accept the assimilated proxies - pushing them through a mode to decide which ones we want. -->
-    <xsl:if test="empty($named-headers)">
-      <xsl:apply-templates select="$p-proxies-assimilated/*" mode="keep-headers"/>
-    </xsl:if>
+    <!--<xsl:if test="empty($named-headers)">-->
+    <xsl:apply-templates select="$p-proxies-assimilated/*" mode="keep-headers"/>
+    <!--</xsl:if>-->
 
   </xsl:variable>
 
