@@ -212,9 +212,11 @@
   <xsl:variable name="p-proxies-grouped">
     <!-- Yes we know the XML syntax is harsh don't worry it's compiled away, this is very fast! -->
     <xsl:choose>
-      <xsl:when test="$p-proxies-filtered/*[matches(@class, $headerRegex,'i')]">
+      <xsl:when test="false()"/>
+      <!-- Turning off style-based grouping for now. -->
+      <!--<xsl:when test="$p-proxies-filtered/*[matches(@class, $headerRegex,'i')]">
         <xsl:call-template name="group-proxies-by-header-level"/>
-      </xsl:when>
+      </xsl:when>-->
       <xsl:otherwise>
         <xsl:call-template name="group-proxies-by-properties"/>
       </xsl:otherwise>
