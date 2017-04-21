@@ -35,6 +35,16 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="span[@class=('EndnoteReference','FootnoteReference')]">
+    <!-- These spans sometimes contain noise from input, in addition to a (generated) endnote or footnote reference.  -->
+    <!-- Note the named style assignment is directly coded in the Word -->
+<!--   <span class="EndnoteReference"><a class="endnoteReference" href="#en5">5</a>6</span>"-->
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="a"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- Remove any 'p' element that is truly empty - nothing but whitespace, no elements.
        (Empty inline elements were stripped by generic logic: see scrub.xsl.) -->
   <!--<xsl:template match="p[not(matches(.,'\S'))][empty(*)]"/>-->
