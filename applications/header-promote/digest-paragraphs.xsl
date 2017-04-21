@@ -181,20 +181,25 @@
 
   </xsl:variable>
 
-  <!-- Never keep a p unless instructed otherwise -->
+  <!-- "Keeper rules" determine which paragraphs are recognized as candidates for header promotion. -->
+  
+  <!-- Fallback rule: if nothing else matches, never keep a p. -->
   <xsl:template mode="keep-headers" match="*"/>
-
-  <!-- Always keep lines that never show full stops (hey what can go wrong) -->
-  <xsl:template mode="keep-headers" priority="100" match="p[@data-never-fullstop = 'true']">
-    <xsl:sequence select="."/>
-  </xsl:template>
-
+    
+  <!-- Actual rules are effected by matches in 'keep-headers' mode.
+       A paragraph to be included passes itself through via <xsl:sequence select="."/>.
+       A paragraph to be excluded is matched by an empty template.
+       Note the priority is important: higher priority wins! -->
+  
+  <!-- Don't keep paragrahs that are right-aligned. -->
+  <xsl:template mode="keep-headers" priority="100"  match="p[xsw:css-prop(.)= 'text-align: right']"/>
+  
   <!-- Never a header if the commonest type of 'p' -->
-  <xsl:template mode="keep-headers" priority="99"  match="p[not(../@data-count &gt; @data-count)]"/>
-
+  <xsl:template mode="keep-headers" priority="75"  match="p[not(../@data-count &gt; @data-count)]"/>
+  
   <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
        less than 120 chars long on average, and is bigger than *someone* -->
-  <xsl:template mode="keep-headers" priority="98"  match="p[@data-average-run &lt; 4]
+  <xsl:template mode="keep-headers" priority="65"  match="p[@data-average-run &lt; 4]
     [@data-nominal-font-size &gt; ../@data-nominal-font-size]
     [@data-average-length &lt;= 120]">
     <!-- Casual polling suggests char length for headers in English
@@ -203,12 +208,18 @@
   </xsl:template>
   
   <!-- Or it could make the grade due to being centered, short on average, and not clumping ... -->
-  <xsl:template mode="keep-headers" priority="97"
+  <xsl:template mode="keep-headers" priority="60"
     match="p[@data-average-run &lt; 2][@data-average-length &lt; 200][xsw:css-prop(.)= 'text-align: center']">
     <xsl:sequence select="."/>
   </xsl:template>
   
+  <!-- Of what remains, always keep lines that never show full stops (hey what can go wrong) -->
+  <xsl:template mode="keep-headers" priority="50" match="p[@data-never-fullstop = 'true']">
+    <xsl:sequence select="."/>
+  </xsl:template>
   
+  
+
   <xsl:variable name="p-proxies-grouped">
     <!-- Yes we know the XML syntax is harsh don't worry it's compiled away, this is very fast! -->
     <xsl:choose>
