@@ -154,6 +154,12 @@
     </p>
   </xsl:template>
 
+  <!-- br documented at http://officeopenxml.com/WPtextSpecialContent-break.php -->
+
+  <xsl:template match="w:br">
+    <br class="br"/>
+  </xsl:template>
+
   <xsl:template match="w:tbl">
     <table>
       <xsl:apply-templates select="w:tr"/>
