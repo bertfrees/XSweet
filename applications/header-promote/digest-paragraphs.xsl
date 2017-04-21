@@ -192,10 +192,15 @@
        Note the priority is important: higher priority wins! -->
   
   <!-- Don't keep paragrahs that are right-aligned. -->
+  <!-- for debugging <xsl:template mode="keep-headers" priority="1000"  match="p">
+    <xsl:sequence select="."/>
+  </xsl:template>-->
+  
+  <!-- Never a header if right-aligned -->
   <xsl:template mode="keep-headers" priority="100"  match="p[xsw:css-prop(.)= 'text-align: right']"/>
   
   <!-- Never a header if the commonest type of 'p' -->
-  <xsl:template mode="keep-headers" priority="75"  match="p[not(../@data-count &gt; @data-count)]"/>
+  <xsl:template mode="keep-headers" priority="75"  match="p[@data-count = max(../@data-count)]"/>
   
   <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
        less than 120 chars long on average, and is bigger than *someone* -->
