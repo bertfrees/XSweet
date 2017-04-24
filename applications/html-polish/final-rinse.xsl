@@ -12,6 +12,7 @@
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
+  
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
@@ -34,6 +35,7 @@
       </xsl:if>
     </xsl:copy>
   </xsl:template>
+  
   
   <xsl:template match="span[@class=('EndnoteReference','FootnoteReference')]">
     <!-- These spans sometimes contain noise from input, in addition to a (generated) endnote or footnote reference.  -->
@@ -87,7 +89,7 @@
   </xsl:template>
   
   <xsl:template match="tab">
-    <span class="tab">&#x9;</span>
+    <span class="tab">&#x9;<xsl:comment> tab </xsl:comment></span>
   </xsl:template>
   
   <xsl:template match="b[ancestor::*[contains(@style,'font-weight')][1]/tokenize(@style,'\s*;\s*') = 'font-weight: bold']">

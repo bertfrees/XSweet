@@ -22,6 +22,10 @@
     <xsl:apply-templates/>
   </xsl:template>
   
+  <!-- Matching b, i and u if they have only whitespace text content
+       this includes <b> </b> and <b><tab/></b> -->
+       
+  
   <xsl:template match="caps | strike">
     <xsl:apply-templates/>
   </xsl:template>
@@ -39,9 +43,12 @@
   </xsl:template>
   
   <!-- Inline elements that are truly empty can be stripped. -->
-  <xsl:template match="p//*[empty(*) and not(string(.))]">
+  <xsl:template match="p//*[empty(.//* except (.//tab|.//span|.//b|.//i|.//u)) and not(string(.))]">
     <xsl:apply-templates/>
   </xsl:template>
+  <!-- Matching b, i and u if they have only whitespace text content w/ other formatting properties
+       this includes <b> </b> and <b><tab/></b> -->
+  
   
   <xsl:template priority="5" match="img | br | hr">
     <xsl:copy>

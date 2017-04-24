@@ -83,6 +83,7 @@
     </p:input>
   </p:xslt>
   
+  <!--<p:identity name="rewired"/>-->
   <p:xslt name="rewired">
     <p:input port="stylesheet">
       <p:document href="css-abstract/css-abstract.xsl"/>
