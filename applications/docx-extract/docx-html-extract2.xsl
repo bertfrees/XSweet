@@ -159,7 +159,12 @@
   <xsl:template match="w:br">
     <br class="br"/>
   </xsl:template>
-
+  
+  <!-- cr documented there too: yes, it's placeholder for CR -->
+  <xsl:template match="w:cr">
+    <br class="cr"/>
+  </xsl:template>
+  
   <xsl:template match="w:tbl">
     <table>
       <xsl:apply-templates select="w:tr"/>
