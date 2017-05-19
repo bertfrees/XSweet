@@ -104,7 +104,27 @@
     <xsl:apply-templates/>  
   </xsl:template>
   
+  <xsl:template match="span[@style='font-style: italic']">
+    <i>
+      <xsl:apply-templates/>
+    </i>
+  </xsl:template>
+  
+  <xsl:template match="span[@style='font-weight: bold']">
+    <b>
+      <xsl:apply-templates/>
+    </b>
+  </xsl:template>
+  
+  <xsl:template match="span[@style='text-decoration: underline']">
+    <u>
+      <xsl:apply-templates/>
+    </u>
+  </xsl:template>
+  
+  
   <xsl:template match="b/b | i/i | u/u" priority="5">
     <xsl:apply-templates/>
   </xsl:template>
+  
 </xsl:stylesheet>
