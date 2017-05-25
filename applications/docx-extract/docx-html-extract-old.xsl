@@ -124,47 +124,28 @@
     </xsl:value-of>
   </xsl:function>
 
-  <xsl:variable name="debug" select="false()"/>
-  
   <xsl:template match="w:p">
     <p>
-      <!-- Copying a named style binding to @class -->
+      <!-- Copying any style declaration -->
       <xsl:for-each select="w:pPr/w:pStyle">
         <!-- strip periods, colons and non-XML name chars (this includes spaces) -->
         <xsl:attribute name="class">
           <xsl:value-of select="xsw:safeClass(@w:val)"/>
         </xsl:attribute>
       </xsl:for-each>
-      
+
       <!-- Also promoting (some) properties to CSS @style -->
       <xsl:variable name="style">
         <xsl:apply-templates mode="render-css" select="w:pPr"/>
       </xsl:variable>
-      
       <!-- Adding the attribute only when there is a value. -->
       <xsl:if test="matches($style, '\S')">
         <xsl:attribute name="style" select="$style"/>
       </xsl:if>
-
-      <xsl:if test="$debug">
-        <xsl:apply-templates select="w:pPr" mode="build-properties"/>
-      </xsl:if>
-      
       <xsl:apply-templates select="*"/>
     </p>
   </xsl:template>
 
-  <!-- br documented at http://officeopenxml.com/WPtextSpecialContent-break.php -->
-
-  <xsl:template match="w:br">
-    <br class="br"/>
-  </xsl:template>
-  
-  <!-- cr documented there too: yes, it's placeholder for CR -->
-  <xsl:template match="w:cr">
-    <br class="cr"/>
-  </xsl:template>
-  
   <xsl:template match="w:tbl">
     <table>
       <xsl:apply-templates select="w:tr"/>
@@ -192,20 +173,15 @@
   </xsl:template>
 
   <xsl:template match="w:r">
-    <xsl:variable name="literal-css">
-      <xsl:apply-templates select="w:rPr" mode="render-css"/>
-    </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="matches($literal-css, '\S')">
-        <span style="{$literal-css}">
-          <xsl:call-template name="format-components"/>
-        </span>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:call-template name="format-components"/>
-      </xsl:otherwise>
-    </xsl:choose>
-
+    <span>
+      <xsl:variable name="literal-css">
+        <xsl:apply-templates select="w:rPr" mode="render-css"/>
+      </xsl:variable>
+      <xsl:if test="matches($literal-css,'\S')">
+        <xsl:attribute name="style" select="$literal-css"/>
+      </xsl:if>
+      <xsl:call-template name="format-components"/>
+    </span>
   </xsl:template>
 
   <xsl:template name="format-components">
@@ -294,6 +270,7 @@
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
   
+  
   <!-- http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_VerticalAlignRun.html -->
   <!--<w:vertAlign w:val="superscript"/>-->
   <xsl:template priority="4" match="w:rPr/w:vertAlign[@w:val='superscript']">
@@ -374,183 +351,108 @@
     <xsl:sequence select="false()"/>
   </xsl:template>
 
-<!-- mode 'build-properties' can be called on any w:pPr or w:rPr (paragraph or run properties element)
-    to return an XML representation of formatting properties defined thereon.
-    The XML uses CSS and pseudo-CSS syntax to ease rewriting into CSS.
-  -->
 
-  <xsl:template match="*" mode="build-properties"/>
+  <xsl:template match="*" mode="render-css"/>
   
-  <xsl:template mode="build-properties" as="element()+" match="w:pPr">
-    
-    <xsl:apply-templates mode="#current" select="w:pStyle/key('styles-by-id',@w:val, $styles)"/>
-    
-    <xsw:paraStyles>
-      <xsl:for-each select="w:pStyle">
-        <xsl:attribute name="calls" select="@w:val"/>
-      </xsl:for-each>
-      <xsl:for-each select="../w:basedOn">
-        <xsl:attribute name="based-on" select="@w:val"/>
-      </xsl:for-each>
+  <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr" as="xs:string?">
+    <xsl:value-of separator="; ">
       <xsl:apply-templates mode="#current"/>
-    </xsw:paraStyles>
+    </xsl:value-of>
+    <!---->
   </xsl:template>
 
-  <xsl:template mode="build-properties" as="element()+" match="w:rPr">
-    
-    <xsl:apply-templates mode="#current" select="w:rStyle/key('styles-by-id',@w:val, $styles)"/>
-    
-    <xsw:runStyles>
-      <xsl:for-each select="w:rStyle">
-        <xsl:attribute name="calls" select="@w:val"/>
-      </xsl:for-each>
-      <xsl:for-each select="../w:basedOn">
-        <xsl:attribute name="based-on" select="@w:val"/>
-      </xsl:for-each>
-      <xsl:apply-templates mode="#current"/>
-    </xsw:runStyles>
-  </xsl:template>
-  
-  <xsl:template mode="build-properties" as="element()*" match="w:style">
-    <!--w:link pulls in character level styles - and gets us infinite loops ... -->
-    <xsl:apply-templates mode="#current" select="w:basedOn/key('styles-by-id',@w:val, $styles)"/>
-    <xsw:style name="{@w:styleId}">
-      <xsl:apply-templates mode="#current"/>
-    </xsw:style>
-  </xsl:template>
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ind">
+  <!-- Inside w:pPr -->
+  <xsl:template mode="render-css" match="w:ind" as="xs:string*">
     <xsl:apply-templates mode="#current" select="@w:left | @w:right | @w:firstLine | @w:hanging"/>
   </xsl:template>
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:spacing">
+
+  <xsl:template mode="render-css" match="w:spacing" as="xs:string*">
     <xsl:apply-templates mode="#current" select="@w:before | @w:after"/>
   </xsl:template>
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ind/@* | w:spacing/@*">
-    <xsl:variable name="property-name">
+
+  <xsl:template mode="render-css" match="w:ind/@* | w:spacing/@*" as="xs:string">
+    <xsl:value-of>
       <xsl:apply-templates mode="css-property" select="."/>
-    </xsl:variable>
-    <xsw:prop name="{$property-name}"><xsl:value-of select=". div 20"/>pt</xsw:prop>
+      <xsl:text>: </xsl:text>
+      <xsl:value-of select=". div 20"/>
+      <xsl:text>pt</xsl:text>
+    </xsl:value-of>
   </xsl:template>
+
+  <!-- <w:jc w:val="center"/> doing center, left, right, justified (ha) -->
+  <!--http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_Jc.html-->
   
   <!-- With apologies, not supporting other values of text alignment in Word. -->
-  <xsl:template priority="2" mode="build-properties"  as="element(xsw:prop)*"  match="w:jc[@w:val=('left','right','center','both')]">
-    <xsw:prop name="text-align">
+  <xsl:template priority="2" mode="render-css" match="w:jc[@w:val=('left','right','center','both')]" as="xs:string">
+    <xsl:value-of>
+      <xsl:text>text-align: </xsl:text>
       <xsl:value-of select="if (@w:val = 'both') then 'justify' else @w:val"/>
-    </xsw:prop>
+    </xsl:value-of>
   </xsl:template>
   
-  <xsl:template priority="2" mode="build-properties" as="element(xsw:prop)*"  match="w:ind/@w:hanging">
-    <xsw:prop name="text-indent">-<xsl:value-of select=". div 20"/>pt</xsw:prop>
-    <xsw:prop name="padding-left"><xsl:value-of select=". div 20"/>pt</xsw:prop>
-  </xsl:template>
-  
-  <xsl:template mode="build-properties" as="element(xsw:prop)*" 
-    match="w:rFonts[exists(@w:ascii | @w:cs | @w:hAnsi | @w:eastAsia)]">
-    <xsw:prop name="font-family">
-      <xsl:value-of select="(@w:ascii, @w:cs, @w:hAnsi, @w:eastAsia)[1]"/>
-    </xsw:prop>
-  </xsl:template>
-  
-  <!--
-    2017-05-25 removing bold, italic and underline from build properties!
-    b/c they should be inoperative at the pPr/rPr level
-    and we reflect them via 'tucking' (i.e. producing 'u','b' and 'i') at the inline level.
-  
-  will become 'b'  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:b[not(@val=('0','none'))]">
-    <xsw:prop name="font-weight">bold</xsw:prop>
-  </xsl:template>
-  
-  will become 'i'
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:i[not(@val=('0','none'))]">
-    <xsw:prop name="font-style">italic</xsw:prop>
-  </xsl:template>
-  
-  will become 'u'
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:u[not(@val=('0','none'))]">
-    <xsw:prop name="text-decoration">underline</xsw:prop>
-  </xsl:template>-->
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:szCs[. = (../w:sz)]"/>
-  
-  <!-- Font size for complex scripts (szCs) is just noise. -->
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:szCs"/>
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:sz">
-    <xsw:prop name="font-size"><xsl:value-of select="@w:val div 2"/>pt</xsw:prop>
-  </xsl:template>
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:smallCaps[not(@val=('0','none'))]">
-    <xsw:prop name="font-variant">small-caps</xsw:prop>
-  </xsl:template>
-  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:color">
-    <xsl:if test="not(@w:val='000000')">
-      <xsw:prop name="color">
-        <xsl:value-of select="@w:val/replace(., '^\d', '#$0')"/>
-      </xsw:prop>
-    </xsl:if>
-  </xsl:template>
-  
-  <!-- <xsl:template priority="10" match="w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] | 
-    w:rPr/w:smallCaps[@w:val='0'] | w:rPr/w:color[@w:val='000000']">
-   -->
-  
-<!--  -->
-
-  <xsl:template match="*" mode="render-css">
-    <xsl:comment> BOO! </xsl:comment>
-  </xsl:template>
-  
-  
-  <!-- <xsw:styling>
-         <xsw:style name="Heading2">
-            <xsw:paraStyles based-on="Normal">
-               <xsw:prop name="margin-top">10pt</xsw:prop>
-               <xsw:prop name="margin-bottom">0pt</xsw:prop>
-            </xsw:paraStyles>
-            <xsw:runStyles based-on="Normal">
-               <xsw:prop name="font-weight">bold</xsw:prop>
-               <xsw:prop name="color">#4F81BD</xsw:prop>
-               <xsw:prop name="font-size">13pt</xsw:prop>
-            </xsw:runStyles>
-         </xsw:style> ... etc.
-
-  -->
-  <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr | w:style" as="xs:string?">
-    
-    <xsl:variable name="styles-tree">
-      <xsl:apply-templates select="." mode="build-properties"/>
-    </xsl:variable>
-    
-    <!-- Building element proxy for CSS, thereby resolving overloaded properties (last one wins)
-         Since mode 'build-properties' delivers the properties from furthest to closest, this
-         has the effect of implementing the style cascade from the Word. -->
-    <xsl:variable name="styleProxy" as="element(xsw:style)">
-      <!-- We will have xsw:style font-size='14pt' font-weight='bold' etc. -->
-      <xsw:style>
-        <xsl:for-each select="$styles-tree//xsw:prop">
-          <xsl:attribute name="{@name}" select="."/>
-        </xsl:for-each>
-      </xsw:style>
-    </xsl:variable>
-         
-    <!-- Now we deliver a string of ; delimited constructs from the $styleProxy attributes -->
-    <xsl:value-of separator="; " select="$styleProxy/@*/concat(name(),': ',.) "/>
-    
-    <!-- Used to apply templates in current mode: no more! <xsl:apply-templates mode="#current"/> -->
-
+  <xsl:template priority="2" mode="render-css" match="w:ind/@w:hanging" as="xs:string">
+    <xsl:value-of>
+      <xsl:text>text-indent: -</xsl:text>
+      <xsl:value-of select=". div 20"/>
+      <xsl:text>pt; padding-left: </xsl:text>
+      <xsl:value-of select=". div 20"/>
+      <xsl:text>pt</xsl:text>
+    </xsl:value-of>
   </xsl:template>
 
-  
   <xsl:template mode="css-property" match="w:spacing/@w:before">margin-top</xsl:template>
   <xsl:template mode="css-property" match="w:spacing/@w:after">margin-bottom</xsl:template>
   <xsl:template mode="css-property" match="w:ind/@w:left">margin-left</xsl:template>
   <xsl:template mode="css-property" match="w:ind/@w:right">margin-right</xsl:template>
   <xsl:template mode="css-property" match="w:ind/@w:firstLine">text-indent</xsl:template>
 
+  <xsl:template mode="render-css" as="xs:string"
+    match="w:rFonts[exists(@w:ascii | @w:cs | @w:hAnsi | @w:eastAsia)]">
+    <xsl:value-of>
+      <xsl:text>font-family: </xsl:text>
+      <xsl:value-of select="(@w:ascii, @w:cs, @w:hAnsi, @w:eastAsia)[1]"/>
+    </xsl:value-of>
+  </xsl:template>
+
+  <xsl:template mode="render-css" as="xs:string?" match="w:szCs[. = (../w:sz)]"/>
+
+  <!-- Font size for complex scripts (szCs) is just noise. -->
+  <xsl:template mode="render-css" as="xs:string?" match="w:szCs"/>
+
+  <xsl:template mode="render-css" as="xs:string" match="w:sz">
+    <xsl:value-of>
+      <xsl:text>font-size: </xsl:text>
+      <xsl:value-of select="@w:val div 2"/>
+      <xsl:text>pt</xsl:text>
+    </xsl:value-of>
+  </xsl:template>
+
+  <xsl:template mode="render-css" as="xs:string" match="w:smallCaps[not(@w:val='0')]">
+    <xsl:text>font-variant: small-caps</xsl:text>
+  </xsl:template>
+
+  <xsl:template mode="render-css" as="xs:string?" match="w:color">
+    <xsl:if test="not(@w:val='000000')">
+    <xsl:value-of>
+      <xsl:text>color: </xsl:text>
+      <xsl:value-of select="@w:val/replace(., '^\d', '#$0')"/>
+    </xsl:value-of>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Wrapper mode 'transcribe-css' enables us to call render-css but also
+       override it in cases. -->
+  <xsl:template match="*" mode="transcribe-css" as="xs:string*">
+    <xsl:apply-templates select="." mode="render-css"/>
+  </xsl:template>
+  
+  <xsl:template match="w:b[not(@val=0)]" mode="transcribe-css" as="xs:string">
+    <xsl:text>font-weight: bold</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="w:i[not(@val=0)]" mode="transcribe-css" as="xs:string">
+    <xsl:text>font-style: italic</xsl:text>
+  </xsl:template>
   
   
   <!-- Generating CSS from Word (paragraph and text) styles. -->
@@ -564,7 +466,6 @@
   <xsl:template match="w:styles/*">
     <xsl:text>&#xA;.</xsl:text>
     <xsl:value-of select="xsw:safeClass(@w:styleId)"/>
-    <!-- XXX Rewrite to use inheritance-override logic -->
     <xsl:text> { </xsl:text>
       <xsl:apply-templates select="." mode="writeCSS"/>
     <xsl:text> }</xsl:text>
@@ -572,7 +473,7 @@
   
   <xsl:template mode="writeCSS" match="w:styles/*">
 
-    <!-- To traverse to linked styles ... XXX don't need this since circular references are prevented in Word -->
+    <!-- To traverse to linked styles ... -->
     <xsl:param name="visited" select="()"/>
     
     <xsl:apply-templates mode="writeCSS"
