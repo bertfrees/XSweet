@@ -147,7 +147,7 @@
       </xsl:if>
 
       <xsl:if test="$debug">
-        <xsl:apply-templates select="w:pPr | w:rPr" mode="build-properties"/>
+        <xsl:apply-templates select="w:pPr" mode="build-properties"/>
       </xsl:if>
       
       <xsl:apply-templates select="*"/>
@@ -192,15 +192,20 @@
   </xsl:template>
 
   <xsl:template match="w:r">
-    <span>
-      <xsl:variable name="literal-css">
-        <xsl:apply-templates select="w:rPr" mode="render-css"/>
-      </xsl:variable>
-      <xsl:if test="matches($literal-css,'\S')">
-        <xsl:attribute name="style" select="$literal-css"/>
-      </xsl:if>
-      <xsl:call-template name="format-components"/>
-    </span>
+    <xsl:variable name="literal-css">
+      <xsl:apply-templates select="w:rPr" mode="render-css"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="matches($literal-css, '\S')">
+        <span style="{$literal-css}">
+          <xsl:call-template name="format-components"/>
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="format-components"/>
+      </xsl:otherwise>
+    </xsl:choose>
+
   </xsl:template>
 
   <xsl:template name="format-components">
@@ -448,17 +453,25 @@
     </xsw:prop>
   </xsl:template>
   
+  <!--
+    2017-05-25 removing bold, italic and underline from build properties!
+    b/c they should be inoperative at the pPr/rPr level
+    and we reflect them via 'tucking' (i.e. producing 'u','b' and 'i') at the inline level.
+  
+  will become 'b'  
   <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:b[not(@val=('0','none'))]">
     <xsw:prop name="font-weight">bold</xsw:prop>
   </xsl:template>
   
+  will become 'i'
   <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:i[not(@val=('0','none'))]">
     <xsw:prop name="font-style">italic</xsw:prop>
   </xsl:template>
   
+  will become 'u'
   <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:u[not(@val=('0','none'))]">
     <xsw:prop name="text-decoration">underline</xsw:prop>
-  </xsl:template>
+  </xsl:template>-->
   
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:szCs[. = (../w:sz)]"/>
   
@@ -507,10 +520,7 @@
 
   -->
   <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr | w:style" as="xs:string?">
-<!-- XXX next here ... rewrite this to call build-properties, then serialize
-     unwanted properties such as font-weight and font-style can be filtered when necessary -->
     
-    <!-- Then, proceed to drop the rest of the 'render-css' and 'transcribe-css' templates -->
     <xsl:variable name="styles-tree">
       <xsl:apply-templates select="." mode="build-properties"/>
     </xsl:variable>
