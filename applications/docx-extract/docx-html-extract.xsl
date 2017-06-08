@@ -156,6 +156,8 @@
 
   <!-- br documented at http://officeopenxml.com/WPtextSpecialContent-break.php -->
 
+  <xsl:template match="w:fldChar"/>
+  
   <xsl:template match="w:br">
     <br class="br"/>
   </xsl:template>
