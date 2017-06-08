@@ -267,6 +267,12 @@
   <!-- w:rPr works by pushing its contents through its children one at a time
        in sibling succession, given them each an opportunity to wrap the results. -->
   <!-- Individual templates matching w:rPr/* provide for the particular mappings into HTML. -->
+  
+  <!-- Amazingly, run properties set at the paragraph are at best redundant and not infrequently
+       inconsistent with properties set on the contained runs. So they are ignored. -->
+  <xsl:template match="w:pPr/w:rPr"/>
+  
+  <!-- When run properties are considered, they are rendered as follows. -->
   <xsl:template match="w:rPr">
     <xsl:param name="contents" select="()" tunnel="yes"/>
     <xsl:apply-templates select="*[1]">
@@ -276,7 +282,6 @@
       <xsl:sequence select="$contents"/>
     </xsl:if>
   </xsl:template>
-
 
   <!-- Look ma! no modes! children of w:rPr perform a *sibling traversal*
        in order to wrap themselves sequentially in HTML (inline) wrappers. -->
@@ -396,6 +401,10 @@
     </xsw:paraStyles>
   </xsl:template>
 
+  <!-- Ignorable on paragraphs and paragraph styles. -->
+  <xsl:template mode="build-properties"
+    match="w:pPr/w:rPr | w:style[@w:type='paragraph']/w:rPr"/>
+  
   <xsl:template mode="build-properties" as="element()+" match="w:rPr">
     
     <xsl:apply-templates mode="#current" select="w:rStyle/key('styles-by-id',@w:val, $styles)"/>
