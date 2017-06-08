@@ -60,7 +60,7 @@
         <meta charset="UTF-8"/>
         <style type="text/css">
           <!-- Retrieving and writing only those styles actually used.
-               #Todo: traverse style derivation tree to pick up defaults. -->
+               The key retrieves w:style elements in the styles.xml document. -->
           <xsl:apply-templates select="//(w:pStyle|w:rStyle)/key('styles-by-id',@w:val, $styles)"/>
         </style>
       </head>
@@ -588,16 +588,18 @@
       select="key('styles-by-id', (w:link/@w:val[false()] | w:basedOn/@w:val)[empty(. intersect $visited)])">
       <xsl:with-param name="visited" select="$visited, ."/>
     </xsl:apply-templates>
+
+    <xsl:variable name="css-produced" as="xs:string*">
+      <xsl:apply-templates select="w:pPr | w:rPr" mode="transcribe-css"/>
+    </xsl:variable>
+    
+    <xsl:text>; </xsl:text>
     
     <xsl:text>/* </xsl:text>
     <xsl:value-of select="@w:styleId"/>
     <xsl:text>*/ </xsl:text>
     
-    <xsl:variable name="css-produced" as="xs:string*">
-      <xsl:apply-templates select="w:pPr | w:rPr" mode="transcribe-css"/>
-    </xsl:variable>
-    
-    <xsl:if test="exists($visited) and exists($css-produced[matches(.,'\S')])">; </xsl:if>
+    <!-- The css-produced already has ; internally -->
     <xsl:value-of select="$css-produced[matches(.,'\S')]" separator="; "/>
     
     
