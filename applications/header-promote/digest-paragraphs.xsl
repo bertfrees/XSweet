@@ -201,17 +201,18 @@
   
   <!-- Never a header if the commonest type of 'p' -->
   <xsl:template mode="keep-headers" priority="75"  match="p[@data-count = max(../@data-count)]"/>
+
   
   <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
        less than 120 chars long on average, and is bigger than *someone* -->
   <xsl:template mode="keep-headers" priority="65"  match="p[@data-average-run &lt; 4]
-    [@data-nominal-font-size &gt; ../@data-nominal-font-size]
+    [@data-nominal-fontsize &gt; ../p/@data-nominal-fontsize]
     [@data-average-length &lt;= 120]">
     <!-- Casual polling suggests char length for headers in English
          should be 25-40 on ave, compared to li (150-175ish) or p (over 1000) -->
     <xsl:sequence select="."/>
   </xsl:template>
-  
+
   <!-- Or it could make the grade due to being centered, short on average, and not clumping ... -->
   <xsl:template mode="keep-headers" priority="60"
     match="p[@data-average-run &lt; 2][@data-average-length &lt; 200][xsw:css-prop(.)= 'text-align: center']">
@@ -222,8 +223,7 @@
   <xsl:template mode="keep-headers" priority="50" match="p[@data-never-fullstop = 'true']">
     <xsl:sequence select="."/>
   </xsl:template>
-  
-  
+
 
   <xsl:variable name="p-proxies-grouped">
     <!-- Yes we know the XML syntax is harsh don't worry it's compiled away, this is very fast! -->
