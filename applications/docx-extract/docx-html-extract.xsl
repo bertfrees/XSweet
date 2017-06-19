@@ -434,6 +434,30 @@
     <xsl:apply-templates mode="#current" select="@w:left | @w:right | @w:firstLine | @w:hanging"/>
   </xsl:template>
   
+  <!--<w:outlineLvl w:val="1"/>-->
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:outlineLvl">
+    <xsl:apply-templates mode="#current" select="@w:val"/>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:outlineLvl/@w:val">
+    <xsw:prop name="xsweet-outline-level"><xsl:value-of select="."/></xsw:prop>
+  </xsl:template>
+  
+  <!--<w:ilvl w:val="0"/>-->
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:numPr">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ilvl">
+    <xsl:apply-templates mode="#current" select="@w:val"/>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ilvl/@w:val">
+    <xsw:prop name="xsweet-list-level"><xsl:value-of select="."/></xsw:prop>
+  </xsl:template>
+  
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:spacing">
     <xsl:apply-templates mode="#current" select="@w:before | @w:after"/>
   </xsl:template>
@@ -505,31 +529,13 @@
     </xsl:if>
   </xsl:template>
   
-  <!-- <xsl:template priority="10" match="w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] | 
-    w:rPr/w:smallCaps[@w:val='0'] | w:rPr/w:color[@w:val='000000']">
-   -->
-  
-<!--  -->
-
   <xsl:template match="*" mode="render-css">
-    <xsl:comment> BOO! </xsl:comment>
+    <xsl:comment>
+    <xsl:text> matching </xsl:text>
+    <xsl:value-of select="name()"/>
+    </xsl:comment>
   </xsl:template>
   
-  
-  <!-- <xsw:styling>
-         <xsw:style name="Heading2">
-            <xsw:paraStyles based-on="Normal">
-               <xsw:prop name="margin-top">10pt</xsw:prop>
-               <xsw:prop name="margin-bottom">0pt</xsw:prop>
-            </xsw:paraStyles>
-            <xsw:runStyles based-on="Normal">
-               <xsw:prop name="font-weight">bold</xsw:prop>
-               <xsw:prop name="color">#4F81BD</xsw:prop>
-               <xsw:prop name="font-size">13pt</xsw:prop>
-            </xsw:runStyles>
-         </xsw:style> ... etc.
-
-  -->
   <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr | w:style" as="xs:string?">
     
     <xsl:variable name="styles-tree">
@@ -549,6 +555,7 @@
     </xsl:variable>
          
     <!-- Now we deliver a string of ; delimited constructs from the $styleProxy attributes -->
+    <!-- replace(name(),'^xsweet','-xsweet')   -->
     <xsl:value-of separator="; " select="$styleProxy/@*/concat(name(),': ',.) "/>
     
     <!-- Used to apply templates in current mode: no more! <xsl:apply-templates mode="#current"/> -->
