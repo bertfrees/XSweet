@@ -15,7 +15,7 @@
     <p:pipe port="result" step="final"/>
   </p:output>
   
-  <p:output port="in" primary="false">
+  <p:output port="_A_in" primary="false">
     <p:pipe port="_Z_FINAL" step="document-production"/>
   </p:output>
   <p:output port="_M_ready" primary="false">
@@ -24,14 +24,31 @@
   <p:output port="_N_digested" primary="false">
     <p:pipe port="result" step="digest-paragraphs"/>
   </p:output>
-  <p:output port="_X_escalator-xslt" primary="false">
+  <p:output port="_O_with_headers" primary="false">
+    <p:pipe port="result" step="omg-apply-the-header-mapping-xslt"/>
+  </p:output>
+  <p:output port="_P1_lists" primary="false">
+    <p:pipe port="result" step="promote-lists"/>
+  </p:output>
+  <p:output port="_P2_lists" primary="false">
+    <p:pipe port="result" step="promote-lists"/>
+  </p:output>
+  <p:output port="_P3_lists" primary="false">
+    <p:pipe port="result" step="refine-lists"/>
+  </p:output>
+  
+  <p:output port="_O_escalator-xslt" primary="false">
     <p:pipe port="result" step="escalator-xslt"/>
   </p:output>
 
-  <p:serialization port="in"                indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_A_in"                indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_M_ready"          indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_N_digested"       indent="true"/>
-  <p:serialization port="_X_escalator-xslt" indent="true"/>
+  <p:serialization port="_O_with_headers"   indent="true"/>
+  <p:serialization port="_P1_lists"         indent="true"/>
+  <p:serialization port="_P2_lists"         indent="true"/>
+  <p:serialization port="_P3_lists"         indent="true"/>
+  <p:serialization port="_O_escalator-xslt" indent="true"/>
   <p:serialization port="_Z_FINAL"          indent="true" omit-xml-declaration="true"/>
   
   <p:import href="docx-extract/docx-document-production.xpl"/>
@@ -82,12 +99,33 @@
       <p:pipe port="result" step="escalator-xslt"/>
     </p:input>
   </p:xslt>
-
+  
+  <!--<p:identity name="infer-lists"/>-->
+  <p:xslt name="infer-lists">
+    <p:input port="stylesheet">
+      <p:document href="list-promote/mark-lists.xsl"/>
+    </p:input>
+  </p:xslt>
+  
+  <p:xslt name="promote-lists">
+    <p:input port="stylesheet">
+      <p:document href="list-promote/nest-lists.xsl"/>
+    </p:input>
+  </p:xslt>
+  
+  <p:xslt name="refine-lists">
+    <p:input port="stylesheet">
+      <p:document href="list-promote/refine-lists.xsl"/>
+    </p:input>
+  </p:xslt>
+  
   <p:xslt name="cleanup">
     <p:input port="stylesheet">
       <p:document href="html-polish/final-rinse.xsl"/>
     </p:input>
   </p:xslt>
+  
+  
   
   <p:xslt name="rewired">
     <p:input port="stylesheet">
