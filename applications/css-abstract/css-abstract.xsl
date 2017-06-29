@@ -83,6 +83,9 @@
       <xsl:for-each select="$props[starts-with(., 'text-indent:')]">
         <xsl:sequence select="replace(., '(^text-|:|\C)', '')"/>
       </xsl:for-each>
+      <xsl:for-each select="$props[matches(., '^\-?xsweet-')]">
+        <xsl:sequence select="replace(., '(^-?xsweet-|:|\C|\-)', '')"/>
+      </xsl:for-each>
       <xsl:if test="$props = 'font-weight: bold'">bold</xsl:if>
       <xsl:if test="$props = 'font-style: italic'">italic</xsl:if>
       <xsl:if test="$props = 'text-decoration: underline'">underline</xsl:if>
