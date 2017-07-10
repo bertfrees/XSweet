@@ -20,7 +20,7 @@
     <li>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates/>
-      <xsl:apply-templates select="following-sibling::*[1]/self::ul" mode="copy"/>
+      <xsl:apply-templates select="following-sibling::*" mode="copy"/>
     </li>
   </xsl:template>
   
