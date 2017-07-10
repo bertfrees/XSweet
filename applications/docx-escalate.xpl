@@ -74,21 +74,22 @@
 
   <p:xslt name="infer-lists">
     <p:input port="stylesheet">
-      <p:document href="list-promote/mark-lists.xsl"/>
+      <p:document href="list-promote/mark-lists2.xsl"/>
     </p:input>
   </p:xslt>
   
   <p:xslt name="promote-lists">
     <p:input port="stylesheet">
-      <p:document href="list-promote/nest-lists.xsl"/>
+      <p:document href="list-promote/nest-lists2.xsl"/>
     </p:input>
   </p:xslt>
   
-  <p:xslt name="refine-lists">
+  <p:identity name="refine-lists"/>
+  <!--<p:xslt name="refine-lists">
     <p:input port="stylesheet">
       <p:document href="list-promote/refine-lists.xsl"/>
     </p:input>
-  </p:xslt>
+  </p:xslt>-->
   
   <p:identity name="ready-with-lists"/>
 
