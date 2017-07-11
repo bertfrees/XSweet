@@ -16,8 +16,6 @@
     </xsl:copy>
   </xsl:template>
   
-  
-  
   <!-- Groups can be unwrapped since the induced list structure takes care of everything. -->
   <xsl:template match="xsw:list">
     <ul>

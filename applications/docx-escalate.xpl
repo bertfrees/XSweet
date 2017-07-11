@@ -74,7 +74,7 @@
 
   <p:xslt name="infer-lists">
     <p:input port="stylesheet">
-      <p:document href="list-promote/mark-lists2.xsl"/>
+      <p:document href="list-promote/mark-lists.xsl"/>
     </p:input>
   </p:xslt>
   
@@ -84,12 +84,6 @@
     </p:input>
   </p:xslt>
   
-  <p:identity name="refine-lists"/>
-  <!--<p:xslt name="refine-lists">
-    <p:input port="stylesheet">
-      <p:document href="list-promote/refine-lists.xsl"/>
-    </p:input>
-  </p:xslt>-->
   
   <p:identity name="ready-with-lists"/>
 
