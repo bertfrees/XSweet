@@ -12,6 +12,9 @@
     <p:pipe port="result" step="final"/>
   </p:output>
   
+  <p:output port="_0_ooxml_document" primary="false">
+    <p:pipe port="result" step="wordml-document"/>
+  </p:output>
   <p:output port="_A_extracted" primary="false">
     <p:pipe port="_A_extracted" step="document-production"/>
   </p:output>
@@ -45,6 +48,7 @@
   </p:output>
   
   <p:serialization port="_Z_FINAL"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_0_ooxml_document" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
@@ -64,7 +68,7 @@
   <!--<p:variable name="document-xml"  select="doc($document-path)"/>-->
   <!-- Validate HTML5 results here:  http://validator.w3.org/nu/ -->
 
-  <p:load>
+  <p:load name="wordml-document">
     <p:with-option name="href" select="$document-path"/>
   </p:load>
   
