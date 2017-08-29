@@ -19,6 +19,13 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="style" priority="11">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:value-of select="replace(string(.),'xsweet','-xsweet')"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- Disable when auto-indenting - this introduces cosmetic whitespace into
        an assumed text-brick. -->
   <xsl:template match="head | head//* | body | body/* | p | h1 | h2 | h3 | h4 | h5 | h6" priority="10">
@@ -63,7 +70,8 @@
         <!-- the property is redundant if the same as the same property on the closest element with the property -->
         <xsl:variable name="redundant" select="$here/ancestor::*[contains(@style,$propName)][1]/tokenize(@style,'\s*;\s*') = $prop"/>
         <xsl:if test="not($redundant)">
-          <xsl:sequence select="$prop"/>
+          <!-- We have some (pseudo) properties named 'xsweet' these are rewritten for CSS -->
+          <xsl:sequence select="replace($prop,'\s*^xsweet','-xsweet')"/>
         </xsl:if>
       </xsl:for-each>
     </xsl:variable>

@@ -2,6 +2,10 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
+  
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  
   xmlns="http://www.w3.org/1999/xhtml" xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all" xmlns:fn="http://www.example.com/fn">
 
@@ -18,6 +22,7 @@
   <xsl:variable name="endnotes-file"  select="resolve-uri('endnotes.xml',  document-uri(/))"/>
   <xsl:variable name="footnotes-file" select="resolve-uri('footnotes.xml', document-uri(/))"/>
   <xsl:variable name="styles-file"    select="resolve-uri('styles.xml',    document-uri(/))"/>
+  <xsl:variable name="rels-file"      select="resolve-uri('_rels/document.xml.rels',    document-uri(/))"/>
   <!-- We have no interest in stylesWithEffects.xml. -->
 
   <!--<xsl:variable name="endnotes-file" select="'x'"/>
@@ -42,9 +47,17 @@
     </xsl:if>
   </xsl:variable>
   
+  <xsl:variable name="relations-doc">
+    <xsl:if test="doc-available($rels-file)">
+      <xsl:sequence select="doc($rels-file)"/>
+    </xsl:if>
+  </xsl:variable>
+  
   
   <xsl:key name="styles-by-id" match="w:style" use="@w:styleId"/>
-
+  
+  <xsl:key name="rels-by-id"   match="rel:Relationship"  use="@Id"/>
+  
   <!-- Reinstate footnotes handling when we have some. -->
   <!-- <xsl:variable name="footnotes-doc" select="document('footnotes.xml',/)"/>
        <xsl:key name="footnotes-by-id" match="w:footnote" use="@w:id"/> -->
@@ -126,6 +139,16 @@
 
   <xsl:variable name="debug" select="false()"/>
   
+  
+  <xsl:key name="internal-refs" match="w:hyperlink[exists(@w:anchor)]" use="@w:anchor"/>
+  
+  <xsl:template match="w:bookmarkStart">
+    <a id="{@w:name}">
+      <xsl:comment> link target @w:name='<xsl:value-of select="@w:name"/>'</xsl:comment>
+    </a>
+    
+  </xsl:template>
+  
   <xsl:template match="w:p">
     <p>
       <!-- Copying a named style binding to @class -->
@@ -188,9 +211,31 @@
   <!-- Drop in default traversal -->
   <xsl:template match="w:pPr"/>
 
-  <!-- Nothing to see here :-( keep going. -->
+
+  <!--<w:bookmarkStart w:id="1" w:name="book"/>-->
+  <!-- <w:hyperlink w:anchor="book" w:history="1">
+        <w:r w:rsidRPr="003D4C44">
+          <w:rPr>
+            <w:rStyle w:val="Hyperlink"/>
+          </w:rPr>
+          <w:t>Ipsum</w:t>
+        </w:r>
+      </w:hyperlink> -->
+  
   <xsl:template match="w:hyperlink">
+    <a>
+      <!-- If we can, we will grab the target of an external link -->
+      <xsl:for-each select="key('rels-by-id',@r:id,$relations-doc)">
+        <xsl:attribute name="href" select="@Target"/>
+      </xsl:for-each>
+      <!-- Internal links -->
+      <!-- Don't worry Saxon indexes these -->
+      <xsl:for-each select="//w:bookmarkStart[@w:name=current()/@w:anchor]">
+        <!-- Using SaxonId for this -->
+        <xsl:attribute name="href" select="concat('#',@w:name)"/>
+      </xsl:for-each>
     <xsl:apply-templates/>
+    </a>
   </xsl:template>
 
   <xsl:template match="w:r">
@@ -434,6 +479,30 @@
     <xsl:apply-templates mode="#current" select="@w:left | @w:right | @w:firstLine | @w:hanging"/>
   </xsl:template>
   
+  <!--<w:outlineLvl w:val="1"/>-->
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:outlineLvl">
+    <xsl:apply-templates mode="#current" select="@w:val"/>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:outlineLvl/@w:val">
+    <xsw:prop name="xsweet-outline-level"><xsl:value-of select="."/></xsw:prop>
+  </xsl:template>
+  
+  <!--<w:ilvl w:val="0"/>-->
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:numPr">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ilvl">
+    <xsl:apply-templates mode="#current" select="@w:val"/>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ilvl/@w:val">
+    <xsw:prop name="xsweet-list-level"><xsl:value-of select="."/></xsw:prop>
+  </xsl:template>
+  
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:spacing">
     <xsl:apply-templates mode="#current" select="@w:before | @w:after"/>
   </xsl:template>
@@ -505,31 +574,13 @@
     </xsl:if>
   </xsl:template>
   
-  <!-- <xsl:template priority="10" match="w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] | 
-    w:rPr/w:smallCaps[@w:val='0'] | w:rPr/w:color[@w:val='000000']">
-   -->
-  
-<!--  -->
-
   <xsl:template match="*" mode="render-css">
-    <xsl:comment> BOO! </xsl:comment>
+    <xsl:comment>
+    <xsl:text> matching </xsl:text>
+    <xsl:value-of select="name()"/>
+    </xsl:comment>
   </xsl:template>
   
-  
-  <!-- <xsw:styling>
-         <xsw:style name="Heading2">
-            <xsw:paraStyles based-on="Normal">
-               <xsw:prop name="margin-top">10pt</xsw:prop>
-               <xsw:prop name="margin-bottom">0pt</xsw:prop>
-            </xsw:paraStyles>
-            <xsw:runStyles based-on="Normal">
-               <xsw:prop name="font-weight">bold</xsw:prop>
-               <xsw:prop name="color">#4F81BD</xsw:prop>
-               <xsw:prop name="font-size">13pt</xsw:prop>
-            </xsw:runStyles>
-         </xsw:style> ... etc.
-
-  -->
   <xsl:template mode="render-css transcribe-css" match="w:pPr | w:rPr | w:style" as="xs:string?">
     
     <xsl:variable name="styles-tree">
@@ -549,6 +600,7 @@
     </xsl:variable>
          
     <!-- Now we deliver a string of ; delimited constructs from the $styleProxy attributes -->
+    <!-- replace(name(),'^xsweet','-xsweet')   -->
     <xsl:value-of separator="; " select="$styleProxy/@*/concat(name(),': ',.) "/>
     
     <!-- Used to apply templates in current mode: no more! <xsl:apply-templates mode="#current"/> -->

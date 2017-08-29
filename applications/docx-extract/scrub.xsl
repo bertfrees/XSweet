@@ -46,6 +46,12 @@
   <xsl:template match="p//*[empty(.//* except (.//tab|.//span|.//b|.//i|.//u)) and not(string(.))]">
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <!-- except a with @id -->
+  <xsl:template priority="10" match="a[matches(@id,'\S')]">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  
   <!-- Matching b, i and u if they have only whitespace text content w/ other formatting properties
        this includes <b> </b> and <b><tab/></b> -->
   
