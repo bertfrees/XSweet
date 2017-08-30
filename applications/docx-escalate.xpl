@@ -28,8 +28,8 @@
   <p:output port="_O2_lists-structured" primary="false">
     <p:pipe port="result" step="promote-lists"/>
   </p:output>
-  <p:output port="_O3_lists-refined" primary="false">
-    <p:pipe port="result" step="refine-lists"/>
+  <p:output port="_O3_with-lists" primary="false">
+    <p:pipe port="result" step="ready-with-lists"/>
   </p:output>
   
   <p:output port="_P1_header-analysis" primary="false">
@@ -46,7 +46,7 @@
   <p:serialization port="_M_ready"             indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_O1_lists-marked"     indent="true"/>
   <p:serialization port="_O2_lists-structured" indent="true"/>
-  <p:serialization port="_O3_lists-refined"    indent="true"/>
+  <p:serialization port="_O3_with-lists"       indent="true"/>
   <p:serialization port="_P1_header-analysis"  indent="true"/>
   <p:serialization port="_P2_promotion-xslt"   indent="true"/>
   <p:serialization port="_P3_with-headers"     indent="true"/>
@@ -80,7 +80,7 @@
   
   <p:xslt name="promote-lists">
     <p:input port="stylesheet">
-      <p:document href="list-promote/nest-lists2.xsl"/>
+      <p:document href="list-promote/itemize-lists.xsl"/>
     </p:input>
   </p:xslt>
   

@@ -78,7 +78,7 @@
   
   <xsl:function name="xsw:list-level" as="xs:integer?">
     <xsl:param name="whose" as="element()"/>
-    <xsl:variable name="list-assignment" select="tokenize($whose/@style,'\s*;\*')[matches(.,'xsweet-list-level:')]"/>
+    <xsl:variable name="list-assignment" select="tokenize($whose/@style,'\s*;\s*')[matches(.,'xsweet-list-level:')]"/>
     <!-- level is only the value, ordinarily a whole number (zero or positive integer) -->
     <xsl:sequence select="if (exists($list-assignment)) then xs:integer(replace($list-assignment,'^.*list-level:\s*','')) else ()"/>
   </xsl:function>
