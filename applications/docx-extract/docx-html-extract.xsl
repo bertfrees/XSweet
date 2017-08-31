@@ -538,22 +538,23 @@
   <!--
     2017-05-25 removing bold, italic and underline from build properties!
     b/c they should be inoperative at the pPr/rPr level
-    and we reflect them via 'tucking' (i.e. producing 'u','b' and 'i') at the inline level.
+    and we reflect them via 'tucking' (i.e. producing 'u','b' and 'i') at the inline level. -->
   
-  will become 'b'  
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:b[not(@val=('0','none'))]">
+  <!-- will become 'b' in regular traversal
+       we need it, however, when in styles -->  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
     <xsw:prop name="font-weight">bold</xsw:prop>
   </xsl:template>
   
-  will become 'i'
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:i[not(@val=('0','none'))]">
+  <!-- will become 'i' -->
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i[not(@val=('0','none'))]">
     <xsw:prop name="font-style">italic</xsw:prop>
   </xsl:template>
   
-  will become 'u'
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:u[not(@val=('0','none'))]">
+  <!-- will become 'u' -->
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u[not(@val=('0','none'))]">
     <xsw:prop name="text-decoration">underline</xsw:prop>
-  </xsl:template>-->
+  </xsl:template>
   
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:szCs[. = (../w:sz)]"/>
   
