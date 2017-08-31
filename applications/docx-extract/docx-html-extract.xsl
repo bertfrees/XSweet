@@ -450,7 +450,9 @@
 
   <!-- Ignorable on paragraphs and paragraph styles. -->
   <xsl:template mode="build-properties"
-    match="w:pPr/w:rPr | w:style[@w:type='paragraph']/w:rPr"/>
+    match="w:pPr/w:rPr"/>
+  
+  <!-- match w:style[@w:type='paragraph']/w:rPr to suppress style settings -->
   
   <xsl:template mode="build-properties" as="element()+" match="w:rPr">
     
