@@ -3,21 +3,21 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
-  
-  <!-- In lieu of suppressXsltNamespaceCheck:on, matching the non-existent HTML 'x'
-       element suppresses a runtime warning. -->
-  <xsl:template match="/x"/>
   
   <xsl:variable name="transformation-sequence">
     <xsw:transform version="2.0">mark-lists.xsl</xsw:transform>
     <xsw:transform version="2.0">itemize-lists.xsl</xsw:transform>
   </xsl:variable>
-
+  
+  <!-- Dummy template quiets anxious XSLT engines when HTML is provided as input. -->
+  <xsl:template match="/html:html" xmlns:html="http://www.w3.org/1999/xhtml">
+    <xsl:next-match/>
+  </xsl:template>
+    
+  <!-- traps the root node of the source and passes it down the chain of transformation references -->
   <xsl:template match="/">
     <xsl:variable name="source" select="."/>
     <xsl:iterate select="$transformation-sequence/*">
@@ -35,15 +35,21 @@
   
   <xsl:template match="xsw:transform">
     <xsl:param    name="sourcedoc" as="document-node()"/>
-    <xsl:variable name="xslt"      select="."/>
+    <xsl:variable name="xslt-spec" select="."/>
     <xsl:variable name="runtime"   select="map {
-      'xslt-version'        : xs:decimal($xslt/@version),
-      'stylesheet-location' : string($xslt),
+      'xslt-version'        : xs:decimal($xslt-spec/@version),
+      'stylesheet-location' : string($xslt-spec),
       'source-node'         : $sourcedoc }" />
     <!-- The function returns a map; primary results are under 'output'
          unless a base output URI is given
          https://www.w3.org/TR/xpath-functions-31/#func-transform -->
     <xsl:sequence select="transform($runtime)?output"/>
+  </xsl:template>
+
+  <!-- Not knowing any better, we simply pass along. -->
+  <xsl:template match="*">
+    <xsl:param    name="sourcedoc" as="document-node()"/>
+    <xsl:sequence select="$sourcedoc"/>
   </xsl:template>
   
 </xsl:stylesheet>

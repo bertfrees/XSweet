@@ -45,7 +45,7 @@
       
       <xsw:output method="xml"  omit-xml-declaration="yes"/>
       
-      <xsw:template match="node() | @*">
+      <xsw:template match="node() | @* | /html">
         <xsw:copy>
           <xsw:apply-templates select="node() | @*"/>
         </xsw:copy>

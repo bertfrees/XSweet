@@ -3,14 +3,12 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xpath-default-namespace="http://www.w3.org/1999/xhtml"
-  
   exclude-result-prefixes="#all">
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
-  <xsl:template match="node() | @*">
+<!-- Redundant match silences noisy XSLT engines -->
+  <xsl:template match="node() | @* | html:html"  xmlns:html="http://www.w3.org/1999/xhtml">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
