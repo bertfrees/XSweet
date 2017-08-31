@@ -7,7 +7,7 @@
   
   version="2.0">
    
-  <xsl:import href="quickndirty2.xsl"/>
+  <xsl:import href="docx-html-extract.xsl"/>
   
   <!-- A 'shell' stylesheet, permitting us to pass a .docx file as an input parameter,
        using Java to retrieve the document.xml from inside it and process that file
@@ -25,7 +25,7 @@
   <xsl:variable name="document-path" select="concat('jar:',$docx-file-uri,'!/word/document.xml')"/>
   <xsl:variable name="document-xml"  select="document($document-path)"/>
   
-  <xsl:template match="/" name="extract">
+  <xsl:template name="extract">
     <!-- Grabbing the document element of document.xml; imported templates will take over. -->
     <xsl:apply-templates select="$document-xml/*"/>
   </xsl:template>
