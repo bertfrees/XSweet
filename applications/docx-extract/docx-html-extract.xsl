@@ -142,8 +142,11 @@
   
   <xsl:key name="internal-refs" match="w:hyperlink[exists(@w:anchor)]" use="@w:anchor"/>
   
-  <xsl:template match="w:bookmarkStart">
-    <a id="{@w:name}">
+  <xsl:template match="w:bookmarkStart | w:bookmarkEnd">
+    <a>
+      <xsl:for-each select="self::w:bookmarkStart">
+        <xsl:attribute name="id" select="@w:name"/>
+      </xsl:for-each>
       <xsl:comment> link target @w:name='<xsl:value-of select="@w:name"/>'</xsl:comment>
     </a>
     
