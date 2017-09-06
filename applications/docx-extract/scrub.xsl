@@ -47,8 +47,8 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <!-- except a with @id -->
-  <xsl:template priority="10" match="a[matches(@id,'\S')]">
+  <!-- except a with @id, @href or @class -->
+  <xsl:template priority="10" match="a[some $a in (@id,@href,@class) satisfies matches($a,'\S')]">
     <xsl:copy-of select="."/>
   </xsl:template>
   

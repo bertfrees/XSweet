@@ -142,14 +142,31 @@
   
   <xsl:key name="internal-refs" match="w:hyperlink[exists(@w:anchor)]" use="@w:anchor"/>
   
-  <xsl:template match="w:bookmarkStart | w:bookmarkEnd">
+  <xsl:template match="w:bookmarkStart">
     <a>
-      <xsl:for-each select="self::w:bookmarkStart">
-        <xsl:attribute name="id" select="@w:name"/>
-      </xsl:for-each>
-      <xsl:comment> link target @w:name='<xsl:value-of select="@w:name"/>'</xsl:comment>
+      <xsl:apply-templates select="@w:name"/>
+        <xsl:attribute name="id">
+          <xsl:text>docx-bookmark_</xsl:text>
+          <xsl:value-of select="@w:id"/>
+        </xsl:attribute>
+      <xsl:comment> bookmark <xsl:for-each select="@w:name">='<xsl:value-of select="."/>'</xsl:for-each> </xsl:comment>
     </a>
-    
+  </xsl:template>
+  
+  <xsl:template match="w:bookmarkStart/@w:name | w:bookmarkEnd/@w:name">
+    <xsl:attribute name="class">
+      <xsl:value-of select="local-name(..)"/>
+    </xsl:attribute>
+  </xsl:template>
+  
+  <xsl:template match="w:bookmarkEnd">
+    <a>
+        <xsl:attribute name="href">
+          <xsl:text>#docx-bookmark_</xsl:text>
+          <xsl:value-of select="@w:id"/>
+        </xsl:attribute>
+      <xsl:comment> bookmark end <xsl:for-each select="@w:name">='<xsl:value-of select="."/>'</xsl:for-each> </xsl:comment>
+    </a>
   </xsl:template>
   
   <xsl:template match="w:p">
