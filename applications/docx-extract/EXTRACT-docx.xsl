@@ -33,9 +33,8 @@ declare namespace xsw ="http://coko.foundation/xsweet";
     <xsl:next-match/>
   </xsl:template>
   
-  <xsl:template match="/w:x" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-    <xsl:message>Unexpected match</xsl:message>
-    <xsl:apply-templates/>
+  <xsl:template match="/w:document" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+    <xsl:next-match/>
   </xsl:template>
   
   <!-- traps the root node of the source and passes it down the chain of transformation references -->
