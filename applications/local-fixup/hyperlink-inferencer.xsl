@@ -25,10 +25,10 @@
   <xsl:template match="@style[.='font-family: Helvetica']"/> -->
   
   
-  <xsl:variable name="tlds"      as="xs:string" expand-text="true">com|org|net|gov|mil|edu|io|foundation</xsl:variable>
+  <xsl:variable name="tlds"      as="xs:string" expand-text="true">(com|org|net|gov|mil|edu|io|foundation)</xsl:variable>
   <xsl:variable name="urlchar"   as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
   <xsl:variable name="domain"    as="xs:string" expand-text="true">({$urlchar}+\.)</xsl:variable>
-  <xsl:variable name="url-match" as="xs:string" expand-text="true">((http|ftp|https):/?/?)?{$domain}+({$tlds})</xsl:variable>
+  <xsl:variable name="url-match" as="xs:string" expand-text="true">((http|ftp|https):/?/?)?{$domain}+{$tlds}</xsl:variable>
     
   <xsl:template match="text()">
     
