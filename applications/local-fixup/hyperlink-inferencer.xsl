@@ -9,7 +9,7 @@
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
-  <xsl:template match="node() | @*">
+  <xsl:template match="* | @* | processing-instruction() | comment()">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
@@ -22,11 +22,24 @@
   </xsl:template>
   
   <xsl:template match="@style[.='font-family: Helvetica']"/> -->
+  <xsl:template match="text()">
+    <xsl:analyze-string select="." regex="(https?:)?(\w+\.)?(\w+)\.(\w\w\w)">
+      <xsl:matching-substring>
+        <xsl:variable name="has-protocol" select="matches(.,'^https?://')"/>
+        <a href="{'http://'[not($has-protocol)]}{regex-group(0)}">
+          <xsl:value-of select="."/>
+        </a>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
+  </xsl:template>
   
-  <xsl:template match="text()[matches(.,'^https?:')][string(.) castable as xs:anyURI][empty(ancestor::a)]">
+  <!--<xsl:template match="text()[matches(.,'^https?:')][string(.) castable as xs:anyURI][empty(ancestor::a)]">
     <a href="{encode-for-uri(.)}">
       <xsl:value-of select="."/>
     </a>
-  </xsl:template>
+  </xsl:template>-->
     
 </xsl:stylesheet>
