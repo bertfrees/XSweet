@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0"
+<xsl:stylesheet version="3.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
@@ -21,9 +21,19 @@
     <xsl:apply-templates/>
   </xsl:template>
   
+  
   <xsl:template match="@style[.='font-family: Helvetica']"/> -->
+  
+  
+  <xsl:variable name="tlds"      as="xs:string" expand-text="true">com|org|net|gov|mil|edu|io|foundation</xsl:variable>
+  <xsl:variable name="urlchar"   as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
+  <xsl:variable name="domain"    as="xs:string" expand-text="true">({$urlchar}+\.)</xsl:variable>
+  <xsl:variable name="url-match" as="xs:string" expand-text="true">((http|ftp|https):/?/?)?{$domain}+({$tlds})</xsl:variable>
+    
   <xsl:template match="text()">
-    <xsl:analyze-string select="." regex="(https?:)?(\w+\.)?(\w+)\.(\w\w\w)">
+    
+    <xsl:analyze-string select="." regex="{$url-match}">
+      <!--(https?:)?(\w+\.)?(\w+)\.(\w\w\w)-->
       <xsl:matching-substring>
         <xsl:variable name="has-protocol" select="matches(.,'^https?://')"/>
         <a href="{'http://'[not($has-protocol)]}{regex-group(0)}">
