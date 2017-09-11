@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsw="http://coko.foundation/xsweet"
   xmlns="http://www.w3.org/1999/xhtml" xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
@@ -7,34 +7,34 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
-  <!-- 
+  <!--
   Heuristic analysis is implemented as a series of filters.
   Each filter is implemented as an internal (XSLT) pipeline consuming
   the (temporary) result tree emitted by the previous filter.
-  
+
   Filters process as follows:
   $p-proxies - Rewrites every 'p' element in the main document content.
   These proxies capture certain style or formatting info
   but also detect conditions such as end stops (periods) at the ends of lines,
   line length, or whether content is all caps.
-  
+
   $p-proxies-measured - Consumes $p-proxies. Since one of the properties
   on paragraphs we are interested in is their 'stickiness' which can be
   indicated by the length of runs of paragraphs of that type. We can
   add that info to each p by passing them through a filter.
-  
+
   $p-proxies-assimilated - Collapses 'p' elements in $p-proxies-measured into
   sets for further analysis (since ultimately elements will be mapped to headers in sets).
-  
+
   $p-proxies-filtered - Removes 'p' elements from $p-proxies-assimilated that are
   judged *not* to be headers. Only headers are left.
-  
+
   This is the critical phase since it determines how the mapping happens. It is
   controlled via mode  'keep-headers', which provides a template cascade that permits
   only p elements through if they are judged to be candidate headers.
-  
+
   $p-proxies-grouped - Groups the proxies together by (header) level
-  
+
   -->
 
   <!--<xsl:param name="form" as="xs:string">xslt</xsl:param>-->
@@ -44,7 +44,7 @@
   <xsl:template match="/*">
     <body>
       <div class="grouped">
-        <!-- delivers remaining $p-proxies in groups assigning them to header levels (by order) --> 
+        <!-- delivers remaining $p-proxies in groups assigning them to header levels (by order) -->
         <xsl:copy-of select="$p-proxies-grouped"/>
       </div>
       <div class="filtered">
@@ -74,19 +74,19 @@
     <xsl:apply-templates select="//div[@class = 'docx-body']/p[matches(string(.),'\S')]" mode="digest"/>
   </xsl:variable>
 
-  <!-- Mode 'digest' is the initial (first) pass over the document, which boils down all paragraph-level 
+  <!-- Mode 'digest' is the initial (first) pass over the document, which boils down all paragraph-level
   objects (they will be 'p' in the input) into informative little proxies of themselves.
-  
+
   So for example
   <p style="font-size: 14pt">CHAPTER 1</p>
-  
+
   becomes
   <p data-lastchar="1" data-allcaps="true" data-length="9" style="font-size: 14pt"/>
 
   Note that @style may be rewritten (only properties in which we will later be interested, are kept).
-  
+
   Analysis proceeds from there in subsequent passes. -->
-  
+
   <xsl:template match="p" mode="digest">
     <!-- lastchar shows the last (non-whitespace) character in the 'p'. -->
     <p data-lastchar="{replace(.,'^.*(\S)\s*$','$1')}"
@@ -96,13 +96,13 @@
       <xsl:apply-templates select="@style" mode="digest"/>
     </p>
   </xsl:template>
-  
+
   <!-- Names CSS properties in which we are interested, in a normalized order. -->
   <xsl:variable name="keepers" select="'font-size', 'font-style', 'font-weight', 'text-decoration', 'color', 'text-align'"/>
-  
+
   <xsl:template mode="digest" match="p/@style">
     <xsl:variable name="props" select="tokenize(., '\s*;\s*')"/>
-    
+
     <xsl:variable name="refined-style">
       <xsl:for-each select="$keepers[some $p in $props satisfies starts-with($p, .)]">
         <xsl:variable name="keeper" select="."/>
@@ -110,14 +110,14 @@
         <xsl:value-of select="$props[starts-with(., $keeper)]"/>
       </xsl:for-each>
     </xsl:variable>
-    
+
     <!-- Add an attribute iff there is a 'refined' value. -->
     <xsl:if test="matches($refined-style, '\S')">
       <xsl:attribute name="style" select="$refined-style"/>
     </xsl:if>
-    
+
   </xsl:template>
-  
+
   <!-- Step 2. Now we have a set of element proxies (one per non-ws paragraph)
        we can run over them in contiguous clumps. This enables us to capture
        info regarding how many contiguous paragraphs appear with a given style -
@@ -182,27 +182,27 @@
   </xsl:variable>
 
   <!-- "Keeper rules" determine which paragraphs are recognized as candidates for header promotion. -->
-  
+
   <!-- Fallback rule: if nothing else matches, never keep a p. -->
   <xsl:template mode="keep-headers" match="*"/>
-    
+
   <!-- Actual rules are effected by matches in 'keep-headers' mode.
        A paragraph to be included passes itself through via <xsl:sequence select="."/>.
        A paragraph to be excluded is matched by an empty template.
        Note the priority is important: higher priority wins! -->
-  
+
   <!-- Don't keep paragrahs that are right-aligned. -->
   <!-- for debugging <xsl:template mode="keep-headers" priority="1000"  match="p">
     <xsl:sequence select="."/>
   </xsl:template>-->
-  
+
   <!-- Never a header if right-aligned -->
   <xsl:template mode="keep-headers" priority="100"  match="p[xsw:css-prop(.)= 'text-align: right']"/>
-  
+
   <!-- Never a header if the commonest type of 'p' -->
   <xsl:template mode="keep-headers" priority="75"  match="p[@data-count = max(../@data-count)]"/>
 
-  
+
   <!-- Assuming it passes that test, keep it if it doesn't appear in large runs, is
        less than 120 chars long on average, and is bigger than *someone* -->
   <xsl:template mode="keep-headers" priority="65"  match="p[@data-average-run &lt; 4]
@@ -218,7 +218,7 @@
     match="p[@data-average-run &lt; 2][@data-average-length &lt; 200][xsw:css-prop(.)= 'text-align: center']">
     <xsl:sequence select="."/>
   </xsl:template>
-  
+
   <!-- Of what remains, always keep lines that never show full stops (hey what can go wrong) -->
   <xsl:template mode="keep-headers" priority="50" match="p[@data-never-fullstop = 'true']">
     <xsl:sequence select="."/>
@@ -255,13 +255,13 @@
     <xsl:param name="who" as="element()"/>
     <xsl:sequence select="for $s in tokenize($who/@style,'\s*;\s*') return normalize-space($s)"/>
   </xsl:function>
-  
+
   <xsl:template name="group-proxies-by-properties">
     <xsl:comment> Proxies being grouped by property assignment </xsl:comment>
     <!-- Alternatively we can sort and group by font properties including primarily size. -->
     <xsl:for-each-group select="$p-proxies-filtered/*" group-by="@data-nominal-fontsize">
       <xsl:sort select="current-grouping-key()" data-type="number"/>
-      
+
       <xsl:for-each-group select="current-group()"
         group-by="xsw:css-prop(.) = 'font-style: italic'">
         <xsl:sort select="string(current-grouping-key())"/><!-- 'false' or 'true' -->

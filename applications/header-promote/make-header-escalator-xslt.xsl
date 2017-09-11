@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0"
+<xsl:stylesheet version="3.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
   xmlns="http://www.w3.org/1999/xhtml"
   xpath-default-namespace="http://www.w3.org/1999/xhtml">
-  
+
   <xsl:output indent="yes"/>
-  
+
 <!-- Example input - all these have been identified as headers -
     <div class="hX">
       <div class="level-group">
@@ -20,31 +20,31 @@
         <p style="font-size: 10pt; font-style: italic; font-weight: bold"/>
       </div>
     </div>
--->  
-  
+-->
+
   <xsl:namespace-alias stylesheet-prefix="xsw" result-prefix="xsl"/>
-  
+
   <xsl:param name="debug-mode" as="xs:string">silent</xsl:param>
-  
+
   <!-- Note that generated stylesheet will error if $extra-match-criteria is anything but an XPath filter expression
        i.e. '[ booleanExp ]' (with square brackets).
        Exposing it as a parameter isn't recommended unless we can defend against arbitrary XPath injection. -->
   <xsl:variable name="extra-match-criteria">[string-length(.) &lt;= 200][matches(.,'\S')][ancestor::*/@class='docx-body']</xsl:variable>
-  
+
   <xsl:template match="body">
-    
+
     <!--       xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
       xmlns:xs="http://www.w3.org/2001/XMLSchema"
       xmlns:xsw="http://coko.foundation/xsweet"
       xmlns="http://www.w3.org/1999/xhtml"
-      
+
     -->
-    <xsw:stylesheet version="2.0"
+    <xsw:stylesheet version="3.0"
       xpath-default-namespace="http://www.w3.org/1999/xhtml"
       exclude-result-prefixes="#all">
-      
+
       <xsw:output method="xml"  omit-xml-declaration="yes"/>
-      
+
       <xsw:template match="node() | @* | /html">
         <xsw:copy>
           <xsw:apply-templates select="node() | @*"/>
@@ -52,18 +52,18 @@
       </xsw:template>
 
       <xsl:apply-templates select="div[@class='grouped']/div[@class='hX']/*" mode="xslt-produce"/>
-      
+
       <xsl:if test="not($debug-mode='silent')">
       <xsw:variable name="in">
         <xsl:copy-of select="div"/>
       </xsw:variable>
       </xsl:if>
-      
+
     </xsw:stylesheet>
   </xsl:template>
-  
+
   <!-- Template writes XSLT templates  -->
-  
+
   <xsl:template match="div[@class='hX']/*" mode="xslt-produce">
     <xsl:variable name="match">
       <xsl:value-of select="local-name()"/>
@@ -96,5 +96,5 @@
       </xsw:element>
     </xsw:template>
   </xsl:template>
-  
+
 </xsl:stylesheet>

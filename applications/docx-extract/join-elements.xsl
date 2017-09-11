@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet 
-  version="2.0"
+<xsl:stylesheet
+  version="3.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
   xmlns="http://www.w3.org/1999/xhtml"
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
-  
+
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
-  
+
   <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
   </xsl:template>
-  
+
   <!-- Copy 'p', and merge what's inside it. -->
   <xsl:template match="p">
     <xsl:copy>
@@ -25,17 +25,17 @@
       <xsl:call-template name="collapse-ilk"/>
     </xsl:copy>
   </xsl:template>
-  
+
   <!-- Merge logic accepts a sequence of nodes (by default,
        children of the context node where called) and returns
        sequences where 'like' nodes in sequence are merged.
        So <u>Moby </u><u>Dick</u> comes back <u>Moby Dick</u>.
-  
+
        'Likeness' is established by xsw:node-signature, and permits elements
        of the same type and attribute values to be merged accorrding
        to logic given in the hashing templates.
   -->
-  
+
   <xsl:template name="collapse-ilk">
     <xsl:param name="among" select="node()"/>
     <xsl:for-each-group select="$among" group-adjacent="xsw:node-signature(.)">
@@ -45,7 +45,7 @@
           <xsl:copy-of select="@*"/>
           <xsl:call-template name="collapse-ilk">
             <xsl:with-param name="among" select="current-group()/node()"/>
-          </xsl:call-template> 
+          </xsl:call-template>
         </xsl:copy>
       </xsl:for-each>
       <!-- Splice in anything not an element. -->
@@ -59,7 +59,7 @@
       <xsl:apply-templates mode="signature" select="$n"/>
     </xsl:value-of>
   </xsl:function>
-  
+
   <!-- Note we're going to collapse things with the same (local) name
        though in different namespaces - this ain't lookin to be namespace safe. -->
   <xsl:template mode="signature" match="*">
@@ -74,13 +74,13 @@
   <xsl:template mode="signature" match="@*">
     <xsl:value-of select="local-name(),." separator="="/>
   </xsl:template>
- 
+
   <!-- These guys should never collapse so their hash is always unique to them.-->
   <xsl:template mode="signature" match="div | p | tab">
     <xsl:value-of select="local-name(.)"/>
     <xsl:value-of select="generate-id(.)"/>
   </xsl:template>
-  
+
   <!-- ws-only text nodes, PIs and comments should be merged with adjacent elements
        iff those nodes are being merged together. -->
   <xsl:template mode="signature" match="text() | comment() | processing-instruction()">
@@ -95,5 +95,5 @@
   <xsl:template mode="signature" match="text()[matches(.,'\S')]">
     <xsl:value-of select="generate-id(.)"/>
   </xsl:template>
-  
+
 </xsl:stylesheet>
