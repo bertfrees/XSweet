@@ -25,14 +25,16 @@
   <xsl:template match="@style[.='font-family: Helvetica']"/> -->
   
   
-  <xsl:variable name="tlds"      as="xs:string" expand-text="true">(com|org|net|gov|mil|edu|io|foundation)</xsl:variable>
-  <xsl:variable name="urlchar"   as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
+  <xsl:variable name="tlds"         as="xs:string" expand-text="true">(com|org|net|gov|mil|edu|io|foundation)</xsl:variable>
+  <xsl:variable name="urlchar"      as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
+  <xsl:variable name="extraURLchar" as="xs:string">[\w\-\?\$:;/:@&amp;=+,]</xsl:variable>
+  
   <xsl:variable name="domain"    as="xs:string" expand-text="true">({$urlchar}+\.)</xsl:variable>
 
   <xsl:variable name="tail"      as="xs:string" expand-text="true">(/|(\.(xml|html|htm|gif|jpg|jpeg|pdf|png|svg)))?</xsl:variable>
   <xsl:variable name="pathstep"  as="xs:string" expand-text="true">(/{$urlchar}+)</xsl:variable>
   
-  <xsl:variable name="url-match" as="xs:string" expand-text="true">((http|ftp|https):/?/?)?{$domain}+{$tlds}{$pathstep}*{$tail}</xsl:variable>
+  <xsl:variable name="url-match" as="xs:string" expand-text="true">((http|ftp|https):/?/?)?{$domain}+{$tlds}{$pathstep}*{$tail}{$extraURLchar}*</xsl:variable>
   
   <xsl:template match="text()">
     
