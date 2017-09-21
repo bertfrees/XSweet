@@ -361,7 +361,7 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template priority="10" match="w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] |
+  <xsl:template priority="10" match="w:rPr/w:kern | w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] |
     w:rPr/w:smallCaps[@w:val='0'] | w:rPr/w:color[@w:val='000000']">
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
