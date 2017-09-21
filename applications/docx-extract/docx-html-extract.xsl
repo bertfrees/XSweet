@@ -7,7 +7,7 @@
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 
   xmlns="http://www.w3.org/1999/xhtml" xmlns:xsw="http://coko.foundation/xsweet"
-  exclude-result-prefixes="#all" xmlns:fn="http://www.example.com/fn">
+  exclude-result-prefixes="#all">
 
 <!-- For docs on WordML, see (at least):
 
@@ -222,11 +222,11 @@
     </tr>
   </xsl:template>
 
-  <xsl:template match="w:tc">
+  <!--<xsl:template match="w:tc">
     <td>
       <xsl:apply-templates select="w:p"/>
     </td>
-  </xsl:template>
+  </xsl:template>-->
 
   <!-- Drop in default traversal -->
   <xsl:template match="w:pPr"/>
@@ -496,7 +496,15 @@
       <xsl:apply-templates mode="#current"/>
     </xsw:style>
   </xsl:template>
-
+  
+  <xsl:template mode="build-properties" as="element()*" match="w:tblSstyle">
+    <!--w:link pulls in character level styles - and gets us infinite loops ... -->
+    <xsl:apply-templates mode="#current" select="key('styles-by-id',@w:val, $styles)"/>
+    <xsw:style name="{@w:styleId}">
+      <xsl:apply-templates mode="#current"/>
+    </xsw:style>
+  </xsl:template>
+  
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:ind">
     <xsl:apply-templates mode="#current" select="@w:left | @w:right | @w:firstLine | @w:hanging"/>
   </xsl:template>
@@ -682,4 +690,6 @@
 
   </xsl:template>
 
+  <xsl:include href="docx-table-extract.xsl"/>
+  
 </xsl:stylesheet>

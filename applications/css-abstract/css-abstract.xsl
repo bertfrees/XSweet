@@ -83,6 +83,11 @@
       <xsl:for-each select="$props[starts-with(., 'text-indent:')]">
         <xsl:sequence select="replace(., '(^text-|:|\C)', '')"/>
       </xsl:for-each>
+      <!--<xsl:for-each select="$props[matches(., '^border-')]">
+        <xsl:variable name="prop" select="tokenize(.,'\s*:\s*')[1]"/>
+        <xsl:variable name="val"  select="tokenize(.,'\s*:\s*')[2]"/>
+        <xsl:sequence select="concat(replace($prop, '(\w)\w*\-', '$1-'),': ',$val)"/>
+      </xsl:for-each>-->
       <xsl:for-each select="$props[matches(., '^\-?xsweet-')]">
         <xsl:sequence select="replace(., '(^-?xsweet-|:|\C|\-)', '')"/>
       </xsl:for-each>
