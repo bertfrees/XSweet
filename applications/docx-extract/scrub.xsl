@@ -43,7 +43,7 @@
   </xsl:template>
 
   <!-- Inline elements that are truly empty can be stripped. -->
-  <xsl:template match="p//*[empty(.//* except (.//tab|.//span|.//b|.//i|.//u)) and not(string(.))]">
+  <xsl:template match="p//*[empty(.//* except (.//tab|.//span|.//b|.//i|.//u)) and not(matches(.,'\S'))]">
     <xsl:apply-templates/>
   </xsl:template>
 
