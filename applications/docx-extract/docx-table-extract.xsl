@@ -24,11 +24,45 @@
       <xsl:if test="matches($style, '\S')">
         <xsl:attribute name="style" select="$style"/>
       </xsl:if>
+      <!-- spanning logic: column and row spanning accomplished by static query of the WordML -->
+      <xsl:for-each select="w:tcPr/w:gridSpan">
+        <xsl:attribute name="colspan" select="@w:val"/>
+      </xsl:for-each>
       
+      <xsl:if test="w:tcPr/w:vMerge[@w:val='restart']">
+        <xsl:variable name="row-count" as="xs:integer">
+          <xsl:apply-templates select="." mode="iterate-rowspan-count"/>
+        </xsl:variable>
+        <xsl:attribute name="rowspan" select="$row-count"/>
+      </xsl:if>
       <xsl:apply-templates select="*"/>
     </td>
   </xsl:template>
   
+  
+  <xsl:template mode="iterate-rowspan-count" match="w:tc" as="xs:integer">  
+    <xsl:param name="so-far" select="0"/>
+    <xsl:variable name="pos" select="xsw:column-position(.)"/>
+    <!-- Going to add one by visiting a cell in the next row in the same position, set to merge -->
+    <xsl:variable name="merged-row-cell" select="parent::w:tr/following-sibling::w:tr[1]/key('cell-by-position',$pos,.)
+      [exists(w:tcPr/w:vMerge[not(@w:val='restart')]) ]"/>
+    <xsl:apply-templates mode="iterate-rowspan-count" select="$merged-row-cell">
+      <xsl:with-param name="so-far" select="$so-far + 1"/>
+    </xsl:apply-templates>
+    <!-- If not, we just report where we have gotten (including ourselves) -->
+    <xsl:if test="empty($merged-row-cell)">
+      <xsl:sequence select="$so-far + 1"/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:key name="cell-by-position" match="w:tc" use="xsw:column-position(.)"/>
+
+  <xsl:function name="xsw:column-position" as="xs:integer">
+    <xsl:param name="cell" as="element(w:tc)"/>
+    <xsl:sequence select="sum( $cell/(.|preceding-sibling::w:tc) / (w:tcPr/w:gridSpan/xs:integer(@w:val),1)[1] )"/>
+  </xsl:function>
+  <!-- Cells dropped because merged vertically into preceding rows -->
+  <xsl:template match="w:tc/w:tcPr/w:vMerge[not(@w:val='restart')]"/>
   
   <xsl:template mode="render-css" match="w:tcPr | w:tblPr" as="xs:string?">
     <xsl:param tunnel="yes" required="yes" name="cell" as="element(w:tc)"/>
@@ -138,7 +172,7 @@
     match="w:tblBorders/*/@w:sz | w:tcBorders/*/@w:sz">
     <xsl:param name="position" tunnel="yes" as="xs:string" required="yes"/>
     <!-- Table borders being line borders they convert to 1/8 pt
-         However -->
+         However 'double' borders come out better scaled to 1/2. -->
     <xsl:if test="not(. = '0')">
       <xsl:variable name="scale-factor"
         select="if (../@w:val = $border-map[@css-style='double']/xsw:border/@ms-style) then 2 else 8"/>
