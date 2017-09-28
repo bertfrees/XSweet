@@ -141,7 +141,7 @@
          However -->
     <xsl:if test="not(. = '0')">
       <xsl:variable name="scale-factor"
-        select="if (../@w:val = $border-map/xsw:border[@css-style='double']/xsw:border/@ms-style) then 2 else 8"/>
+        select="if (../@w:val = $border-map[@css-style='double']/xsw:border/@ms-style) then 2 else 8"/>
       <xsw:prop name="border-{$position}-width">
         <xsl:value-of select="number(.) div $scale-factor"/>
         <xsl:text>pt</xsl:text>
