@@ -137,10 +137,13 @@
   <xsl:template mode="build-properties" as="element(xsw:prop)?" priority="1"
     match="w:tblBorders/*/@w:sz | w:tcBorders/*/@w:sz">
     <xsl:param name="position" tunnel="yes" as="xs:string" required="yes"/>
-    <!-- Table borders being line borders they convert to 1/8 pt -->
+    <!-- Table borders being line borders they convert to 1/8 pt
+         However -->
     <xsl:if test="not(. = '0')">
+      <xsl:variable name="scale-factor"
+        select="if (../@w:val = $border-map/xsw:border[@css-style='double']/xsw:border/@ms-style) then 2 else 8"/>
       <xsw:prop name="border-{$position}-width">
-        <xsl:value-of select="number(.) div 8"/>
+        <xsl:value-of select="number(.) div $scale-factor"/>
         <xsl:text>pt</xsl:text>
       </xsw:prop>
     </xsl:if>
