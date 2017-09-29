@@ -39,7 +39,6 @@
     </td>
   </xsl:template>
   
-  
   <xsl:template mode="iterate-rowspan-count" match="w:tc" as="xs:integer">  
     <xsl:param name="so-far" select="0"/>
     <xsl:variable name="pos" select="xsw:column-position(.)"/>
@@ -61,8 +60,9 @@
     <xsl:param name="cell" as="element(w:tc)"/>
     <xsl:sequence select="sum( $cell/(.|preceding-sibling::w:tc) / (w:tcPr/w:gridSpan/xs:integer(@w:val),1)[1] )"/>
   </xsl:function>
+  
   <!-- Cells dropped because merged vertically into preceding rows -->
-  <xsl:template match="w:tc/w:tcPr/w:vMerge[not(@w:val='restart')]"/>
+  <xsl:template match="w:tc[w:tcPr/w:vMerge[not(@w:val='restart')] ]"/>
   
   <xsl:template mode="render-css" match="w:tcPr | w:tblPr" as="xs:string?">
     <xsl:param tunnel="yes" required="yes" name="cell" as="element(w:tc)"/>
