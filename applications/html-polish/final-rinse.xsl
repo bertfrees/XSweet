@@ -50,7 +50,7 @@
 <!--   <span class="EndnoteReference"><a class="endnoteReference" href="#en5">5</a>6</span>"-->
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:apply-templates select="a"/>
+      <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
 
