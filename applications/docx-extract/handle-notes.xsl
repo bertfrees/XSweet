@@ -10,6 +10,10 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
+
+  <xsl:param as="xs:string" name="footnote-format">a</xsl:param>
+  <xsl:param as="xs:string" name="endnote-format" >1</xsl:param>
+  
   <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
     <xsl:copy>
@@ -98,13 +102,13 @@
 
   <xsl:template match="a[@class='endnoteReference']" mode="get-number">
     <xsl:for-each select="key('endnoteRef-by-href',@href)[1]">
-      <xsl:number level="any" count="a[@class='endnoteReference'][xsw:is-first-enref(.)]"/>
+      <xsl:number level="any" format="{$endnote-format}" count="a[@class='endnoteReference'][xsw:is-first-enref(.)]"/>
     </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="a[@class='footnoteReference']" mode="get-number">
     <xsl:for-each select="key('footnoteRef-by-href',@href)[1]">
-      <xsl:number level="any" count="a[@class='footnoteReference'][xsw:is-first-fnref(.)]"/>
+      <xsl:number level="any" format="{$footnote-format}" count="a[@class='footnoteReference'][xsw:is-first-fnref(.)]"/>
     </xsl:for-each>
   </xsl:template>
 
