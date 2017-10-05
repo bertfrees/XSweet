@@ -54,6 +54,7 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- speed up this stylesheet in some processors by matching only w:tbl[descendant::w:vMerge]//w:tc ? -->
   <xsl:key name="cell-by-position" match="w:tc" use="xsw:column-position(.)"/>
 
   <xsl:function name="xsw:column-position" as="xs:integer">
@@ -99,6 +100,8 @@
     <xsl:apply-templates mode="#current" select="w:tblStyle/key('styles-by-id',@w:val, $styles)"/>
     
     <xsw:cellStyles>
+      <!-- table cells have vertical align 'top' by default -->
+      <xsw:prop name="vertical-align">top</xsw:prop>
       <!--<xsl:for-each select="w:rStyle">
         <xsl:attribute name="calls" select="@w:val"/>
       </xsl:for-each>
@@ -182,7 +185,7 @@
       </xsw:prop>
     </xsl:if>
   </xsl:template>
-    
+  
     <xsl:template mode="build-properties" as="element(xsw:prop)?" priority="1"
       match="w:tblBorders/*/@w:space | w:tcBorders/*/@w:space">
       <xsl:param name="position" tunnel="yes" as="xs:string" required="yes"/>
@@ -194,17 +197,35 @@
       </xsw:prop>
       </xsl:if>
     </xsl:template>
-    
+  
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" priority="1"
     match="w:tblBorders/*/@w:color | w:tcBorders/*/@w:color">
     <xsl:param name="position" tunnel="yes" as="xs:string" required="yes"/>
     <xsl:if test="not(.=('000000','auto'))">
-        <xsw:prop name="border-{$position}-color">
-          <xsl:value-of select="replace(., '^\d', '#$0')"/>
-        </xsw:prop>
-      </xsl:if>
-    </xsl:template>
+      <xsw:prop name="border-{$position}-color">
+        <xsl:value-of select="replace(., '^\d', '#$0')"/>
+      </xsw:prop>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)*" priority="1"
+    match="w:vAlign">
+    <!--  <w:vAlign w:val="top"/>
+        <w:vAlign w:val="center"/>
+        <w:vAlign w:val="bottom"/>
+    http://officeopenxml.com/WPtableCellProperties-verticalAlignment.php
     
+    These map to the following CSS attributes:
+      vertical-align: top
+      vertical-align: middle
+      vertical-align: bottom-->
+    <xsw:prop name="vertical-align">
+      <xsl:value-of select="if (string(@w:val) eq 'center') then 'middle' else string(@w:val)"/>
+    </xsw:prop>
+  </xsl:template>
+  
+  
+
   <!--See http://officeopenxml.com/WPtableBorders.php-->
   <xsl:variable name="border-map" as="element()*">
     <xsw:border css-style="none">
