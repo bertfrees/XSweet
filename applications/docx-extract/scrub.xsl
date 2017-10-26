@@ -17,14 +17,12 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Strip these, retaining their contents. -->
-  <xsl:template match="position | iCs | lang | vertAlign | noProof">
+  <!-- Strip these, retaining their contents.
+       Note some at least may also be suppressed in the extraction,
+       so "gloves and mittens" -->
+  <xsl:template match="position | iCs | lang | vertAlign | noProof | kern">
     <xsl:apply-templates/>
   </xsl:template>
-
-  <!-- Matching b, i and u if they have only whitespace text content
-       this includes <b> </b> and <b><tab/></b> -->
-
 
   <xsl:template match="caps | strike">
     <xsl:apply-templates/>
@@ -43,7 +41,7 @@
   </xsl:template>
 
   <!-- Inline elements that are truly empty can be stripped. -->
-  <xsl:template match="p//*[empty(.//* except (.//tab|.//span|.//b|.//i|.//u)) and not(matches(.,'\S'))]">
+  <xsl:template match="p//*[empty(.//* except (.//tab|.//span|.//b|.//i|.//u)) and not(string(.))]">
     <xsl:apply-templates/>
   </xsl:template>
 
