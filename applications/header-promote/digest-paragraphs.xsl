@@ -71,7 +71,7 @@
   <xsl:variable name="p-proxies">
     <!-- Only paragraphs with contents are examined for header promotion.
          matches(string(.),'\S') is true iff non-ws content is present. -->
-    <xsl:variable name="matching-ps" select="//div[@class = 'docx-body']/p[matches(string(.),'\S')] except (//table//p | //list//p)"/>
+    <xsl:variable name="matching-ps" select="//div[@class = 'docx-body']/p[matches(string(.),'\S')] except (//table//p | //li//p)"/>
     <xsl:apply-templates select="$matching-ps" mode="digest"/>
   </xsl:variable>
 

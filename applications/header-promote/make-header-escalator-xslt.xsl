@@ -29,7 +29,7 @@
   <!-- Note that generated stylesheet will error if $extra-match-criteria is anything but an XPath filter expression
        i.e. '[ booleanExp ]' (with square brackets).
        Exposing it as a parameter isn't recommended unless we can defend against arbitrary XPath injection. -->
-  <xsl:variable name="extra-match-criteria">[empty(ancestor::table|ancestor::list)][ancestor::*/@class='docx-body'][string-length(.) &lt;= 200][matches(.,'\S')]</xsl:variable>
+  <xsl:variable name="extra-match-criteria">[empty(ancestor::table|ancestor::li)][ancestor::*/@class='docx-body'][string-length(.) &lt;= 200][matches(.,'\S')]</xsl:variable>
 
   <xsl:template match="body">
 
