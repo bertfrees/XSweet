@@ -12,6 +12,18 @@
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
+<xsl:template match="html/head">
+  <xsl:copy>
+    <xsl:for-each select="(//h1 | //h2 | //h3)[1]">
+      <title>
+        <xsl:value-of select="."/>
+      </title>
+    </xsl:for-each>
+    <xsl:apply-templates/>
+  </xsl:copy>
+</xsl:template>
+  
+<xsl:template match="html/head/title"/>
 
   <xsl:template match="node() | @*">
     <xsl:copy>

@@ -3,6 +3,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
+  xmlns="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
