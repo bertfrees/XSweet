@@ -81,8 +81,8 @@ Note the following mappings:
   <xsl:template name="override-styles">
     <!-- Under certain conditions, descends tree to collect CSS style property assignments
       returning them as attributes (captured on a proxy). -->
-    <xsl:if test="count(span) eq 1 and normalize-space(.) = normalize-space(*[1])">
-      <xsl:for-each select="span">
+    <xsl:if test="count(* except tab) eq 1 and normalize-space(.) = normalize-space(*[1])">
+      <xsl:for-each select="* except tab">
         <xsl:apply-templates select=". | @style" mode="as-attributes"/>
         <!-- descend recursively -->
         <xsl:call-template name="override-styles"/>
