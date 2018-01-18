@@ -1,43 +1,32 @@
-# XSweet docx to html extraction and more
+# Various XSweet applications live here
 
-These are XSLT stylesheets, designed to specify transformations from XML or HTML source documents, into other XML or HTML documents. The main goal of XSweet is to provide for conversion of data encoded in MS Word's data description format (`docx`), into a clean and serviceable HTML.
+Each directory contains one or several XSLT transformations. Some are experimental and will not provide satisfactory results, so do not be dismayed if not everything makes sense. Usually the way forward will be evident by clues left in the set of XSLTs themselves, in their comments or in accompanying readme docs.
 
-Why use XSweet
+Typically you will be constructing a chain of these transformations calling XSLTs from several different subdirectories. So, for example:
 
-- Works reasonably well without further setting
-- Works reasonably well on arbitrary inputs
-- Acts like a black box, but isn't
-- Adaptable, extensible
-- Versatile, powerful, scalable: doorway to XSLT
+(starting with the extracted `document.xml`, transform with)
 
-These are all written as straightforward "one-up" XSLT transformations with some meta-transformations and other advanced stuff mixed in. Operations are broken out very discretely so a single XSLT typically has a single task to do. This enables mixing and matching the transformations called in for particular pipelines. If there's something you don't need, you simply leave it out. If there's something you want, you add it.
+* docx-extract/EXTRACT-docx.xsl
+* list-promote/PROMOTE-lists.xsl
+* local-fixup/hyperlink-inferencer.xsl
+* html-polish/final-rinse.xsl
+* XSweet/XSweet/applications/html-polish/xhtml-serialize.xsl
+* XSweet/HTMLevator/applications/header-promote/header-promotion-CHOOSE.xsl
 
-Transformations are achieved in chains called "pipelines". There are many ways of building and operating a pipeline of transformations, running all the way from old-fashioned scripts, to full-fledged pipelining technologies such as those supporting XProc, a specification of W3C that describes a pipeline language. XSweet will work irrespective of the particular approach to putting its inputs and outputs together.
+Every step but the first, consumes (reads) an HTML-tagged document (albeit in XML syntax for convenience) and produces an (xml-well-formed) HTML document. (A tag-abbreviated HTML5 output may be produced as a terminal step, if wanted.)
 
-A pipelining or "glue" framework must be able to:
+Note: it's a convention in this project to name stylesheets with components of their filenames in ALL CAPS when these stylesheets use the XPath 3.0 function transform(), thus achieving "meta-stylesheet" status (inasmuch as they do not merely transform, they also orchestrate and execute transformations). For example, the 
 
-* access arbitrary resources (XML documents and XSLTs)
-* apply an XSLT transformation to an XML document and capturing the results
-  * offer a way of setting runtime parameters in XSLT invocation
-* sequence transformations together, so the output of one becomes input to another
-* persisting (writing, serializing) final results or making them available
+## `css-abstract`
 
-As long as some provision is made for all these, just about anything will work. In addition to 
+## `docx-extract`
 
-Here is an example of an XSweet pipeline using bash:
+## `html-polish`
 
-[bash example]
+## `list-promote`
 
-(The most primitive possible kind: in particular, notice how a separate VM is started for every single transformation. Nonetheless throughput may be tolerable for many purposes.)
+## `local-fixup`
 
-Here is an example in PHP:
+## `produce-analysis`
 
-Here is an XProc pipeline:
-
-Here is a prototype XSweet "XSLT puppeteer"
-
-Other ways this could be done: Windows batch files (these are like bash scripts); XML services under a servlet architecture e.g. Apache Cocoon; XML db e.g. BaseX; XMLsh (CL tool library).
-
-
-
-
+## `produce-plaintext`
