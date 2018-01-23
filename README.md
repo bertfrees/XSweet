@@ -12,7 +12,7 @@ The stylesheets in XSweet include other XSLTs as well, maintained in the HTMLeva
 
 Why use XSweet
 
-- Works reasonably well with defaults
+- Works reasonably well with defaults*
 - Works reasonably well on arbitrary inputs
 - Alternatively, you can assert control
   - Deciding which phases (transformations) to include or exclude
@@ -20,11 +20,22 @@ Why use XSweet
 - Acts like a black box, but isn't: due to its "get insidability", XSweet is adaptable and extensible
 - Versatile, powerful, scalable: doorway to XSLT
 
+* You do have to "pick your pathway"
+
 Also, please use XSweet in addition to other tools that do parts or all of the job. There is no wrong way to use XSweet. You might find you like another extractor, but like to use XSweet to clean up afterwards. Or maybe the other way around.
 
-XSweet's various components are all written as straightforward "one-up" XSLT transformations with some meta-transformations and other advanced stuff mixed in. (The basic "extract from docx" transformation combines five separate transformation steps, operating on a zip file unzipped on the system.) Operations are broken out very discretely so a single XSLT typically has a single task to do. This enables very flexible mixing and matching the transformations called in for particular pipelines. If there's something you don't need, you simply leave it out. If there's something you want, you add it.
+## Pick your pathway
 
-Using a glue language of some sort, transformations are strung together in chains or "pipelines". There are many ways of building and operating a pipeline of transformations, running all the way from old-fashioned scripts, to full-fledged pipelining technologies such as those supporting XProc, a specification of W3C that describes a pipeline language. As long as you can get them to work independently, XSweet will also work irrespective of the particular approach you use to putting its inputs and outputs together.
+Picking your pathway entails two choices: first, picking your framework or glue language. Then, selecting from and arranging for the different transformations to be executed on your data. Since XSweet's first challenge was Word data conversion, the working assumption is that your input data might (may) be WordML (an XML format maintained internally in Word docx files); but components of XSweet might also be useful in document processing architectures especially XML-based HTML processing architectures.
+
+Since this endeavor is open-ended and everyone's solution will be different, XSweet offers several "prefab pathways" using several different "glue" solutions, for inspection and emulation. An easy way to start is just to try whichever of these you think will work best for you.
+
+
+## XSweet architecture: mix and match your XSLTs
+
+XSweet's various components are all written as straightforward "one-up" XSLT transformations with some meta-transformations and other advanced stuff mixed in. (The basic "extract from docx" transformation combines five separate transformation steps, operating on a zip file unzipped on the system.) Operations are broken out discreetly so a single XSLT typically has a single task to do. This enables flexible mixing and matching of the transformations called in for particular pipelines. If there's something you don't need, you simply leave it out. If there's something you want, you add it.
+
+This does mean you need some kind of glue (language, environment) to string the transformations together. Fortunately there are many ways of building and operating a pipeline of transformations, running all the way from old-fashioned scripts, to full-fledged pipelining technologies such as those supporting XProc, a specification of W3C that describes a pipeline language. As long as you can get them to work independently, XSweet will also work irrespective of the particular approach you use to putting its inputs and outputs together.
 
 A pipelining or "glue" framework must be able to:
 

@@ -19,11 +19,21 @@ Note: it's a convention in this project to name stylesheets with components of t
 
 ## `css-abstract`
 
+Does its best to rewrite style properties into CSS. YMMV.
+
 ## `docx-extract`
+
+Pulls HTML out of .docx. Assumes `document.xml` as the (primary) source document. Several XSLTs here may also make reference to other XML documents in the (docx, unzipped) repository, such as `styles.xml`, `footnotes.xml` and the like.
+
+See the readme for more info.
 
 ## `html-polish`
 
+Steps expected to be final or near-final.
+
 ## `list-promote`
+
+Make HTML `ol` and `ul` from WordML inputs (marked as lists items).
 
 ## `local-fixup`
 
