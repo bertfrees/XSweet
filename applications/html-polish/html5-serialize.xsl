@@ -3,7 +3,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   
   <!-- Requests a tool use HTML5 serialization rules. -->
-  <xsl:output method="html" html-version="5" indent="no"/>
+  <xsl:output method="html" html-version="5" indent="no" include-content-type="no"/>
   
   <!-- Otherwise, just copies. -->
   <xsl:mode on-no-match="deep-copy"/>

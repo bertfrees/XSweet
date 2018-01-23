@@ -5,7 +5,7 @@
   xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
 
-  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
  
 <!-- Use this XQuery to get a list of stylesheets called by an XProc pipeline:
 
