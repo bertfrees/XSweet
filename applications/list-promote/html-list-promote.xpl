@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc"
   xmlns:xsw="http://coko.foundation/xsweet"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0"
   type="xsw:html-header-promote" name="html-header-promote">
+
+  <!-- XSweet: XProc implementation of two-step list promotion pipeline. -->
   
   <p:input port="source" primary="true"/>
   
@@ -24,8 +25,8 @@
     <p:pipe port="result" step="structure-lists"/>
   </p:output>
 
-  <p:serialization port="_A_digested"         indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_B_headers-promoted" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_A_marked"     indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_B_structured" indent="true" omit-xml-declaration="true"/>
   
   <p:identity name="in"/>
   
@@ -35,7 +36,7 @@
     </p:input>
   </p:xslt>
   
-  <p:xslt name="escalator-xslt">
+  <p:xslt name="structure-lists">
     <p:input port="stylesheet">
       <p:document href="itemize-lists.xsl"/>
     </p:input>

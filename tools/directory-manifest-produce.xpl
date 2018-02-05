@@ -14,12 +14,16 @@
   <p:output port="HTML" primary="false">
     <p:pipe port="result" step="produce-manifest-html"/>
   </p:output>
+  <p:output port="HTML-sorted" primary="false">
+    <p:pipe port="result" step="organize-manifest"/>
+  </p:output>
   <p:output port="MARKDOWN" primary="true">
     <p:pipe port="result" step="render-markdown"/>
   </p:output>
 
-  <p:serialization port="HTML"     method="html" omit-xml-declaration="true" indent="true"/>
-  <p:serialization port="MARKDOWN" method="text" omit-xml-declaration="true"/>
+  <p:serialization port="HTML"        method="html" omit-xml-declaration="true" indent="true"/>
+  <p:serialization port="HTML-sorted" method="html" omit-xml-declaration="true" indent="true"/>
+  <p:serialization port="MARKDOWN"    method="text" omit-xml-declaration="true"/>
   
   <p:xslt name="produce-manifest-html">
     <p:input port="source">
@@ -29,6 +33,12 @@
       <p:document href="directory-manifest.xsl"/>
     </p:input>
     <p:with-param name="dirpath" select="$dirpath"/>
+  </p:xslt>
+  
+  <p:xslt name="organize-manifest">
+    <p:input port="stylesheet">
+      <p:document href="manifest-reorder.xsl"/>
+    </p:input>
   </p:xslt>
   
   <p:xslt name="render-markdown">

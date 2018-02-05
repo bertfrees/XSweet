@@ -30,18 +30,16 @@
   <xsl:template match="/" name="go">
     <xsl:if test="$dirpath castable as xs:anyURI">
       <html>
-      <body>
-          <xsl:for-each-group select="file:list($dirpath, true())" group-by="replace(.,'.*\.','')">
+        <body>
+          <xsl:for-each-group select="file:list($dirpath, true())" group-by="replace(., '.*\.', '')">
             <div>
               <h3>{ current-grouping-key() }</h3>
               <xsl:apply-templates select="current-group()"/>
             </div>
           </xsl:for-each-group>
-        
-      </body>
-    </html>
+        </body>
+      </html>
     </xsl:if>
-    
   </xsl:template>
 
   <xsl:template match=".">
@@ -52,21 +50,35 @@
     </div>
   </xsl:template>
   
+  <xsl:template match=".[ends-with(.,'md')]"/>
   
   <xsl:template match=".[ends-with(.,'xsl') or ends-with(.,'xslt') or ends-with(.,'xpl')]">
     <xsl:variable name="filepath"  select="$dirpath || '/' || ."/>
-    <div>
-      <h4> 
-        <xsl:sequence select="."/>
-      </h4>
-      <xsl:apply-templates select="document($filepath)/*" mode="report"/>
-    </div>
+    <xsl:if test="matches($filepath, '(xml|xpl|sch|xsl|xslt)$')">
+      <div>
+        <h4>
+          <xsl:sequence select="."/>
+        </h4>
+        <xsl:apply-templates select="document($filepath)/*" mode="report"/>
+      </div>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="xsl:stylesheet | xsl:transform" mode="report">
     <xsl:variable name="templatecount" select="count(xsl:template)"/>
     <p>XSLT stylesheet version { @version } ({ $templatecount } { if ($templatecount eq 1) then 'template' else 'templates' })</p>
     <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="xsl:stylesheet/xsl:param" mode="report">
+    <p>Runtime parameter <code>{ '`' || @name || '`' }</code> { @as/(' as ' || .) }</p>
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="comment()[matches(.,'^\s*(XSweet|Input|Output|Note):')]"  mode="report">
+    <p>
+      <xsl:value-of select="normalize-space(.)"/>
+    </p>
   </xsl:template>
   
   <xsl:template match="xsl:include | xsl:import" mode="report">
