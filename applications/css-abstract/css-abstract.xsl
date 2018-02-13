@@ -9,6 +9,10 @@
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
+  <!-- XSweet: rewrites CSS, doing its best to promote CSS settings from style attributes to classes -->
+  <!-- Input: An HTML Typescript file. -->
+  <!-- Output: A copy, except rewritten wrt use of @style and @class. -->
+  
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>

@@ -7,6 +7,11 @@
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
  
+ 
+  <!-- XSweet: 'wrapper' XSLT for docx extraction with cleanup; using this XSLT in a 3.0 processor replaces five calls to distinct XSLTs. [1] -->
+  <!-- Input: a WordML document.xml file as extracted from .docx input, with its related (neighbor) files in place -->
+  <!-- Output: HTML Typescript - fairly clean and regular HTML -->
+  
 <!-- Use this XQuery to get a list of stylesheets called by an XProc pipeline:
 
 declare namespace p='http://www.w3.org/ns/xproc';

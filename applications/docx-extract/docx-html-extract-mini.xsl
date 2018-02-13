@@ -9,6 +9,8 @@
   xmlns="http://www.w3.org/1999/xhtml" xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
 
+<!-- XSweet: an EXPERIMENTAL single-pass reduced docx extraction for further development. [ZZ]-->
+  
 <!-- For docs on WordML, see (at least):
 
   http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/index.html

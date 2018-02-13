@@ -9,6 +9,8 @@
    
   <xsl:import href="docx-html-extract.xsl"/>
   
+<!-- XSweet: A utility XSLT, for wrapping a call to docx-extract.xsl in logic to unpack a document.xml from its zip (docx file wrapper). Thus saving unzipping when running diagnostics. -->
+  
   <!-- A 'shell' stylesheet, permitting us to pass a .docx file as an input parameter,
        using Java to retrieve the document.xml from inside it and process that file
        through imported templates (matching elements in the w: namespace), for "extraction" output. -->

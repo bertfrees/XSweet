@@ -9,6 +9,11 @@
   xmlns="http://www.w3.org/1999/xhtml" xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
 
+  <!-- XSweet: step 1 of docx extraction - pulling the main text, notes and styles.... [3a] -->
+  <!-- Input: a WordML document.xml file as extracted from .docx input, with its related (neighbor) files in place -->
+  <!-- Output: Spammy HTML, pretty cruddy, expect to perform cleanup ... -->
+  
+
 <!-- For docs on WordML, see (at least):
 
   http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/index.html

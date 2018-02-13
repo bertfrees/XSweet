@@ -11,6 +11,11 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
+
+  <!-- XSweet: Further reduces haphazard redundancy in markup by joining adjacent elements with similar properties .... [3d] -->
+  <!-- Input: A messy noisy HTML document needing (yet more) streamlining and cleanup. -->
+  <!-- Output: A copy, with improvements. -->
+  
   <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
     <xsl:copy>

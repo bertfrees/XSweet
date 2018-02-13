@@ -7,6 +7,8 @@
   xmlns:xsw="http://coko.foundation/xsweet"
   exclude-result-prefixes="#all">
   
+<!-- XSweet: one of the earliest docx extraction XSLTs, kept here for historical reasons. It's standalone! -->
+  
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   

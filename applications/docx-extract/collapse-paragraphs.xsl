@@ -11,6 +11,11 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
+  <!-- XSweet: Further removal of redundant expression of formatting properties, especially in service of subsequent
+    heuristics (where we need to see properties on paragraphs, not only their contents objects) .... [3e] -->
+  <!-- Input: A messy noisy HTML document needing (yet more and even more) streamlining and cleanup. -->
+  <!-- Output: A copy, with improvements. -->
+  
   <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
     <xsl:copy>

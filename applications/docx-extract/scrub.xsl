@@ -10,6 +10,13 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
+
+  <!-- XSweet: "Scrub" cleanup in service of docx-extraction, usually step 3 .... [3c] -->
+  <!-- Input: A messy noisy HTML document needing streamlining and cleanup. -->
+  <!-- Output: A copy, with improvements. -->
+  <!-- Note: the rule in the extraction XSLT is "make an element for anything" even if it hasn't been mapped - this step has a chance to wipe this up, and does so for certain elements known to be innocuous. Occasionally new such elements may need to be matched in this XSLT (detect them by invalid HTML downstream, with unknown element types). -->
+  
+
   <!-- Copy everything by default. -->
   <xsl:template match="node() | @*">
     <xsl:copy>

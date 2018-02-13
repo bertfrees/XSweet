@@ -10,7 +10,10 @@
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
-
+  <!-- XSweet: notes cleanup, step 2 of regular docx extraction .... [3b] -->
+  <!-- Input: A messy noisy HTML document straight out of docx-extract.xsl -->
+  <!-- Output: A copy, with some regularization with respect specifically to footnotes and endnotes ... -->
+  
   <xsl:param as="xs:string" name="footnote-format">a</xsl:param>
   <xsl:param as="xs:string" name="endnote-format" >1</xsl:param>
   

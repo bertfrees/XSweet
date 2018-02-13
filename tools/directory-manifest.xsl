@@ -75,7 +75,7 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="comment()[matches(.,'^\s*(XSweet|Input|Output|Note):')]"  mode="report">
+  <xsl:template match="comment()[matches(.,'^\s*(XSweet|Input|Output|Note|Limitations?):')]"  mode="report">
     <p>
       <xsl:value-of select="normalize-space(.)"/>
     </p>
