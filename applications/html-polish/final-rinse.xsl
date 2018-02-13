@@ -8,6 +8,8 @@
 
   exclude-result-prefixes="#all">
 
+<!-- XSweet: After everything, certain efficiencies can still be 'squeezed' out of presentational HTML markup as emitted raw. So, some final normalizations can be made opportunistically. -->
+  
   <!-- Removes redundant tagging from HTML based on @style analysis, element type e.g. redundant b, i, u etc. -->
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>

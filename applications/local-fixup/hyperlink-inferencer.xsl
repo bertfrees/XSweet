@@ -9,6 +9,10 @@
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
+  <!-- XSweet: picks up URI substrings and renders them as (HTML) anchors with (purported or matched) links -->
+<!-- Input: HTML Typescript or relatively clean HTML or XML. -->
+<!-- Output: A copy, except that URIs now appear as live links (`a` elements). -->
+  
   <xsl:template match="* | @* | processing-instruction() | comment()">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>

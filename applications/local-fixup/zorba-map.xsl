@@ -9,6 +9,10 @@
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
+  <!-- XSweet: A demo of an "ad hoc" filter for a particular workflow or process - this time, tuned particularly for a particular usage profile. -->
+  <!-- Input: HTML Typescript -->
+  <!-- Output: A copy, with modifications. -->
+  
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
