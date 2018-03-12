@@ -548,7 +548,10 @@
     </xsl:variable>
     <xsw:prop name="{$property-name}"><xsl:value-of select=". div 20"/>pt</xsw:prop>
   </xsl:template>
-
+  
+  <!-- Suppress @w:left when there is a @w:hanging .... -->
+  <xsl:template mode="build-properties" priority="2" as="element(xsw:prop)*" match="w:ind[matches(@w:hanging,'\S')]/@w:left"/>
+  
   <!-- With apologies, not supporting other values of text alignment in Word. -->
   <xsl:template priority="2" mode="build-properties"  as="element(xsw:prop)*"  match="w:jc[@w:val=('left','right','center','both')]">
     <xsw:prop name="text-align">
