@@ -466,7 +466,7 @@
     <xsl:variable name="n-is-callout" as="xs:boolean">
       <xsl:apply-templates select="$n" mode="is-callout"/>
     </xsl:variable>
-    <xsl:sequence select="($n is $n/self::w:tab) or exists($n/../w:rPr) and not($n-is-callout)"/>
+    <xsl:sequence select="exists($n/../w:rPr) and not($n-is-callout)"/>
   </xsl:function>
 
   <!-- If we didn't want to see these wrapped in formatting ...
