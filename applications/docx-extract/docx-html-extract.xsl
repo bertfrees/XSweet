@@ -366,11 +366,37 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template priority="10" match="w:rPr/w:kern | w:rPr/w:b[@w:val='0'] | w:rPr/w:i[@w:val='0'] | w:rPr/w:u[@w:val=('0','none')] |
-    w:rPr/w:smallCaps[@w:val='0'] | w:rPr/w:color[@w:val='000000']">
+  <xsl:template priority="10" match="w:rPr/w:kern | w:rPr/w:color[@w:val='000000']">
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
-
+  
+  <xsl:template priority="10" match="w:rPr/w:b[@w:val=('0','none')]">
+    <span style="font-weight: normal">
+      <xsl:call-template name="tuck-next"/>
+    </span>
+  </xsl:template>
+  
+  <xsl:template priority="10" match="w:rPr/w:i[@w:val=('0','none')]">
+    <span style="font-style: normal">
+      <xsl:call-template name="tuck-next"/>
+    </span>
+  </xsl:template>
+  
+  <xsl:template priority="10" match="w:rPr/w:u[@w:val=('0','none')]">
+    <span style="text-decoration: none">
+      <xsl:call-template name="tuck-next"/>
+    </span>
+  </xsl:template>
+  
+  <!--<xsl:template priority="10" match="w:rPr/w:smallCaps[@w:val=('0','none')]">
+    <span style="font-variant: normal">
+      <xsl:call-template name="tuck-next"/>
+    </span>
+  </xsl:template>-->
+  
+  
+  
+  
   <!-- http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/ST_VerticalAlignRun.html -->
   <!--<w:vertAlign w:val="superscript"/>-->
   <xsl:template priority="4" match="w:rPr/w:vertAlign[@w:val='superscript']">
@@ -423,7 +449,8 @@
     <xsl:call-template name="tuck-next"/>
   </xsl:template>
 
-  <!-- Called to effect the sibling traversal among w:rPrr/* elements. -->
+  <!-- Called to effect the sibling traversal among w:rPr/* elements.
+       Notice we go backwards 'cause we need later elements (style settings) to wrap earlier (local/override settings) -->
   <xsl:template name="tuck-next">
     <xsl:param name="contents" select="()" tunnel="yes"/>
     <!-- If there's more format, keep going. -->
@@ -571,26 +598,49 @@
     </xsw:prop>
   </xsl:template>
 
-  <!--
-    2017-05-25 removing bold, italic and underline from build properties!
-    b/c they should be inoperative at the pPr/rPr level
-    and we reflect them via 'tucking' (i.e. producing 'u','b' and 'i') at the inline level. -->
-
-  <!-- will become 'b' in regular traversal
-       we need it, however, when in styles -->
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
+  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b">
+    <xsw:prop name="font-weight">
+      <xsl:apply-templates mode="set-property" select="."/>
+    </xsw:prop>
+  </xsl:template>-->
+  
+  <xsl:template mode="set-property" match="w:b[@w:val='0','none']">normal</xsl:template>
+  <xsl:template mode="set-property" match="w:b">bold</xsl:template>
+  
+  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
     <xsw:prop name="font-weight">bold</xsw:prop>
-  </xsl:template>
-
+  </xsl:template>-->
+  
+<!-- Note italics, bold and underline are dropped except when set in a style. They are picked
+     up through the "tucking" traversal. -->
+  
+  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i">
+    <xsw:prop name="font-style">
+      <xsl:apply-templates mode="set-property" select="."/>
+    </xsw:prop>
+  </xsl:template>-->
+  
+  <xsl:template mode="set-property" match="w:i[@w:val='0','none']">normal</xsl:template>
+  <xsl:template mode="set-property" match="w:i">italic</xsl:template>
+  
   <!-- will become 'i' -->
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i[not(@val=('0','none'))]">
+  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i[not(@val=('0','none'))]">
     <xsw:prop name="font-style">italic</xsw:prop>
-  </xsl:template>
+  </xsl:template>-->
 
+  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u">
+    <xsw:prop name="text-decoration">
+      <xsl:apply-templates mode="set-property" select="."/>
+    </xsw:prop>
+  </xsl:template>-->
+  
+  <xsl:template mode="set-property" match="w:u[@w:val='0','none']">none</xsl:template>
+  <xsl:template mode="set-property" match="w:u">underline</xsl:template>
+  
   <!-- will become 'u' -->
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u[not(@val=('0','none'))]">
+  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u[not(@val=('0','none'))]">
     <xsw:prop name="text-decoration">underline</xsw:prop>
-  </xsl:template>
+  </xsl:template>-->
 
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:szCs[. = (../w:sz)]"/>
 
@@ -601,10 +651,14 @@
     <xsw:prop name="font-size"><xsl:value-of select="@w:val div 2"/>pt</xsw:prop>
   </xsl:template>
 
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:smallCaps[not(@val=('0','none'))]">
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:smallCaps[not(@w:val=('0','none'))]">
     <xsw:prop name="font-variant">small-caps</xsw:prop>
   </xsl:template>
-
+  
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:smallCaps[@w:val=('0','none')]">
+    <xsw:prop name="font-variant">normal</xsw:prop>
+  </xsl:template>
+  
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:color">
     <xsl:if test="not(@w:val='000000')">
       <xsw:prop name="color">
