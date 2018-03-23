@@ -77,7 +77,7 @@ Note the following mappings:
   <!-- We can strip 'span' elements when they are coextensive with their wrapping p and
        have nothing but @style to offer, as the latter is being promoted. -->
   <xsl:template match="p//span[empty(@class)]
-    [normalize-space(.) = normalize-space(ancestor::p[1])]">
+    [normalize-space(.) = normalize-space(ancestor::p[1]) and count(../(* except tab)) eq 1]">
     <xsl:apply-templates/>
   </xsl:template>
 
