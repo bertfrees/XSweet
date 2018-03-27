@@ -598,27 +598,28 @@
     </xsw:prop>
   </xsl:template>
 
-  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b">
+  <!-- Note these are popped out only when assigned via style, not directly to spans. -->
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b">
     <xsw:prop name="font-weight">
       <xsl:apply-templates mode="set-property" select="."/>
     </xsw:prop>
-  </xsl:template>-->
+  </xsl:template>
   
   <xsl:template mode="set-property" match="w:b[@w:val='0','none']">normal</xsl:template>
   <xsl:template mode="set-property" match="w:b">bold</xsl:template>
   
-  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
     <xsw:prop name="font-weight">bold</xsw:prop>
-  </xsl:template>-->
+  </xsl:template>
   
 <!-- Note italics, bold and underline are dropped except when set in a style. They are picked
      up through the "tucking" traversal. -->
   
-  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i">
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i">
     <xsw:prop name="font-style">
       <xsl:apply-templates mode="set-property" select="."/>
     </xsw:prop>
-  </xsl:template>-->
+  </xsl:template>
   
   <xsl:template mode="set-property" match="w:i[@w:val='0','none']">normal</xsl:template>
   <xsl:template mode="set-property" match="w:i">italic</xsl:template>
@@ -628,11 +629,11 @@
     <xsw:prop name="font-style">italic</xsw:prop>
   </xsl:template>-->
 
-  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u">
+  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u">
     <xsw:prop name="text-decoration">
       <xsl:apply-templates mode="set-property" select="."/>
     </xsw:prop>
-  </xsl:template>-->
+  </xsl:template>
   
   <xsl:template mode="set-property" match="w:u[@w:val='0','none']">none</xsl:template>
   <xsl:template mode="set-property" match="w:u">underline</xsl:template>
