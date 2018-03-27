@@ -19,31 +19,53 @@
     </xsl:copy>
   </xsl:template>
   
-  <!-- Deprecating these ... since @style info is factored out ...
-    
-    <xsl:template match="span[@style='font-family: Helvetica'][empty(@class)]">
-    <xsl:apply-templates/>
+ 
+<!-- tlds includes three-letter domain names but also anything that indicates
+     an URL when followed by . (dot) e.g. .mil or .us ...  -->
+  <xsl:variable name="tlds"         as="xs:string" expand-text="true">(com|org|net|gov|mil|edu|io|foundation|mx|us)</xsl:variable>
+ 
+  <xsl:template match="text()">
+    <!-- tokenize by splitting around spaces, plus leading punctuation characters  -->
+    <xsl:analyze-string select="." regex="\p{{P}}$|\p{{P}}?\s+">
+      <xsl:matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+          <xsl:choose>
+            <!-- skip file URIs -->
+            <xsl:when test="matches(.,'file:/')">
+              <xsl:value-of select="."/>
+            </xsl:when>
+            <xsl:when test="matches(.,('\.' || $tlds )) and (. castable as xs:anyURI)">
+              <xsl:variable name="has-protocol" select="matches(.,'^(https?|ftp)://')"/>
+              <a href="{'http://'[not($has-protocol)]}{.}">
+                <xsl:value-of select="."/>
+              </a>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
   </xsl:template>
-  
-  
-  <xsl:template match="@style[.='font-family: Helvetica']"/> -->
-  
-  
-  <xsl:variable name="tlds"         as="xs:string" expand-text="true">(com|org|net|gov|mil|edu|io|foundation)</xsl:variable>
+ 
+ 
+<!-- Old code wasn't working with a shorter TLD list but it could be okay now ... -->
   <xsl:variable name="urlchar"      as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
   <xsl:variable name="extraURLchar" as="xs:string">[\w\-\$:;/:@&amp;=+,_]</xsl:variable>
   
   <xsl:variable name="domain"    as="xs:string" expand-text="true">({$urlchar}+\.)</xsl:variable>
-
+  
   <xsl:variable name="tail"      as="xs:string" expand-text="true">(/|(\.(xml|html|htm|gif|jpg|jpeg|pdf|png|svg)))?</xsl:variable>
   <xsl:variable name="pathstep"  as="xs:string" expand-text="true">(/{$urlchar}+)</xsl:variable>
   
   <xsl:variable name="url-match" as="xs:string" expand-text="true">((http|ftp|https):/?/?)?{$domain}+{$tlds}{$pathstep}*{$tail}(\?{$extraURLchar}+)?</xsl:variable>
   
-  <xsl:template match="text()">
-    
-    <xsl:analyze-string select="." regex="{$url-match}">
-      <!--(https?:)?(\w+\.)?(\w+)\.(\w\w\w)-->
+      <xsl:template match="text()" mode="regexing">
+        
+        <xsl:analyze-string select="." regex="{$url-match}">
+          <!--(https?:)?(\w+\.)?(\w+)\.(\w\w\w)-->
       <xsl:matching-substring>
         <xsl:variable name="has-protocol" select="matches(.,'^https?://')"/>
         <a href="{'http://'[not($has-protocol)]}{regex-group(0)}">
