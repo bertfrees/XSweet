@@ -20,9 +20,14 @@
   </xsl:template>
   
  
-<!-- tlds includes three-letter domain names but also anything that indicates
+  <xsl:variable name="country-codes">ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bl|bm|bn|bo|bq|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cu|cv|cw|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mf|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu</xsl:variable>
+
+  <!-- tlds includes three-letter domain names but also anything that indicates
      an URL when followed by . (dot) e.g. .mil or .us ...  -->
-  <xsl:variable name="tlds"         as="xs:string" expand-text="true">(com|org|net|gov|mil|edu|io|foundation|mx|us)</xsl:variable>
+  <xsl:variable name="tlds"         as="xs:string" expand-text="true">com|org|net|gov|mil|edu|io|foundation</xsl:variable>
+  
+  <xsl:variable name="uri-match" as="xs:string" expand-text="true">\.({$country-codes}|{$tlds})</xsl:variable>
+  
  
   <xsl:template match="text()">
     <!-- tokenize by splitting around spaces, plus leading punctuation characters  -->
@@ -36,7 +41,7 @@
             <xsl:when test="matches(.,'file:/')">
               <xsl:value-of select="."/>
             </xsl:when>
-            <xsl:when test="matches(.,('\.' || $tlds )) and (. castable as xs:anyURI)">
+            <xsl:when test="matches(.,$uri-match) and (. castable as xs:anyURI)">
               <xsl:variable name="has-protocol" select="matches(.,'^(https?|ftp)://')"/>
               <a href="{'http://'[not($has-protocol)]}{.}">
                 <xsl:value-of select="."/>
@@ -52,7 +57,7 @@
  
  
 <!-- Old code wasn't working with a shorter TLD list but it could be okay now ... -->
-  <xsl:variable name="urlchar"      as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
+ <!-- <xsl:variable name="urlchar"      as="xs:string" expand-text="true">[\w\-_]</xsl:variable>
   <xsl:variable name="extraURLchar" as="xs:string">[\w\-\$:;/:@&amp;=+,_]</xsl:variable>
   
   <xsl:variable name="domain"    as="xs:string" expand-text="true">({$urlchar}+\.)</xsl:variable>
@@ -65,7 +70,7 @@
       <xsl:template match="text()" mode="regexing">
         
         <xsl:analyze-string select="." regex="{$url-match}">
-          <!--(https?:)?(\w+\.)?(\w+)\.(\w\w\w)-->
+          <!-\-(https?:)?(\w+\.)?(\w+)\.(\w\w\w)-\->
       <xsl:matching-substring>
         <xsl:variable name="has-protocol" select="matches(.,'^https?://')"/>
         <a href="{'http://'[not($has-protocol)]}{regex-group(0)}">
@@ -76,7 +81,7 @@
         <xsl:value-of select="."/>
       </xsl:non-matching-substring>
     </xsl:analyze-string>
-  </xsl:template>
+  </xsl:template>-->
   
   <!--<xsl:template match="text()[matches(.,'^https?:')][string(.) castable as xs:anyURI][empty(ancestor::a)]">
     <a href="{encode-for-uri(.)}">
