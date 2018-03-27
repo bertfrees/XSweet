@@ -605,7 +605,7 @@
     </xsw:prop>
   </xsl:template>
   
-  <xsl:template mode="set-property" match="w:b[@w:val='0','none']">normal</xsl:template>
+  <xsl:template mode="set-property" match="w:b[@w:val=('0','none')]">normal</xsl:template>
   <xsl:template mode="set-property" match="w:b">bold</xsl:template>
   
   <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
@@ -621,7 +621,7 @@
     </xsw:prop>
   </xsl:template>
   
-  <xsl:template mode="set-property" match="w:i[@w:val='0','none']">normal</xsl:template>
+  <xsl:template mode="set-property" match="w:i[@w:val=('0','none')]">normal</xsl:template>
   <xsl:template mode="set-property" match="w:i">italic</xsl:template>
   
   <!-- will become 'i' -->
@@ -635,7 +635,7 @@
     </xsw:prop>
   </xsl:template>
   
-  <xsl:template mode="set-property" match="w:u[@w:val='0','none']">none</xsl:template>
+  <xsl:template mode="set-property" match="w:u[@w:val=('0','none')]">none</xsl:template>
   <xsl:template mode="set-property" match="w:u">underline</xsl:template>
   
   <!-- will become 'u' -->
