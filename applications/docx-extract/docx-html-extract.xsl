@@ -608,10 +608,6 @@
   <xsl:template mode="set-property" match="w:b[@w:val=('0','none')]">normal</xsl:template>
   <xsl:template mode="set-property" match="w:b">bold</xsl:template>
   
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b[not(@val=('0','none'))]">
-    <xsw:prop name="font-weight">bold</xsw:prop>
-  </xsl:template>
-  
 <!-- Note italics, bold and underline are dropped except when set in a style. They are picked
      up through the "tucking" traversal. -->
   
