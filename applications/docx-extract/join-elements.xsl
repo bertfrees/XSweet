@@ -44,17 +44,23 @@
   <xsl:template name="collapse-ilk">
     <xsl:param name="among" select="node()"/>
     <xsl:for-each-group select="$among" group-adjacent="xsw:node-signature(.)">
-      <xsl:for-each select="current-group()[1]/self::*">
-        <!-- In the element case, splice in an element. -->
-        <xsl:copy>
-          <xsl:copy-of select="@*"/>
-          <xsl:call-template name="collapse-ilk">
-            <xsl:with-param name="among" select="current-group()/node()"/>
-          </xsl:call-template>
-        </xsl:copy>
-      </xsl:for-each>
+      <xsl:choose>
+        <xsl:when test="exists(current-group()/self::*)">
+          <xsl:for-each select="current-group()[self::*][1]">
+            <!-- In the element case, splice in an element. -->
+            <xsl:copy>
+              <xsl:copy-of select="@*"/>
+              <xsl:call-template name="collapse-ilk">
+                <xsl:with-param name="among" select="current-group()/(node(),self::text())"/>
+              </xsl:call-template>
+            </xsl:copy>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:copy-of select="current-group()"/>
+        </xsl:otherwise>
+      </xsl:choose>
       <!-- Splice in anything not an element. -->
-      <xsl:copy-of select="current-group()[empty(self::*)]"/>
     </xsl:for-each-group>
   </xsl:template>
 
