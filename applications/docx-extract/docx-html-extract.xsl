@@ -14,9 +14,9 @@
   <!-- Output: Spammy HTML, pretty cruddy, expect to perform cleanup ... -->
   
 
-<!-- For docs on WordML, see (at least):
+  <!-- For docs on WordML, see (at least):
 
-  http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/index.html
+    http://webapp.docx4java.org/OnlineDemo/ecma376/WordML/index.html
 
   -->
 
@@ -69,7 +69,7 @@
 
 
 
- <!-- Run on 'document.xml' inside a .docx -->
+  <!-- Run on 'document.xml' inside a .docx -->
 
   <!-- Note that unprefixed elements are in namespace http://www.w3.org/1999/xhtml -->
   <xsl:template match="/w:document">
@@ -227,11 +227,8 @@
     </tr>
   </xsl:template>
 
-  <!--<xsl:template match="w:tc">
-    <td>
-      <xsl:apply-templates select="w:p"/>
-    </td>
-  </xsl:template>-->
+  <!-- more table handling in module docx-table-extract.xsl -->
+  
 
   <!-- Drop in default traversal -->
   <xsl:template match="w:pPr"/>
@@ -620,12 +617,9 @@
   <xsl:template mode="set-property" match="w:i[@w:val=('0','none')]">normal</xsl:template>
   <xsl:template mode="set-property" match="w:i">italic</xsl:template>
   
-  <!-- will become 'i' -->
-  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i[not(@val=('0','none'))]">
-    <xsw:prop name="font-style">italic</xsw:prop>
-  </xsl:template>-->
-
-  <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u">
+  <!-- Inoperable when no value is given -->
+  <xsl:template mode="build-properties"  as="element(xsw:prop)?" match="w:style//w:u[empty(@w:val)]" priority="2"/>
+  <xsl:template mode="build-properties"  as="element(xsw:prop)"  match="w:style//w:u">
     <xsw:prop name="text-decoration">
       <xsl:apply-templates mode="set-property" select="."/>
     </xsw:prop>
@@ -634,11 +628,6 @@
   <xsl:template mode="set-property" match="w:u[@w:val=('0','none')]">none</xsl:template>
   <xsl:template mode="set-property" match="w:u">underline</xsl:template>
   
-  <!-- will become 'u' -->
-  <!--<xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:u[not(@val=('0','none'))]">
-    <xsw:prop name="text-decoration">underline</xsw:prop>
-  </xsl:template>-->
-
   <xsl:template mode="build-properties"  as="element(xsw:prop)*" match="w:szCs[. = (../w:sz)]"/>
 
   <!-- Font size for complex scripts (szCs) is just noise. -->
