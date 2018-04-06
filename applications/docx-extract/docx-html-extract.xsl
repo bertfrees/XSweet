@@ -596,7 +596,6 @@
   </xsl:template>
 
   <!-- Note these are popped out only when assigned via style, not directly to spans. -->
-  <xsl:template mode="build-properties"  as="element(xsw:prop)?" match="w:style//w:b[empty(@w:val)]" priority="2"/>
   <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:b">
     <xsw:prop name="font-weight">
       <xsl:apply-templates mode="set-property" select="."/>
@@ -609,7 +608,6 @@
 <!-- Note italics, bold and underline are dropped except when set in a style. They are picked
      up through the "tucking" traversal. -->
   
-  <xsl:template mode="build-properties"  as="element(xsw:prop)?" match="w:style//w:i[empty(@w:val)]" priority="2"/>
   <xsl:template mode="build-properties"  as="element(xsw:prop)" match="w:style//w:i">
     <xsw:prop name="font-style">
       <xsl:apply-templates mode="set-property" select="."/>
