@@ -51,7 +51,7 @@
   <p:serialization port="_0_ooxml_document" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_A_extracted" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_B_arranged"  indent="true" omit-xml-declaration="true"/>
-  <p:serialization port="_C_scrubbed"  indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_scrubbed"  indent="false" omit-xml-declaration="true"/>
   <p:serialization port="_D_trimmed"   indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_E_folded"    indent="true" omit-xml-declaration="true"/>
   
@@ -75,11 +75,12 @@
   
   <xsw:docx-document-production name="document-production"/>
   
-  <p:xslt name="mapped">
+  <p:identity name="mapped"/>
+  <!--<p:xslt name="mapped">
     <p:input port="stylesheet">
       <p:document href="local-fixup/ucp-fixup.xsl"/>
     </p:input>
-  </p:xslt>
+  </p:xslt>-->
   
   <p:xslt name="rinsed">
     <p:input port="stylesheet">
