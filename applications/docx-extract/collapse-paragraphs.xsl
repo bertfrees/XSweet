@@ -76,10 +76,12 @@ Note the following mappings:
 
   <!-- We can strip 'span' elements when they are coextensive with their wrapping p and
        have nothing but @style to offer, as the latter is being promoted. -->
-  <xsl:template match="p//span[empty(@class)]
+<!-- NB suppressing this until it can test whether a wrapping @class doesn't warrant its retention
+     see https://gitlab.coko.foundation/XSweet/XSweet/issues/140 -->
+  <!--<xsl:template match="p//span[empty(@class)]
     [normalize-space(.) = normalize-space(ancestor::p[1]) and count(../*) eq 1]">
     <xsl:apply-templates/>
-  </xsl:template>
+  </xsl:template>-->
 
   <!-- Note we leave 'u', 'i' and 'b' in place despite also promoting them to CSS. -->
 
