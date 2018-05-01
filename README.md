@@ -6,6 +6,7 @@
 
 |Project            |Description                                    |In progress?   |Done     |Issue|
 |:---:              |:---:                                          |:---:          |:---:    |:---:|
+|XSweet             |Extract images to HTML; handling image files   |               |         |     |
 
 
 Wendell Piez for Coko Foundation, from July 2016
