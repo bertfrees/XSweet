@@ -1,4 +1,4 @@
-Copyright (c) 2017, Aspiration Tech
+Copyright (c) 2017, Adam Hyde
 
 MIT License (https://opensource.org/licenses/MIT)
 
