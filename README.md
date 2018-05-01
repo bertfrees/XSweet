@@ -2,6 +2,12 @@
 
 *Including extraction of document contents from MS Office Open XML into HTML*
 
+## Roadmap
+
+|Project            |Description                                    |In progress?   |Done     |Issue|
+|:---:              |:---:                                          |:---:          |:---:    |:---:|
+
+
 Wendell Piez for Coko Foundation, from July 2016
 
 You will need an XSLT 3.0 processor. Everything has been tested with SaxonHE.
@@ -73,7 +79,7 @@ A pipelining or "glue" framework must be able to:
 * sequence transformations together, so the output of one becomes input to the next, chains being of arbitrary length
 * persist (write or serialize or otherwise save) final results and/or make them available in some useful way
 
-As long as some provision is made for all these, just about anything will work. In addition to these features, having some kind of conditional logic and/or access to reasoning about the inputs, is nice to have in a shell language. 
+As long as some provision is made for all these, just about anything will work. In addition to these features, having some kind of conditional logic and/or access to reasoning about the inputs, is nice to have in a shell language.
 
 Here is an example of an XSweet pipeline using bash:
 
